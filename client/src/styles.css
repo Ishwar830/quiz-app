@@ -126,6 +126,11 @@ code {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-cyberpunk-black: hsla(206, 47%, 3%, 1);
+  --color-cyberpunk-yellow: hsla(56, 97%, 51%, 1);
+  --color-cyberpunk-red: hsla(345, 100%, 50%, 1);
+  --color-cyberpunk-skyblue: hsla(183, 100%, 50%, 1);
+  --color-cyberpunk-grey: hsla(0, 0%, 98%, 1);
 }
 
 @layer base {

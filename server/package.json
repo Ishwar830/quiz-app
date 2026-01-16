@@ -14,19 +14,25 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.5",
+    "@tsconfig/node16": "^16.1.8",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.0.9",
+    "@types/pg": "^8.16.0",
+    "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "better-auth": "^1.4.13",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
     "morgan": "^1.10.1",
+    "pg": "^8.17.1",
     "zod": "^4.3.5"
   }
 }
