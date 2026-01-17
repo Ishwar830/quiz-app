@@ -6,43 +6,38 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from './ui/card';
 import { Button } from './ui/button';
-import { EmailField, PasswordField } from './FormFields';
+import { EmailField, PasswordField, UserNameField } from './FormFields';
 import { FieldError } from './ui/field';
 import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/authClient';
 
-export function LoginCard() {
+export function SignUpCard() {
   return (
     <Card className="w-full max-w-sm mx-auto">
       <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
+        <CardTitle>Create a new account</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your details below to create a new account
         </CardDescription>
         <CardAction>
-          <Link to="/signup">
-            <Button variant="link">Sign Up</Button>
+          <Link to="/login">
+            <Button variant="link">Login</Button>
           </Link>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <LoginForm />
+        <SignUpForm />
       </CardContent>
-      <CardFooter>
-        <Button variant="outline" className="w-full">
-          Guest Login
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
 
-interface LoginFormInputs {
+interface SignUpFormInputs {
+  name: string;
   email: string;
   password: string;
 }
@@ -51,14 +46,19 @@ interface ValidationError {
   message?: string;
 }
 
-function LoginForm() {
-  const { formData, handleInputChange } = useForm<LoginFormInputs>({
+function SignUpForm() {
+  const { formData, handleInputChange } = useForm<SignUpFormInputs>({
+    name: '',
     email: '',
     password: '',
   });
   const [validationError, setValidationError] =
     useState<Array<ValidationError>>();
   const [isPending, setIsPending] = useState(false);
+
+  const handleNameChange = (val: string) => {
+    handleInputChange('name', val);
+  };
 
   const handleEmailChange = (val: string) => {
     handleInputChange('email', val);
@@ -71,7 +71,8 @@ function LoginForm() {
   const handleSubmit = async () => {
     setIsPending(true);
 
-    const { data, error } = await auth.signIn.email({
+    const { data, error } = await auth.signUp.email({
+      name: formData.name,
       email: formData.email,
       password: formData.password,
     });
@@ -89,6 +90,7 @@ function LoginForm() {
       }}
     >
       <div className="flex flex-col gap-4">
+        <UserNameField value={formData.name} handleChange={handleNameChange} />
         <EmailField value={formData.email} handleChange={handleEmailChange} />
         <PasswordField
           value={formData.password}
@@ -101,7 +103,7 @@ function LoginForm() {
               <Loader2 />
             </span>
           ) : (
-            <span>Login</span>
+            <span>SignUp</span>
           )}
         </Button>
       </div>
