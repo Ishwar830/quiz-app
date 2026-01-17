@@ -6,13 +6,12 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from './ui/card';
 import { Button } from './ui/button';
 import { EmailField, PasswordField } from './FormFields';
-import { FieldError } from './ui/field';
+import { FieldError, FieldSeparator } from './ui/field';
 import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/authClient';
 
@@ -33,11 +32,6 @@ export function LoginCard() {
       <CardContent>
         <LoginForm />
       </CardContent>
-      <CardFooter>
-        <Button variant="outline" className="w-full">
-          Guest Login
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
@@ -81,6 +75,15 @@ function LoginForm() {
     setIsPending(false);
   };
 
+  const handleGuestLogin = async () => {
+    setIsPending(true);
+
+    const { data, error } = await auth.signIn.anonymous();
+    if (data) console.log(data);
+    if (error) setValidationError([error]);
+    setIsPending(false);
+  };
+
   return (
     <form
       onSubmit={(e) => {
@@ -95,6 +98,7 @@ function LoginForm() {
           handleChange={handlePasswordChange}
         />
         <FieldError errors={validationError} />
+
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? (
             <span className="animate-spin">
@@ -103,6 +107,16 @@ function LoginForm() {
           ) : (
             <span>Login</span>
           )}
+        </Button>
+
+        <FieldSeparator>Or</FieldSeparator>
+        <Button
+          variant="outline"
+          className="w-full"
+          disabled={isPending}
+          onClick={handleGuestLogin}
+        >
+          Guest Login
         </Button>
       </div>
     </form>
