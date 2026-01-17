@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
@@ -47,6 +47,7 @@ interface ValidationError {
 }
 
 function SignUpForm() {
+  const navigate = useNavigate();
   const { formData, handleInputChange } = useForm<SignUpFormInputs>({
     name: '',
     email: '',
@@ -71,15 +72,19 @@ function SignUpForm() {
   const handleSubmit = async () => {
     setIsPending(true);
 
-    const { data, error } = await auth.signUp.email({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    });
-    if (data) console.log(data);
-    if (error) setValidationError([error]);
-
-    setIsPending(false);
+    try {
+      const { data, error } = await auth.signUp.email({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      if (data) navigate({ to: '/dashboard' });
+      if (error) setValidationError([error]);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
