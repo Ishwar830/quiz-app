@@ -19,8 +19,6 @@ export interface Quiz {
   title: string;
   topic: string;
   questions: Array<QuizQuestion>;
-  createdAt?: number;
-  updatedAt?: number;
 }
 
 interface QuizStore extends Quiz {
