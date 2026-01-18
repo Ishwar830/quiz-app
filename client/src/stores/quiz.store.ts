@@ -32,6 +32,7 @@ interface QuizStore extends Quiz {
     removeQuestion: (questionId: string) => void;
     updateTopic: (topic: string) => void;
     updateTitle: (title: string) => void;
+    updateCorrectChoice: (questionId: string, choiceId: string) => void;
   };
 }
 
@@ -70,6 +71,11 @@ const useQuizStore = create<QuizStore>()(
       updateTitle: (title) =>
         set((s) => {
           s.title = title;
+        }),
+      updateCorrectChoice: (questionId, choiceId) =>
+        set((s) => {
+          const question = s.questions.find((q) => q.id === questionId);
+          if (question) question.correctChoiceId = choiceId;
         }),
     },
   })),
