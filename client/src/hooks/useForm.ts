@@ -7,5 +7,5 @@ export function useForm<T>(initialFormData: T) {
     setFormData((prev) => ({ ...prev, [field]: val }));
   };
 
-  return { formData, handleInputChange };   
+  return { formData, handleInputChange };
 }

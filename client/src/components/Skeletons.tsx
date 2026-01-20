@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
+import { cn } from '@/lib/utils';
 
 export function Skeleton({ className = '' }) {
   return <div className={cn('animate-pulse bg-gray-400 rounded', className)} />;

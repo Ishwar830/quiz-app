@@ -19,7 +19,8 @@ export class ApiResponse<T = any> {
     return new ApiResponse<T>(true, data);
   }
 
-  static error(error: Record<string, string>): ApiResponse<null> {
+  static error(error: string | Record<string, string>): ApiResponse<null> {
+    if (typeof error === "string") error = { message: error };
     return new ApiResponse(false, null, error);
   }
 }

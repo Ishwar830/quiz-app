@@ -32,7 +32,7 @@ function SearchBar() {
   return (
     <div>
       <InputGroup>
-        <InputGroupInput type="search" placeholder="Search..." id='query' />
+        <InputGroupInput type="search" placeholder="Search..." id="query" />
         <InputGroupAddon>
           <Search />
         </InputGroupAddon>

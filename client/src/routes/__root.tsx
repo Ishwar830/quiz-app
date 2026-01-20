@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRoute } from '@tanstack/react-router';
 import { ToastContainer } from 'react-toastify';
 
 export const Route = createRootRoute({
