@@ -1,13 +1,13 @@
 import z from "zod";
 
 const AnswerChoiceSchema = z.object({
-  id: z.string().trim().min(1, "Choice ID is required"),
+  id: z.string().trim().min(10, "Choice ID is required"),
   text: z.string().trim().min(1, "Choice text cannot be empty"),
 });
 
 const QuestionSchema = z
   .object({
-    id: z.string().trim().min(1).max(30),
+    id: z.string().trim().min(10, "Question ID is required"),
     text: z.string().min(1, "Question text is required"),
     choices: z
       .array(AnswerChoiceSchema)
@@ -31,7 +31,7 @@ const QuestionSchema = z
   );
 
 export const QuizPayloadSchema = z.object({
-  id: z.string().trim().min(1).max(30),
+  id: z.string().trim().min(10, "Quiz ID is required"),
   title: z.string().trim().min(3, "Title must be at least 3 characters"),
   description: z.string().trim().optional().nullable(),
   topics: z
@@ -39,7 +39,7 @@ export const QuizPayloadSchema = z.object({
     .optional()
     .default([])
     .transform((tags) => [...new Set(tags)]),
-  questions: z.array(QuestionSchema).min(5).max(20),
+  questions: z.array(QuestionSchema).min(5, "Minimum 5 Questions are required").max(20, "Maximum 20 Questions Limit"),
 });
 
 export type QuizPayload = z.infer<typeof QuizPayloadSchema>;

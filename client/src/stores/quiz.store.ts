@@ -11,13 +11,16 @@ export interface QuizQuestion {
   id: string;
   text: string;
   choices: Array<AnswerChoice>;
+  order: number;
+  timeLimitSeconds: number;
   correctChoiceId: string;
 }
 
 export interface Quiz {
   id: string;
   title: string;
-  topic: string;
+  description: string;
+  topics: Array<string>;
   questions: Array<QuizQuestion>;
 }
 
@@ -25,11 +28,14 @@ interface QuizStore extends Quiz {
   actions: {
     initialize: (quizData: Quiz) => void;
     addQuestion: (question: QuizQuestion) => void;
-    updateQuestion: (questionId: string, text: string) => void;
+    updateQuestionText: (questionId: string, text: string) => void;
+    updateQuestionTimeLimit: (questionId: string, timeLimit: number) => void;
     updateChoice: (questionId: string, choiceId: string, text: string) => void;
     removeQuestion: (questionId: string) => void;
-    updateTopic: (topic: string) => void;
+    addTopic: (topic: string) => void;
+    removeTopic: (idx: number) => void;
     updateTitle: (title: string) => void;
+    updateDescription: (description: string) => void;
     updateCorrectChoice: (questionId: string, choiceId: string) => void;
   };
 }
@@ -37,7 +43,8 @@ interface QuizStore extends Quiz {
 const defaultData: Quiz = {
   id: '',
   title: '',
-  topic: '',
+  description: '',
+  topics: [],
   questions: [],
 };
 
@@ -46,10 +53,17 @@ const useQuizStore = create<QuizStore>()(
     ...defaultData,
     actions: {
       initialize: (quizData) => set(() => ({ ...quizData })),
-      addQuestion: (question) => set((s) => s.questions.push(question)),
+      addQuestion: (question) =>
+        set((s) => {
+          const newQuestions = [question, ...s.questions];
+          s.questions = newQuestions.map((q, idx) => ({
+            ...q,
+            order: idx + 1,
+          }));
+        }),
       removeQuestion: (questionId: string) =>
         set((s) => s.questions.filter(({ id }) => id !== questionId)),
-      updateQuestion: (id, text) =>
+      updateQuestionText: (id, text) =>
         set((s) => {
           const question = s.questions.find((q) => q.id === id);
           if (question) question.text = text;
@@ -62,27 +76,45 @@ const useQuizStore = create<QuizStore>()(
             if (choice) choice.text = text;
           }
         }),
-      updateTopic: (topic) =>
+      addTopic: (topic) =>
         set((s) => {
-          s.topic = topic;
+          s.topics.push(topic);
+        }),
+      removeTopic: (idx) =>
+        set((s) => {
+          s.topics = s.topics.filter((_, i) => i !== idx);
         }),
       updateTitle: (title) =>
         set((s) => {
           s.title = title;
+        }),
+      updateDescription: (description) =>
+        set((s) => {
+          s.description = description;
         }),
       updateCorrectChoice: (questionId, choiceId) =>
         set((s) => {
           const question = s.questions.find((q) => q.id === questionId);
           if (question) question.correctChoiceId = choiceId;
         }),
+      updateQuestionTimeLimit: (questionId, timeLimit) =>
+        set((s) => {
+          const question = s.questions.find((q) => q.id === questionId);
+          if (question) question.timeLimitSeconds = timeLimit;
+        }),
     },
   })),
 );
 
 export const useQuizActions = () => useQuizStore((s) => s.actions);
-export const useQuizTopic = () => useQuizStore((s) => s.topic);
+export const useQuizTopics = () => useQuizStore((s) => s.topics);
 export const useQuizTitle = () => useQuizStore((s) => s.title);
+export const useQuizDescription = () => useQuizStore((s) => s.description);
 export const useQuizQuestionById = (id: string) =>
   useQuizStore(useShallow((s) => s.questions.find((q) => q.id === id)));
 export const useQuizQuestionIds = () =>
   useQuizStore(useShallow((s) => s.questions.map((q) => q.id)));
+export const getQuizData = () => {
+  const { actions, ...quizData } = useQuizStore.getState();
+  return quizData;
+};

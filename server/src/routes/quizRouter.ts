@@ -8,6 +8,5 @@ quizRouter.use(authMiddleware);
 
 quizRouter.get("/", QuizController.getQuizzesHandler);
 quizRouter.get("/:quizId", QuizController.getQuizHandler);
-quizRouter.post("/", QuizController.createQuizHandler);
+quizRouter.post("/", QuizController.createOrUpdateQuizHandler);
 quizRouter.delete("/:quizId", QuizController.deleteQuizHandler);
-quizRouter.put("/:quizId", QuizController.updateQuizHandler);

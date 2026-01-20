@@ -1,22 +1,29 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Search } from 'lucide-react';
+import type { QuizMeta } from '@/components/QuizCard';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { QuizCard } from '@/components/QuizCard';
+import { QuizCardSkeleton } from '@/components/Skeletons';
 
 export const Route = createFileRoute('/quizzes')({
   component: RouteComponent,
+  loader: getUserQuizzes,
+  pendingComponent: () => <LoadingCardContainer />,
+  pendingMinMs: 200,
+  pendingMs: 200,
 });
 
 function RouteComponent() {
+  const quizzes = Route.useLoaderData();
   return (
     <div>
-      My Quizzes
+      <h1>My Quizzes</h1>
       <SearchBar />
-      <QuizContainer />
+      <QuizContainer quizzes={quizzes} />
     </div>
   );
 }
@@ -25,7 +32,7 @@ function SearchBar() {
   return (
     <div>
       <InputGroup>
-        <InputGroupInput type="search" placeholder="Search..." />
+        <InputGroupInput type="search" placeholder="Search..." id='query' />
         <InputGroupAddon>
           <Search />
         </InputGroupAddon>
@@ -34,50 +41,36 @@ function SearchBar() {
   );
 }
 
-function QuizContainer() {
+function QuizContainer({ quizzes }: { quizzes: Array<QuizMeta> }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-      {dummyQuizInfos.map((quiz) => (
+      {quizzes.map((quiz) => (
         <QuizCard key={quiz.id} quizInfo={quiz} />
       ))}
     </div>
   );
 }
 
-const dummyQuizInfos = [
-  {
-    id: 'quiz-js-101',
-    title: 'Modern JavaScript Mastery',
-    topics: ['Programming', 'Frontend', 'JavaScript'],
-    description:
-      'Test your knowledge of ES6+ features, async/await, and closures.',
-    createdAt: 1768654400000, // Future timestamp example
-    totalQuestions: 15,
-  },
-  {
-    id: 'quiz-sci-205',
-    title: 'Wonders of the Solar System',
-    topics: ['Science', 'Astronomy', 'Physics'],
-    description:
-      'A journey through the planets, moons, and stars of our neighborhood.',
-    createdAt: 1768568000000,
-    totalQuestions: 10,
-  },
-  {
-    id: 'quiz-hist-330',
-    title: 'Ancient Civilizations',
-    topics: ['History', 'Archaeology', 'Culture'],
-    description:
-      'Explore the rise and fall of the Roman Empire and Ancient Egypt.',
-    createdAt: 1768481600000,
-    totalQuestions: 20,
-  },
-  {
-    id: 'quiz-geo-410',
-    title: 'World Capitals Challenge',
-    topics: ['Geography', 'Travel', 'General Knowledge'],
-    description: 'Can you name the capital cities of these 25 countries?',
-    createdAt: 1768395200000,
-    totalQuestions: 25,
-  },
-];
+async function getUserQuizzes() {
+  const res = await fetch('/api/quizzes');
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch quizzes: ${res.status}`);
+  }
+
+  const { data } = await res.json();
+  return data as Array<QuizMeta>;
+}
+
+function LoadingCardContainer() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      <QuizCardSkeleton />
+      <QuizCardSkeleton />
+      <QuizCardSkeleton />
+      <QuizCardSkeleton />
+      <QuizCardSkeleton />
+      <QuizCardSkeleton />
+    </div>
+  );
+}

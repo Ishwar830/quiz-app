@@ -17,4 +17,10 @@ export const auth = betterAuth({
   },
   plugins: [anonymous()],
   trustedOrigins: [process.env.CLIENT_URL!],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 10 * 60, // 10 mins
+    },
+  },
 });

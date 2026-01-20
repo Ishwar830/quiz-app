@@ -1,13 +1,13 @@
 export class ApiResponse<T = any> {
   public readonly success: boolean;
   public readonly data: T | null;
-  public readonly error?: string;
+  public readonly error?: Record<string, string>;
   public readonly timestamp: string;
 
   constructor(
     success: boolean,
     data: T | null = null,
-    error?: string,
+    error?: Record<string, string>,
   ) {
     this.success = success;
     this.data = data;
@@ -19,7 +19,7 @@ export class ApiResponse<T = any> {
     return new ApiResponse<T>(true, data);
   }
 
-  static error(message: string): ApiResponse<null> {
-    return new ApiResponse(false, null, message);
+  static error(error: Record<string, string>): ApiResponse<null> {
+    return new ApiResponse(false, null, error);
   }
 }

@@ -18,7 +18,7 @@ export const getUserQuizzes = async (userId: string) => {
   const result = res.map((quiz) => ({
     ...quiz,
     totalQuestions: quiz.questions.length,
-    questions: undefined, 
+    questions: undefined,
   }));
 
   return result;
@@ -36,10 +36,29 @@ export const getQuizById = async (quizId: string) => {
   return result;
 };
 
-export const createQuizWithQuestions = async (
+export const createOrUpdateQuiz = async (
   userId: string,
+  quizId: string,
   data: QuizPayload,
 ) => {
+  const quizWithId = await getQuizById(quizId);
+
+  if (quizWithId) {
+    return await updateQuiz(quizId, userId, data);
+  }
+
+  return await createQuiz(userId, data);
+};
+
+export const deleteQuiz = async (quizId: string, userId: string) => {
+  await db
+    .delete(quiz)
+    .where(and(eq(quiz.id, quizId), eq(quiz.userId, userId)));
+
+  return true;
+};
+
+const createQuiz = async (userId: string, data: QuizPayload) => {
   return await db.transaction(async (tx) => {
     await tx.insert(quiz).values({
       userId,
@@ -62,15 +81,7 @@ export const createQuizWithQuestions = async (
   });
 };
 
-export const deleteQuiz = async (quizId: string, userId: string) => {
-  await db
-    .delete(quiz)
-    .where(and(eq(quiz.id, quizId), eq(quiz.userId, userId)));
-
-  return true;
-};
-
-export const updateEntireQuiz = async (
+const updateQuiz = async (
   quizId: string,
   userId: string,
   data: QuizPayload,

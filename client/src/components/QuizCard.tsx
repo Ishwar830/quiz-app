@@ -4,6 +4,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@radix-ui/react-popover';
+import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from './ui/button';
 import {
   Card,
@@ -15,15 +16,17 @@ import {
 } from './ui/card';
 import { formatDate } from '@/lib/utils';
 
+export interface QuizMeta {
+  id: string;
+  title: string;
+  topics: Array<string>;
+  description: string;
+  createdAt: number;
+  totalQuestions: number;
+}
+
 interface QuizCardProps {
-  quizInfo: {
-    id: string;
-    title: string;
-    topics: Array<string>;
-    description: string;
-    createdAt: number;
-    totalQuestions: number;
-  };
+  quizInfo: QuizMeta;
 }
 
 export function QuizCard({ quizInfo }: QuizCardProps) {
@@ -31,7 +34,7 @@ export function QuizCard({ quizInfo }: QuizCardProps) {
 
   return (
     <Card className="relative">
-      <QuizConfigs />
+      <QuizConfigs quizId={quizInfo.id} />
       <CardHeader>
         <CardTitle className="text-xl">{quizInfo.title}</CardTitle>
         <button
@@ -49,8 +52,12 @@ export function QuizCard({ quizInfo }: QuizCardProps) {
         <div>Created {formattedDate}</div>
       </CardContent>
       <CardFooter className="flex justify-around">
-        <Button variant="outline" className='bg-gray-300'>Preview</Button>
-        <Button className='bg-green-300' variant="ghost">Start Quiz</Button>
+        <Button variant="outline" className="bg-gray-300">
+          Preview
+        </Button>
+        <Button className="bg-green-300" variant="ghost">
+          Start Quiz
+        </Button>
       </CardFooter>
     </Card>
   );
@@ -68,7 +75,9 @@ function QuizTopics({ topics }: { topics: Array<string> }) {
   );
 }
 
-function QuizConfigs() {
+function QuizConfigs({ quizId }: { quizId: string }) {
+  const router = useRouter();
+
   return (
     <div className="absolute top-4 right-4">
       <Popover>
@@ -79,10 +88,22 @@ function QuizConfigs() {
         </PopoverTrigger>
         <PopoverContent>
           <div className="flex flex-col items-start bg-gray-100 shadow-lg p-2 rounded-lg border border-slate-200">
-            <Button variant="ghost">
-              <Edit /> <span>Edit</span>
-            </Button>
-            <Button variant="ghost" className="text-red-600">
+            <Link to="/quizbuilder/{-$quizId}" params={{ quizId }}>
+              <Button variant="ghost">
+                <Edit /> <span>Edit</span>
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              className="text-red-600"
+              onClick={() =>
+                fetch(`/api/quizzes/${quizId}`, {
+                  method: 'DELETE',
+                }).then(() => {
+                  router.invalidate();
+                })
+              }
+            >
               <Trash2 /> <span>Delete</span>
             </Button>
           </div>
