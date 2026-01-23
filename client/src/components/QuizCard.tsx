@@ -4,7 +4,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@radix-ui/react-popover';
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { Button } from './ui/button';
 import {
   Card,
@@ -55,11 +55,26 @@ export function QuizCard({ quizInfo }: QuizCardProps) {
         <Button variant="outline" className="bg-gray-300">
           Preview
         </Button>
-        <Button className="bg-green-300" variant="ghost">
-          Start Quiz
-        </Button>
+        <StartQuizButton quizId={quizInfo.id} />
       </CardFooter>
     </Card>
+  );
+}
+
+function StartQuizButton({ quizId }: { quizId: string }) {
+  const navigate = useNavigate();
+  const handleStartQuiz = async () => {
+    const res = await fetch(`/api/rooms?quizId=${quizId}`, { method: 'POST' });
+    const { data } = await res.json();
+    if (data) {
+      navigate({ to: '/rooms/$roomId', params: { roomId: data.id } });
+    }
+  };
+
+  return (
+    <Button onClick={handleStartQuiz} className="bg-green-300" variant="ghost">
+      Start Quiz
+    </Button>
   );
 }
 

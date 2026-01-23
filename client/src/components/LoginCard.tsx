@@ -41,7 +41,7 @@ interface LoginFormInputs {
   password: string;
 }
 
-interface ValidationError {
+export interface ValidationError {
   message?: string;
 }
 
