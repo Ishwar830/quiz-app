@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import type { Quiz } from '@/stores/QuizStore';
+import type { QuizState } from '@/stores/QuizStore';
 import { QuizBuilder } from '@/components/QuizBuilder';
 import { generateMockQuizData } from '@/lib/utils';
 
@@ -21,7 +21,7 @@ async function fetchQuiz(quizId: string) {
     throw new Error('Failed to get quiz');
   }
   const { data } = await res.json();
-  return data as Quiz;
+  return data as QuizState;
 }
 
 function RouteComponent() {
