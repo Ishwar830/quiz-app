@@ -9,7 +9,7 @@ import {
 import { QuizCard } from '@/components/QuizCard';
 import { QuizCardSkeleton } from '@/components/Skeletons';
 
-export const Route = createFileRoute('/quizzes')({
+export const Route = createFileRoute('/_authenticated/quizzes')({
   component: RouteComponent,
   loader: getUserQuizzes,
   pendingComponent: () => <LoadingCardContainer />,

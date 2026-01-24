@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
-import type { Quiz } from '@/stores/quiz.store';
+import type { Quiz } from '@/stores/QuizStore';
 import { QuizBuilder } from '@/components/QuizBuilder';
 import { generateMockQuizData } from '@/lib/utils';
 
-export const Route = createFileRoute('/quizbuilder/{-$quizId}')({
+export const Route = createFileRoute('/_authenticated/quizbuilder/{-$quizId}')({
   component: RouteComponent,
   loader: async ({ params }) => {
     const quizId = params.quizId;

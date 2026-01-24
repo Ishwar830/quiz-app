@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { JoinRoomForm } from '@/components/JoinRoomForm';
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute('/_authenticated/dashboard')({
   component: RouteComponent,
 });
 

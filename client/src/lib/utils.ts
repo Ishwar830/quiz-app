@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { nanoid } from 'nanoid';
 import type { ClassValue } from 'clsx';
-import type { Quiz, QuizQuestion } from '@/stores/quiz.store';
+import type { Question, QuizState } from '@/stores/QuizStore';
 
 export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs));
@@ -23,7 +23,7 @@ export function generateMockQuestion() {
     id: nanoid(),
     text: `Choice ${idx + 1}`,
   }));
-  const question: QuizQuestion = {
+  const question: Question = {
     id: nanoid(),
     text: '',
     choices,
@@ -36,7 +36,7 @@ export function generateMockQuestion() {
 }
 
 export function generateMockQuizData() {
-  const quiz: Quiz = {
+  const quiz: QuizState = {
     id: nanoid(),
     title: '',
     topics: [],
@@ -45,4 +45,9 @@ export function generateMockQuizData() {
   };
 
   return quiz;
+}
+
+export function calulateTimeLeft(endTime: number) {
+  const timeLeft = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+  return timeLeft;
 }

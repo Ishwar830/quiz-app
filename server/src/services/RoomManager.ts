@@ -1,4 +1,5 @@
 import redisClient from "../lib/redis.ts";
+import { GameStateManager } from "./GameStateManager.ts";
 import { MemberManager } from "./MemberManager.ts";
 import { KeyManager } from "./redis/KeyManager.ts";
 import type { Room, QuizMeta, RoomMember } from "./types.d.ts";
@@ -13,6 +14,7 @@ const createRoom = async (host: RoomMember, quizMeta: QuizMeta) => {
   const key = KeyManager.room(room.id);
   await redisClient.json.set(key, "$", room as any);
   await joinRoom(room.id, host);
+  await GameStateManager.initializeGameState(room);
   const generatedRoom = await getRoomInfo(room.id);
   return generatedRoom;
 };

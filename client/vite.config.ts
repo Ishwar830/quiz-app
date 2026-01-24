@@ -29,6 +29,11 @@ export default defineConfig(({ mode }) => {
           target: env.SERVER_URL,
           changeOrigin: true,
         },
+        '/socket': {
+          target: 'http://localhost:8080',
+          ws: true,
+          changeOrigin: true,
+        },
       },
     },
   };

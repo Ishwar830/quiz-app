@@ -1,7 +1,21 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { ToastContainer } from 'react-toastify';
 
-export const Route = createRootRoute({
+interface User {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  email: string;
+  name: string;
+  image?: string | null | undefined;
+}
+
+interface RouterContext {
+  user: User | null;
+}
+
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
       <ToastContainer

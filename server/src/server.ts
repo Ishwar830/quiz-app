@@ -1,6 +1,7 @@
 import "dotenv/config";
 import app from "./app.js";
 import { initRedis } from "./lib/redis.ts";
+import { initSocket } from "./services/socket.ts";
 
 const PORT = process.env.PORT || 8000;
 
@@ -13,3 +14,5 @@ const server = app.listen(PORT, () => {
 server.on("error", (err) => {
   console.error("Server Error: ", err);
 });
+
+initSocket(server);

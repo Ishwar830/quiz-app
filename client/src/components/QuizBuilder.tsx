@@ -1,31 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { PlusCircle, Timer, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Field, FieldLabel } from './ui/field';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
-import type { AnswerChoice, Quiz } from '@/stores/quiz.store';
+import type {
+  AnswerChoice,
+  QuizState,
+} from '@/stores/QuizStore';
 import {
-  getQuizData,
+  QuizStoreContext,
+  createQuizStore,
   useQuizActions,
   useQuizDescription,
   useQuizQuestionById,
   useQuizQuestionIds,
   useQuizTitle,
   useQuizTopics,
-} from '@/stores/quiz.store';
+} from '@/stores/QuizStore';
 import { cn, generateMockQuestion } from '@/lib/utils';
 
-export function QuizBuilder({ quiz }: { quiz: Quiz }) {
-  const { initialize } = useQuizActions();
-
-  useEffect(() => {
-    initialize(quiz);
-  }, []);
+export function QuizBuilder({ quiz }: { quiz: QuizState }) {
+  const [store] = useState(createQuizStore(quiz));
 
   return (
-    <>
+    <QuizStoreContext.Provider value={store}>
       <div className="p-6 grid gap-2">
         <div className="flex justify-between mb-4">
           <p className="text-2xl">Quiz Builder</p>
@@ -40,14 +40,15 @@ export function QuizBuilder({ quiz }: { quiz: Quiz }) {
           <QuestionContainer />
         </div>
       </div>
-    </>
+    </QuizStoreContext.Provider>
   );
 }
 
 function SaveQuizButton() {
+  const store = useContext(QuizStoreContext)!;
   const saveQuiz = async () => {
+    const { actions, ...quizData } = store.getState();
     const toastId = toast.loading('Saving');
-    const quizData = getQuizData();
     try {
       const res = await fetch('/api/quizzes', {
         method: 'POST',

@@ -10,7 +10,9 @@ import './styles.css';
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: {},
+  context: {
+    user: null,
+  },
   defaultPreload: 'intent',
   scrollRestoration: true,
   defaultStructuralSharing: true,

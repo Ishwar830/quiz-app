@@ -4,8 +4,11 @@ import * as DBQueryHandler from "../services/DBQueryManager.ts";
 import { ApiResponse } from "../lib/utils.ts";
 import { QuizManager } from "../services/QuizManager.ts";
 import type { RoomMember } from "../services/types.d.ts";
+import { GameStateManager } from "../services/GameStateManager.ts";
+import { SubmissionManager } from "../services/SubmissionManager.ts";
+import { MemberManager } from "../services/MemberManager.ts";
 
-export const createRoomHandler: RequestHandler = async (req, res, next) => {
+export const createRoomHandler: RequestHandler = async (req, res) => {
   const user = req.user!;
   const quizId = req.query.quizId as string;
   const host: RoomMember = {
@@ -28,7 +31,7 @@ export const createRoomHandler: RequestHandler = async (req, res, next) => {
   res.json(ApiResponse.success(room));
 };
 
-export const joinRoomHandler: RequestHandler = async (req, res, next) => {
+export const joinRoomHandler: RequestHandler = async (req, res) => {
   const user = req.user!;
   const roomId = req.params.roomId as string;
   const role = req.query.role as "PLAYER" | "SPECTATOR";
@@ -47,8 +50,27 @@ export const joinRoomHandler: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getRoomHandler: RequestHandler = async (req, res, next) => {
+export const getRoomHandler: RequestHandler = async (req, res) => {
+  const user = req.user!;
   const roomId = req.params.roomId as string;
-  const room = await RoomManager.getRoomInfo(roomId);
-  return res.json(ApiResponse.success(room));
+  const gameState = await GameStateManager.getGameState(roomId);
+  const userSubmissions = await SubmissionManager.getUserSubmissions(
+    roomId,
+    user.id,
+  );
+  const memberInfo = await MemberManager.getMemberInfo(roomId, user.id);
+
+  const resData = {
+    gameState,
+    memberState: {
+      member: memberInfo,
+      submissions: userSubmissions,
+    },
+  };
+
+  console.log(resData);
+
+  return res.json(
+    ApiResponse.success(resData),
+  );
 };
