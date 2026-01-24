@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { RoomManager } from "../services/RoomManager.ts";
-import * as DBQueryHandler from "../services/queries.ts";
+import * as DBQueryHandler from "../services/DBQueryManager.ts";
 import { ApiResponse } from "../lib/utils.ts";
 import { QuizManager } from "../services/QuizManager.ts";
 import type { RoomMember } from "../services/types.d.ts";
