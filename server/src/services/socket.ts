@@ -129,9 +129,18 @@ function setupGameEventHandlers() {
     },
   );
 
-  GameEventEmitter.on("quizEnded", ({ room }: GameState) => {
-    io.to(room.id).emit("quiz:end");
-  });
+  GameEventEmitter.on(
+    "quizEnded",
+    ({
+      gameState,
+      leaderboard,
+    }: {
+      gameState: GameState;
+      leaderboard: any;
+    }) => {
+      io.to(gameState.room.id).emit("quiz:end", leaderboard);
+    },
+  );
 
   GameEventEmitter.on("submissionCountUpdate", (payload) => {
     const { roomId, data } = payload;

@@ -5,6 +5,7 @@ import type { Quiz, Question, QuizMeta } from "./types.d.ts";
 const storeQuiz = async (quiz: Quiz) => {
   const key = KeyManager.quiz(quiz.id);
   await redisClient.json.set(key, "$", quiz as any);
+  await cacheQuizAnswers(quiz.questions);
 };
 
 const getQuiz = async (quizId: string) => {
@@ -24,7 +25,7 @@ const getQuizMeta = async (quizId: string) => {
     title: quiz.title,
     description: quiz.description,
     topics: quiz.topics,
-    totalQuestions: quiz.questions.length
+    totalQuestions: quiz.questions.length,
   };
   return quizMeta as unknown as QuizMeta;
 };
@@ -36,6 +37,14 @@ const getQuestionWithOrder = async (quizId: string, order: number) => {
 
   if (!question) return null;
   return question;
+};
+
+const cacheQuizAnswers = async (questions: Question[]) => {
+  await Promise.all(
+    questions.map((q) =>
+      redisClient.set(KeyManager.answer(q.id), q.correctChoiceId),
+    ),
+  );
 };
 
 export const QuizManager = {

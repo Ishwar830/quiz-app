@@ -2,18 +2,50 @@ import redisClient from "../lib/redis.ts";
 import { KeyManager } from "./redis/KeyManager.ts";
 import type { Submission } from "./types.d.ts";
 
-
 const submitAnswer = async (submissionData: Submission) => {
   const { roomId, questionId, userId, choiceId } = submissionData;
   const submissionKey = KeyManager.submission(roomId, userId, questionId);
 
-  await Promise.all([
-    redisClient.json.set(submissionKey, "$", submissionData as any),
-    incrementSubmissionCount(roomId, questionId, choiceId),
-  ]);
+  const hasSubmittedBefore = await redisClient.exists(submissionKey);
+  if (!hasSubmittedBefore) {
+    const score = await calculateScore(submissionData);
+    await Promise.all([
+      redisClient.json.set(submissionKey, "$", submissionData as any),
+      incrementSubmissionCount(roomId, questionId, choiceId),
+      updateLeaderboard(roomId, userId, score),
+    ]);
+  }
 
-  const submission = await redisClient.json.get(submissionKey);
+  const submission = (await redisClient.json.get(
+    submissionKey,
+  )) as unknown as Submission;
   return submission;
+};
+
+const calculateScore = async (submissionData: Submission) => {
+  const { questionId, choiceId } = submissionData;
+  const correctChoiceId = await redisClient.get(KeyManager.answer(questionId));
+  if (!correctChoiceId) throw new Error("correct choice not found");
+
+  const isCorrect = correctChoiceId === choiceId;
+  return isCorrect ? 10 : 0;
+};
+
+const updateLeaderboard = async (
+  roomId: string,
+  userId: string,
+  score: number,
+) => {
+  await redisClient.zIncrBy(KeyManager.leaderboard(roomId), score, userId);
+};
+
+const getLeaderboard = async (roomId: string) => {
+  const res = await redisClient.zRangeWithScores(
+    KeyManager.leaderboard(roomId),
+    0,
+    -1,
+  );
+  return res.map(({ value, score }) => ({ userId: value, score }));
 };
 
 const incrementSubmissionCount = async (
@@ -72,4 +104,5 @@ export const SubmissionManager = {
   submitAnswer,
   getSubmissionCountForQuestion,
   getUserSubmissions,
+  getLeaderboard
 } as const;

@@ -3,6 +3,7 @@ import { KeyManager } from "./redis/KeyManager.js";
 import { QuizManager } from "./QuizManager.ts";
 import EventEmitter from "node:events";
 import type { GameState, QuestionInfo, QuizMeta, Room } from "./types.d.ts";
+import { SubmissionManager } from "./SubmissionManager.ts";
 
 export const GameEventEmitter = new EventEmitter();
 
@@ -72,7 +73,9 @@ const endQuiz = async (roomId: string) => {
     countdownInfo: null,
   });
 
-  GameEventEmitter.emit("quizEnded", gameState);
+  const leaderboard = await SubmissionManager.getLeaderboard(gameState.room.id);
+  console.log(leaderboard);
+  GameEventEmitter.emit("quizEnded", { gameState, leaderboard });
 };
 
 const hasQuestionEnded = (questionInfo: QuestionInfo | null) => {
