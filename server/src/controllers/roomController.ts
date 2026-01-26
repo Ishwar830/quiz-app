@@ -68,8 +68,6 @@ export const getRoomHandler: RequestHandler = async (req, res) => {
     },
   };
 
-  console.log(resData);
-
   return res.json(
     ApiResponse.success(resData),
   );

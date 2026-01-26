@@ -185,8 +185,6 @@ function SpectatorView({ question }: { question: Question }) {
     info: Object.fromEntries(question.choices.map((choice) => [choice.id, 0])),
   });
 
-  console.log(analytics);
-
   useEffect(() => {
     socket.on('question:analytics', (questionReport: QuestionAnalytics) => {
       setAnalytics(questionReport);

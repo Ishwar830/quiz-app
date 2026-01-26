@@ -24,6 +24,7 @@ const getQuizMeta = async (quizId: string) => {
     title: quiz.title,
     description: quiz.description,
     topics: quiz.topics,
+    totalQuestions: quiz.questions.length
   };
   return quizMeta as unknown as QuizMeta;
 };

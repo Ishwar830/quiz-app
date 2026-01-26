@@ -2,31 +2,13 @@ import redisClient from "../lib/redis.ts";
 import { KeyManager } from "./redis/KeyManager.js";
 import { QuizManager } from "./QuizManager.ts";
 import EventEmitter from "node:events";
-import { SubmissionManager } from "./SubmissionManager.ts";
-import type { Question, Room } from "./types.d.ts";
+import type { GameState, QuestionInfo, QuizMeta, Room } from "./types.d.ts";
 
 export const GameEventEmitter = new EventEmitter();
 
-const analyticsTimers = new Map();
-
-type QuestionInfo = Omit<Question, "correctChoiceId"> & {
-  submissionStartTime: number;
-  submissionEndTime: number;
+const GameConfigs = {
+  COUNTDOWN_TIMER: 5, // seconds
 };
-
-interface CountdownInfo {
-  endsAt: number;
-  duration: number;
-}
-
-interface GameState {
-  room: Room;
-  status: "WAITING" | "COUNTDOWN" | "QUESTION_ACTIVE" | "FINISHED";
-  quizStartedAt: number | null;
-  quizEndedAt: number | null;
-  currentQuestionInfo: QuestionInfo | null;
-  countdownInfo: CountdownInfo | null;
-}
 
 const initializeGameState = async (room: Room) => {
   const initialState: GameState = {
@@ -47,26 +29,12 @@ const initializeGameState = async (room: Room) => {
 };
 
 const startQuiz = async (roomId: string) => {
-  const startDelay = 10 * 1000; // 10 seconds in ms
-
-  const countdownEndsAt = Date.now() + startDelay;
   const stateUpdates: Partial<GameState> = {
     quizStartedAt: Date.now(),
-    status: "COUNTDOWN",
-    countdownInfo: {
-      endsAt: countdownEndsAt,
-      duration: 10,
-    },
   };
 
   await updateGameState(roomId, stateUpdates);
-
-  setTimeout(async () => {
-    const questionData = await GameStateManager.moveToNextQuestion(roomId);
-    GameEventEmitter.emit("startQuestion", { roomId, questionData });
-  }, startDelay);
-
-  return countdownEndsAt;
+  await prepareNextQuestion(roomId);
 };
 
 const getGameState = async (roomId: string) => {
@@ -80,38 +48,93 @@ const getGameState = async (roomId: string) => {
   return gameState;
 };
 
-const getCurrentQuestionInfo = async (roomId: string) => {
-  const gameState = await getGameState(roomId);
-  const questionInfo = gameState.currentQuestionInfo;
-  return questionInfo;
+const updateGameState = async (roomId: string, updates: Partial<GameState>) => {
+  const currentState = await getGameState(roomId);
+  const newState: GameState = {
+    ...currentState,
+    ...updates,
+  };
+
+  await redisClient.json.set(
+    KeyManager.gameState(roomId),
+    "$",
+    newState as any,
+  );
+
+  return newState;
 };
 
-const moveToNextQuestion = async (roomId: string) => {
-  const canMove = await canMoveToNextQuestion(roomId);
+const endQuiz = async (roomId: string) => {
+  const gameState = await updateGameState(roomId, {
+    status: "FINISHED",
+    quizEndedAt: Date.now(),
+    currentQuestionInfo: null,
+    countdownInfo: null,
+  });
 
-  if (!canMove) {
-    throw new Error("Question is active, cant move to next question yet");
+  GameEventEmitter.emit("quizEnded", gameState);
+};
+
+const hasQuestionEnded = (questionInfo: QuestionInfo | null) => {
+  const currentTime = Date.now();
+  return !questionInfo || currentTime > questionInfo.submissionEndTime;
+};
+
+const hasMoreQuestions = (questionOrder: number, quizMeta: QuizMeta) => {
+  return questionOrder <= quizMeta.totalQuestions;
+};
+
+const prepareNextQuestion = async (roomId: string) => {
+  let currentGameState = await getGameState(roomId);
+  const currentQuestionInfo = currentGameState.currentQuestionInfo;
+
+  const nextQuestionOrder = (currentQuestionInfo?.order ?? 0) + 1;
+
+  const hasQuizEnded = !hasMoreQuestions(
+    nextQuestionOrder,
+    currentGameState.room.quizMeta,
+  );
+
+  if (hasQuizEnded) {
+    await endQuiz(roomId);
+    return;
   }
 
-  const currentState = (await redisClient.json.get(
-    KeyManager.gameState(roomId),
-  )) as unknown as GameState;
+  if (!hasQuestionEnded(currentQuestionInfo)) return;
 
-  let currentQuestionOrder = currentState.currentQuestionInfo?.order;
-  if (!currentQuestionOrder) {
-    currentQuestionOrder = 0;
-  }
+  GameEventEmitter.emit("questionEnded", currentGameState);
+  await setupCountdown(roomId);
+  await startNextQuestion(currentGameState, nextQuestionOrder);
+};
 
-  stopAnalyticHandler(roomId);
+const setupCountdown = async (roomId: string) => {
+  const duration = GameConfigs.COUNTDOWN_TIMER;
+  const endsAt = Date.now() + duration * 1000;
 
-  const nextQuestionOrder = currentQuestionOrder + 1;
+  const gameState = await updateGameState(roomId, {
+    status: "COUNTDOWN",
+    countdownInfo: { duration, endsAt },
+  });
 
+  GameEventEmitter.emit("startCountdown", gameState);
+
+  await new Promise<void>((resolve) => setTimeout(resolve, duration * 1000));
+};
+
+const startNextQuestion = async (
+  gameState: GameState,
+  nextQuestionOrder: number,
+) => {
+  const roomId = gameState.room.id;
+  const quizId = gameState.room.quizMeta.id;
   const question = await QuizManager.getQuestionWithOrder(
-    currentState.room.quizMeta.id,
+    quizId,
     nextQuestionOrder,
   );
 
-  if (!question) return;
+  if (!question) {
+    throw new Error("No questions left");
+  }
   // remove correctChoiceId
   const { correctChoiceId, ...questionForPlayer } = question;
 
@@ -131,75 +154,13 @@ const moveToNextQuestion = async (roomId: string) => {
     countdownInfo: null,
   };
 
-  await updateGameState(roomId, stateUpdates);
-  startAnalyticHandler(roomId, question.id);
-  return questionInfo;
-};
-
-const canMoveToNextQuestion = async (roomId: string) => {
-  const gameState = await getGameState(roomId);
-
-  const currentQuestionInfo = gameState.currentQuestionInfo;
-  if (currentQuestionInfo === null) return true;
-
-  const currentTime = Date.now();
-  if (currentTime > currentQuestionInfo.submissionEndTime) return true;
-  return false;
-};
-
-const startAnalyticHandler = async (roomId: string, questionId: string) => {
-  // clear previous timer if any exist
-  stopAnalyticHandler(roomId);
-
-  const intervalTime = 2000; // ms
-  const timerId = setInterval(async () => {
-    const data = await SubmissionManager.getSubmissionCountForQuestion(
-      roomId,
-      questionId,
-    );
-    GameEventEmitter.emit("submissionCountUpdate", { roomId, data });
-  }, intervalTime);
-
-  // automatic termination after 2 mins
-  setTimeout(
-    () => {
-      clearInterval(timerId);
-    },
-    2 * 60 * 1000,
-  );
-
-  analyticsTimers.set(roomId, timerId);
-};
-
-const stopAnalyticHandler = (roomId: string) => {
-  const currTimerId = analyticsTimers.get(roomId);
-  if (currTimerId) {
-    clearInterval(currTimerId);
-  }
-  analyticsTimers.delete(roomId);
-};
-
-const updateGameState = async (roomId: string, updates: Partial<GameState>) => {
-  const currentState = await getGameState(roomId);
-  const newState = {
-    ...currentState,
-    ...updates,
-  };
-
-  await redisClient.json.set(
-    KeyManager.gameState(roomId),
-    "$",
-    newState as any,
-  );
-
-  const updatedState = await redisClient.json.get(KeyManager.gameState(roomId));
-  return updatedState;
+  const newState = await updateGameState(roomId, stateUpdates);
+  GameEventEmitter.emit("startQuestion", newState);
 };
 
 export const GameStateManager = {
   initializeGameState,
   startQuiz,
-  moveToNextQuestion,
+  prepareNextQuestion,
   getGameState,
-  getCurrentQuestionInfo,
 } as const;

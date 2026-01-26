@@ -1,13 +1,7 @@
 import redisClient from "../lib/redis.ts";
 import { KeyManager } from "./redis/KeyManager.ts";
+import type { Submission } from "./types.d.ts";
 
-interface Submission {
-  roomId: string;
-  userId: string;
-  questionId: string;
-  choiceId: string;
-  submittedAt: number;
-}
 
 const submitAnswer = async (submissionData: Submission) => {
   const { roomId, questionId, userId, choiceId } = submissionData;

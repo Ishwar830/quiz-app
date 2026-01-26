@@ -31,4 +31,31 @@ export interface Quiz {
   questions: Array<Question>;
 }
 
-export type QuizMeta = Omit<Quiz, "questions">;
+export type QuizMeta = Omit<Quiz, "questions"> & {totalQuestions: number};
+
+export type QuestionInfo = Omit<Question, "correctChoiceId"> & {
+  submissionStartTime: number;
+  submissionEndTime: number;
+};
+
+export interface CountdownInfo {
+  endsAt: number;
+  duration: number;
+}
+
+export interface GameState {
+  room: Room;
+  status: "WAITING" | "COUNTDOWN" | "QUESTION_ACTIVE" | "FINISHED";
+  quizStartedAt: number | null;
+  quizEndedAt: number | null;
+  currentQuestionInfo: QuestionInfo | null;
+  countdownInfo: CountdownInfo | null;
+}
+
+export interface Submission {
+  roomId: string;
+  userId: string;
+  questionId: string;
+  choiceId: string;
+  submittedAt: number;
+}

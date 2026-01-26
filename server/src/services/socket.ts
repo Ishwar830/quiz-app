@@ -5,6 +5,8 @@ import { GameStateManager } from "./GameStateManager.ts";
 import { GameEventEmitter } from "./GameStateManager.ts";
 import { RoomManager } from "./RoomManager.ts";
 import { SubmissionManager } from "./SubmissionManager.ts";
+import { setupAnalyticsHandler } from "./AnalyticsManager.ts";
+import type { GameState } from "./types.d.ts";
 
 export let io: Server;
 
@@ -22,6 +24,7 @@ export function initSocket(server: HttpServer) {
 
   io.on("connection", onConnection);
   setupGameEventHandlers();
+  setupAnalyticsHandler();
 }
 
 function onConnection(socket: Socket) {
@@ -37,6 +40,7 @@ function onConnection(socket: Socket) {
   });
 
   socket.onAnyOutgoing((event, ...args) => {
+    if (event == "question:analytics") return;
     console.log(event, "  ", args);
   });
 }
@@ -71,21 +75,17 @@ async function handleQuizStart(socket: Socket) {
     if (room.host.id !== userId)
       throw new Error("Permission denied, only host can start game");
 
-    const countdownEndsAt = await GameStateManager.startQuiz(roomId);
-    io.to(roomId).emit("question:countdown", countdownEndsAt);
+    await GameStateManager.startQuiz(roomId);
   } catch (err) {
     socket.emit("room:permission-error", (err as Error).message);
   }
 }
 
 async function handleNextQuestionTrigger(socket: Socket) {
-  const userId = socket.data.userId;
   const roomId = socket.data.roomId;
 
   try {
-    const questionData = await GameStateManager.moveToNextQuestion(roomId);
-    if (questionData) io.to(roomId).emit("question:update", questionData);
-    else io.to(roomId).emit("quiz:end");
+    await GameStateManager.prepareNextQuestion(roomId);
   } catch (err) {
     socket.emit("error", (err as Error).message);
   }
@@ -115,9 +115,22 @@ async function handleSubmission(
 }
 
 function setupGameEventHandlers() {
-  GameEventEmitter.on("startQuestion", (payload) => {
-    const { roomId, questionData } = payload;
-    io.to(roomId).emit("question:update", questionData);
+  GameEventEmitter.on(
+    "startQuestion",
+    ({ room, currentQuestionInfo }: GameState) => {
+      io.to(room.id).emit("question:update", currentQuestionInfo);
+    },
+  );
+
+  GameEventEmitter.on(
+    "startCountdown",
+    ({ room, countdownInfo }: GameState) => {
+      io.to(room.id).emit("question:countdown", countdownInfo!.endsAt);
+    },
+  );
+
+  GameEventEmitter.on("quizEnded", ({ room }: GameState) => {
+    io.to(room.id).emit("quiz:end");
   });
 
   GameEventEmitter.on("submissionCountUpdate", (payload) => {

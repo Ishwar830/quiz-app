@@ -10,7 +10,8 @@ export function GameLayout() {
 
   const gameStatus = useGameStatus();
   const room = useGameRoom();
-  const { updateQuestionInfo, updateCountdownInfo } = useGameActions();
+  const { updateQuestionInfo, updateCountdownInfo, updateGameStatus } =
+    useGameActions();
 
   useEffect(() => {
     socket.emit('room:join', room.id);
@@ -20,6 +21,10 @@ export function GameLayout() {
     });
     socket.on('question:countdown', (countdownInfo) => {
       updateCountdownInfo(countdownInfo);
+    });
+
+    socket.on('quiz:end', () => {
+      updateGameStatus('FINISHED');
     });
 
     // eslint-disable-next-line @typescript-eslint/array-type
@@ -34,6 +39,7 @@ export function GameLayout() {
     return () => {
       socket.off('question:update');
       socket.off('question:countdown');
+      socket.off('quiz:end');
       socket.offAny();
       socket.offAnyOutgoing();
       socket.volatile.emit('room:leave');
