@@ -11,6 +11,7 @@ export interface RoomMember {
   id: string;
   name: string;
   role: "PLAYER" | "SPECTATOR";
+  score?: number;
 }
 
 export interface Question {
@@ -19,7 +20,7 @@ export interface Question {
   text: string;
   order: number;
   timeLimitSeconds: number;
-  choices: Array<{id: string, text: string}>;
+  choices: Array<{ id: string; text: string }>;
   correctChoiceId: string;
 }
 
@@ -31,7 +32,7 @@ export interface Quiz {
   questions: Array<Question>;
 }
 
-export type QuizMeta = Omit<Quiz, "questions"> & {totalQuestions: number};
+export type QuizMeta = Omit<Quiz, "questions"> & { totalQuestions: number };
 
 export type QuestionInfo = Omit<Question, "correctChoiceId"> & {
   submissionStartTime: number;

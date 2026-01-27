@@ -3,7 +3,11 @@ import type { Question } from '@/stores/GameStore';
 import type { Submission } from '@/stores/MemberStore';
 import { useQuestionInfo } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
-import { useMemberActions, useMemberSubmissions } from '@/stores/MemberStore';
+import {
+  useMemberActions,
+  useMemberScore,
+  useMemberSubmissions,
+} from '@/stores/MemberStore';
 import { calulateTimeLeft } from '@/lib/utils';
 
 interface QuestionAnalytics {
@@ -127,7 +131,8 @@ function QuestionView() {
   const [hasEnded, setHasEnded] = useState(false);
   const question = useQuestionInfo();
   const submissions = useMemberSubmissions();
-  const { updateSubmissions } = useMemberActions();
+  const currentScore = useMemberScore();
+  const { updateSubmissions, updateScore } = useMemberActions();
   const selectedOptionId =
     submissions.find((sub) => sub.questionId == question.id)?.choiceId ?? null;
 
@@ -138,9 +143,13 @@ function QuestionView() {
         questionId: question.id,
         choiceId,
       },
-      (res: { success: boolean; submission: Submission }) => {
+      (res: {
+        success: boolean;
+        submission: Submission & { score: number };
+      }) => {
         if (res.success) {
           updateSubmissions(res.submission);
+          updateScore(res.submission.score);
         }
       },
     );
@@ -166,6 +175,7 @@ function QuestionView() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 flex flex-col h-full justify-center">
+      <div>Score: {currentScore}</div>
       <QuestionTimer endTime={question.submissionEndTime} />
       <QuestionContent
         selectedOptionId={selectedOptionId}

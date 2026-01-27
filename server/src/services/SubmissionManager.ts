@@ -1,4 +1,5 @@
 import redisClient from "../lib/redis.ts";
+import { MemberManager } from "./MemberManager.ts";
 import { KeyManager } from "./redis/KeyManager.ts";
 import type { Submission } from "./types.d.ts";
 
@@ -16,10 +17,13 @@ const submitAnswer = async (submissionData: Submission) => {
     ]);
   }
 
+  const updatedScore = await getMemberScore(roomId, userId);
+
   const submission = (await redisClient.json.get(
     submissionKey,
   )) as unknown as Submission;
-  return submission;
+
+  return { ...submission, score: updatedScore };
 };
 
 const calculateScore = async (submissionData: Submission) => {
@@ -36,7 +40,19 @@ const updateLeaderboard = async (
   userId: string,
   score: number,
 ) => {
-  await redisClient.zIncrBy(KeyManager.leaderboard(roomId), score, userId);
+  return await redisClient.zIncrBy(
+    KeyManager.leaderboard(roomId),
+    score,
+    userId,
+  );
+};
+
+const getMemberScore = async (roomId: string, userId: string) => {
+  const score = await redisClient.zScore(
+    KeyManager.leaderboard(roomId),
+    userId,
+  );
+  return score ?? 0;
 };
 
 const getLeaderboard = async (roomId: string) => {
@@ -44,8 +60,18 @@ const getLeaderboard = async (roomId: string) => {
     KeyManager.leaderboard(roomId),
     0,
     -1,
+    {
+      REV: true
+    }
   );
-  return res.map(({ value, score }) => ({ userId: value, score }));
+
+  const userIds = res.map(({ value }) => value);
+  const names = await MemberManager.getMemberNames(roomId, userIds);
+  return res.map(({ value, score }, index) => ({
+    userId: value,
+    name: names[index],
+    score,
+  }));
 };
 
 const incrementSubmissionCount = async (
@@ -104,5 +130,6 @@ export const SubmissionManager = {
   submitAnswer,
   getSubmissionCountForQuestion,
   getUserSubmissions,
-  getLeaderboard
+  getLeaderboard,
+  getMemberScore,
 } as const;

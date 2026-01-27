@@ -23,8 +23,9 @@ export function GameLayout() {
       updateCountdownInfo(countdownInfo);
     });
 
-    socket.on('quiz:end', () => {
+    socket.on('quiz:end', (leaderboard) => {
       updateGameStatus('FINISHED');
+      console.log(leaderboard);
     });
 
     // eslint-disable-next-line @typescript-eslint/array-type

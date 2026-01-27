@@ -8,5 +8,6 @@ export const KeyManager = {
   submissionCount: (roomId: string, questionId: string) =>
     `submissionCount:${roomId}:${questionId}`,
   answer: (questionId: string) => `answer:${questionId}`,
-  leaderboard: (roomId: string) => `leaderboard:${roomId}`
+  leaderboard: (roomId: string) => `leaderboard:${roomId}`,
+  memberNames: (roomId: string) => `room:${roomId}:names`
 };
