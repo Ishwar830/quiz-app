@@ -1,81 +1,149 @@
 import { useState } from 'react';
+import { Check, Copy, Hash, TrophyIcon } from 'lucide-react';
 import { useMember } from '@/stores/MemberStore';
 import { useGameRoom } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
 
 export default function LobbyView() {
-  const [copied, setCopied] = useState(false);
   const room = useGameRoom();
   const member = useMember();
-  const socket = useSocket();
 
   const isHost = member.id === room.host.id;
 
-  const handleStartQuiz = () => {
-    socket.emit('quiz:start');
-  };
+  const { title, description, topics, totalQuestions } = room.quizMeta;
+
+  return (
+    <div className="min-h-dvh max-w-2xl p-4 mx-auto">
+      <LobbyHeader
+        title={title}
+        description={description}
+        hostname={room.host.name}
+      />
+
+      <LobbyContent
+        topics={topics}
+        totalQuestions={totalQuestions}
+        roomCode={room.id}
+      />
+
+      <LobbyFooter isHost={isHost}/>
+    </div>
+  );
+}
+
+interface LobbyHeaderProps {
+  title: string;
+  description: string;
+  hostname: string;
+}
+
+function LobbyHeader({ title, description, hostname }: LobbyHeaderProps) {
+  return (
+    <div className="bg-linear-to-r from-gray-800 to-gray-900 p-4 sm:px-8 sm:py-10 text-white rounded-lg">
+      <div className="grid gap-4 overflow-hidden">
+        <div className="flex items-center gap-3">
+          <div className="size-12 bg-gray-500 rounded-lg grid place-items-center">
+            <TrophyIcon size={32} stroke="white" />
+          </div>
+          <div>
+            <p className="text-gray-400 text-sm font-medium mb-1">
+              Hosted by <span className="text-gray-100">{hostname}</span>
+            </p>
+            <h1 className="text-3xl font-bold tracking-wide">{title}</h1>
+          </div>
+        </div>
+
+        <p className="text-gray-200 leading-relaxed">{description}</p>
+      </div>
+    </div>
+  );
+}
+
+interface LobbyContentProps {
+  topics: Array<string>;
+  totalQuestions: number;
+  roomCode: string;
+}
+
+function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
+  const [copied, setCopied] = useState(false);
 
   const copyCode = () => {
-    navigator.clipboard.writeText(room.id);
+    navigator.clipboard.writeText(roomCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-8 bg-white border border-gray-200 rounded-xl shadow-lg">
-      <div className="text-center mb-8 border-b pb-6 border-gray-100">
-        <span className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wide">
-          Quiz Topic
-        </span>
-        <h1 className="text-3xl font-extrabold text-gray-900 mt-2 mb-1">
-          {room.quizMeta.topics}
-        </h1>
-        <p className="text-gray-500 text-sm">
-          Hosted by{' '}
-          <span className="font-medium text-gray-800">{room.host.name}</span>
-        </p>
-      </div>
-
-      <div>
-       
-        <div className="flex flex-col gap-6">
-          
-          <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
-            <p className="text-xs text-gray-500 uppercase font-semibold mb-2">
-              Room Code
-            </p>
-            <button
-              onClick={copyCode}
-              className="text-4xl font-mono font-bold text-slate-800 tracking-widest hover:text-indigo-600 transition-colors cursor-pointer w-full"
-              title="Click to copy"
+    <div className="grid gap-4 py-4">
+      <div className="flex flex-col gap-4">
+        <ul className="flex gap-2">
+          {topics.map((topic, index) => (
+            <li
+              className="list-none border text-sm rounded-lg p-1 bg-gray-200"
+              key={index}
             >
-              {room.id}
-            </button>
-            <p className="text-xs h-4 mt-2 text-green-600 font-medium transition-opacity">
-              {copied ? 'Copied to clipboard!' : 'Click code to copy'}
-            </p>
+              {topic}
+            </li>
+          ))}
+        </ul>
+        <div>
+          <div className="rounded-sm border bg-gray-100 p-2 w-fit">
+            <div className="flex items-center gap-1">
+              <Hash size={16} />
+              <span>Questions</span>
+            </div>
+            <p className="text-center text-2xl">{totalQuestions}</p>
           </div>
         </div>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-gray-100 flex justify-center">
-        {isHost ? (
-          <div className="w-full max-w-sm text-center">
-            <button
-              onClick={handleStartQuiz}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold py-3 px-8 rounded-xl shadow-lg transform transition hover:-translate-y-0.5"
-            >
-              Start Quiz
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center animate-pulse">
-            <div className="text-xl font-medium text-slate-700">
-              Waiting for host to start...
-            </div>
-          </div>
-        )}
+      <div>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Room Code
+        </h2>
+        <button
+          onClick={copyCode}
+          className="flex items-center gap-4 justify-center w-full bg-gray-900 rounded-xl px-6 py-4 hover:bg-gray-800"
+          aria-label="Copy room code"
+        >
+          <span className="text-3xl font-mono font-bold text-white tracking-widest text-center">
+            {roomCode}
+          </span>
+          <span className="text-white">
+            {copied ? (
+              <Check className="w-6 h-6 text-green-600" />
+            ) : (
+              <Copy className="w-6 h-6" />
+            )}
+          </span>
+        </button>
       </div>
     </div>
+  );
+}
+
+function LobbyFooter({ isHost }: { isHost: boolean }) {
+  const socket = useSocket();
+
+  const handleStartQuiz = () => {
+    if (isHost) socket.emit('quiz:start');
+  };
+
+  return (
+    <>
+      {isHost ? (
+        <button
+          onClick={handleStartQuiz}
+          className="w-full bg-gray-900 text-white font-bold py-5 rounded-xl text-lg"
+        >
+          Start Quiz
+        </button>
+      ) : (
+        <p className="text-center text-lg text-gray-500 mt-4 animate-pulse">
+          Waiting for host to start quiz...
+        </p>
+      )}
+    </>
   );
 }

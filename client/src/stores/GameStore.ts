@@ -13,7 +13,6 @@ export interface Question {
 
 export interface Room {
   id: string;
-  maxParticipants: number;
   host: {
     id: string;
     name: string;
@@ -23,6 +22,7 @@ export interface Room {
     title: string;
     description: string;
     topics: Array<string>;
+    totalQuestions: number;
   };
 }
 
