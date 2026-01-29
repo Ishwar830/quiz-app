@@ -12,7 +12,7 @@ export default function CountDownView() {
     <div className="min-h-dvh max-w-2xl mx-auto p-4 grid grid-rows-[60px_1fr_120px]">
       <p className="self-center text-2xl">{title}</p>
       <CountdownTimer />
-      {role !== 'PLAYER' && <Stats />}
+      {role === 'PLAYER' && <Stats />}
     </div>
   );
 }

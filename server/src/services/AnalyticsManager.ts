@@ -31,7 +31,7 @@ const startAnalyticHandler = async (roomId: string, questionId: string) => {
   analyticsTimers.set(roomId, timerId);
 
   setTimeout(
-    () => clearInterval(roomId),
+    () => clearInterval(timerId),
     AnalyticConfigs.AUTO_STOP_DURATION * 1000,
   );
 };

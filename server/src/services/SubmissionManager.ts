@@ -61,8 +61,8 @@ const getLeaderboard = async (roomId: string) => {
     0,
     -1,
     {
-      REV: true
-    }
+      REV: true,
+    },
   );
 
   const userIds = res.map(({ value }) => value);
@@ -118,11 +118,14 @@ const getSubmissionCountForQuestion = async (
     0,
   );
 
+  const info: { [key: string]: number } = {};
+  Object.keys(result).forEach((k) => (info[k] = Number(result[k])));
+
   return {
     roomId,
     questionId,
     totalSubmissions,
-    info: result,
+    info,
   };
 };
 
