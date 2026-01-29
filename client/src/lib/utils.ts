@@ -48,6 +48,6 @@ export function generateMockQuizData() {
 }
 
 export function calulateTimeLeft(endTime: number) {
-  const timeLeft = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+  const timeLeft = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
   return timeLeft;
 }
