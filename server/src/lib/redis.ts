@@ -1,7 +1,8 @@
+import "dotenv/config";
 import { createClient } from "redis";
 import { initializeIndexes } from "../services/redis/indexManager.ts";
 
-const redisClient = createClient();
+const redisClient = createClient({ url: process.env.REDIS_URL! });
 
 export async function initRedis() {
   await redisClient.connect();
