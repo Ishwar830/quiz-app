@@ -1,10 +1,14 @@
-import type {Submission} from "@/stores/MemberStore";
-import { cn } from "@/lib/utils";
-import { useSocket } from "@/socket";
-import { useQuestionInfo } from "@/stores/GameStore";
-import {  useMemberActions, useMemberSubmissions } from "@/stores/MemberStore";
+import type { Submission } from '@/stores/MemberStore';
+import { cn } from '@/lib/utils';
+import { useSocket } from '@/socket';
+import { useQuestionInfo } from '@/stores/GameStore';
+import { useMemberActions, useMemberSubmissions } from '@/stores/MemberStore';
 
-export default function QuestionView({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
+export default function QuestionView({
+  hasQuestionEnded,
+}: {
+  hasQuestionEnded: boolean;
+}) {
   const socket = useSocket();
   const question = useQuestionInfo();
   const submissions = useMemberSubmissions();

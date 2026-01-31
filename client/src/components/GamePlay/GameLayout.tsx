@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import LobbyView from './LobbyView';
 import CountDownView from './CountDownView';
 import QuizView from './QuizView';
+import LeaderBoardView from './LeaderboardView';
 import { useSocket } from '@/socket';
 import { useGameActions, useGameRoom, useGameStatus } from '@/stores/GameStore';
 
@@ -10,8 +11,12 @@ export function GameLayout() {
 
   const gameStatus = useGameStatus();
   const room = useGameRoom();
-  const { updateQuestionInfo, updateCountdownInfo, updateGameStatus } =
-    useGameActions();
+  const {
+    updateQuestionInfo,
+    updateCountdownInfo,
+    updateGameStatus,
+    updateRankings,
+  } = useGameActions();
 
   useEffect(() => {
     socket.emit('room:join', room.id);
@@ -23,13 +28,14 @@ export function GameLayout() {
       updateCountdownInfo(countdownInfo);
     });
 
-    socket.on('quiz:end', (leaderboard) => {
+    socket.on('quiz:end', ({ finalRankings }) => {
       updateGameStatus('FINISHED');
-      console.log(leaderboard);
+      updateRankings(finalRankings);
     });
 
     // eslint-disable-next-line @typescript-eslint/array-type
     const catchAllListener = (event: any, ...args: any[]) => {
+      if (event == 'question:analytics') return;
       console.log(event, '  ', args);
     };
 
@@ -50,5 +56,5 @@ export function GameLayout() {
   if (gameStatus == 'WAITING') return <LobbyView />;
   if (gameStatus == 'COUNTDOWN') return <CountDownView />;
   if (gameStatus == 'QUESTION_ACTIVE') return <QuizView />;
-  return <div>Quiz Finished. Thanks for playing!!!</div>;
+  return <LeaderBoardView />;
 }

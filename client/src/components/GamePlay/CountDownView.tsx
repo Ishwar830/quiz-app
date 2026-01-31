@@ -21,7 +21,7 @@ function CountdownTimer() {
   const countdownInfo = useCountdownInfo();
   const endTime = countdownInfo!.endsAt;
   const timeLeft = useTimer(endTime);
-  
+
   return (
     <div className="place-self-center">
       <div className="grid justify-center place-items-center gap-4 p-2">

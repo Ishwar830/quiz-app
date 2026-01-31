@@ -11,7 +11,6 @@ export interface RoomMember {
   id: string;
   name: string;
   role: "PLAYER" | "SPECTATOR";
-  score?: number;
 }
 
 export interface Question {
@@ -44,6 +43,13 @@ export interface CountdownInfo {
   duration: number;
 }
 
+export interface RankInfo {
+  id: string;
+  rank: number;
+  name: string;
+  score: number;
+}
+
 export interface GameState {
   room: Room;
   status: "WAITING" | "COUNTDOWN" | "QUESTION_ACTIVE" | "FINISHED";
@@ -51,6 +57,7 @@ export interface GameState {
   quizEndedAt: number | null;
   currentQuestionInfo: QuestionInfo | null;
   countdownInfo: CountdownInfo | null;
+  finalRankings: Array<RankInfo> | null;
 }
 
 export interface Submission {
@@ -59,4 +66,7 @@ export interface Submission {
   questionId: string;
   choiceId: string;
   submittedAt: number;
+  isCorrect: boolean;
 }
+
+export type SubmissionPayload = Omit<Submission, "isCorrect">;

@@ -8,6 +8,7 @@ export interface Submission {
   questionId: string;
   choiceId: string;
   submittedAt: number;
+  isCorrect: boolean;
 }
 
 interface Member {

@@ -9,7 +9,13 @@ const socket = io({
 
 const SocketContext = createContext<Socket | null>(null);
 
-export function SocketProvider({user, children }: {user: User, children: React.ReactNode }) {
+export function SocketProvider({
+  user,
+  children,
+}: {
+  user: User;
+  children: React.ReactNode;
+}) {
   socket.auth = { userId: user.id };
 
   useEffect(() => {

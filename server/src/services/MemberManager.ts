@@ -1,7 +1,7 @@
 import redisClient from "../lib/redis.ts";
 import { KeyManager } from "./redis/KeyManager.ts";
 import { RoomManager } from "./RoomManager.ts";
-import { SubmissionManager } from "./SubmissionManager.ts";
+import { ScoreManager } from "./ScoreManager.ts";
 import type { RoomMember } from "./types.d.ts";
 
 const addMember = async (roomId: string, member: RoomMember) => {
@@ -16,7 +16,9 @@ const addMember = async (roomId: string, member: RoomMember) => {
     return memberInfo as RoomMember;
   }
 
-  if (member.role == "PLAYER") member.score = 0;
+  if (member.role == "PLAYER") {
+    await ScoreManager.updateLeaderboard(roomId, member.id, 0);
+  }
 
   await redisClient.hSet(memberKey, member as any);
   await cacheMemberName(roomId, member);
@@ -27,7 +29,7 @@ const getMemberInfo = async (roomId: string, userId: string) => {
   const member = (await redisClient.hGetAll(
     KeyManager.member(roomId, userId),
   )) as unknown as RoomMember | null;
-  const score = await SubmissionManager.getMemberScore(roomId, userId);
+  const score = await ScoreManager.getMemberScore(roomId, userId);
   if (member) return { ...member, score };
   return member;
 };
@@ -49,14 +51,24 @@ const cacheMemberName = async (roomId: string, member: RoomMember) => {
   await redisClient.hSet(cacheKey, member.id, member.name);
 };
 
-const getMemberNames = async (roomId: string, userIds: Array<string>) => {
-  const names = await redisClient.hmGet(KeyManager.memberNames(roomId), userIds);
+const addToPlayerList = async (roomId: string, userId: string) => {
+  await redisClient.sAdd(KeyManager.playerList(roomId), userId);
+};
+
+const getMemberNamesWithIds = async (
+  roomId: string,
+  userIds: Array<string>,
+) => {
+  const names = await redisClient.hmGet(
+    KeyManager.memberNames(roomId),
+    userIds,
+  );
   return names;
-}
+};
 
 export const MemberManager = {
   addMember,
   getMemberInfo,
   incrementMemberScoreBy,
-  getMemberNames
+  getMemberNamesWithIds,
 } as const;

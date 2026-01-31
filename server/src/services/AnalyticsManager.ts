@@ -37,14 +37,13 @@ const startAnalyticHandler = async (roomId: string, questionId: string) => {
 };
 
 export function setupAnalyticsHandler() {
+  const stopEvents = ["quizEnded", "questionEnded"];
 
-  GameEventEmitter.on("quizEnded", ({ gameState }) => {
-    stopAnalyticHandler(gameState.room.id);
+  stopEvents.forEach((event) => {
+    GameEventEmitter.on(event, ({ room }: GameState) => {
+      stopAnalyticHandler(room.id);
+    });
   });
-
-  GameEventEmitter.on("questionEnded", ({ room }: GameState) =>
-    stopAnalyticHandler(room.id),
-  );
 
   GameEventEmitter.on(
     "startQuestion",

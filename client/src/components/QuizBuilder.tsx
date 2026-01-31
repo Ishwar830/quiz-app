@@ -5,10 +5,7 @@ import { Field, FieldLabel } from './ui/field';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
-import type {
-  AnswerChoice,
-  QuizState,
-} from '@/stores/QuizStore';
+import type { AnswerChoice, QuizState } from '@/stores/QuizStore';
 import {
   QuizStoreContext,
   createQuizStore,

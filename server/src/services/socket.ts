@@ -131,14 +131,8 @@ function setupGameEventHandlers() {
 
   GameEventEmitter.on(
     "quizEnded",
-    ({
-      gameState,
-      leaderboard,
-    }: {
-      gameState: GameState;
-      leaderboard: any;
-    }) => {
-      io.to(gameState.room.id).emit("quiz:end", leaderboard);
+    (gameState: GameState) => {
+      io.to(gameState.room.id).emit("quiz:end", gameState);
     },
   );
 

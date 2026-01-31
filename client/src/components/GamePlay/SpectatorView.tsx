@@ -154,16 +154,13 @@ function SubmissionsVertical({
             key={choice.id}
             className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl transform transition-all duration-300 hover:scale-102 relative overflow-hidden"
           >
-           
             <div
               className={`absolute inset-0 ${colors[index]} opacity-20 origin-left transition-transform duration-500`}
               style={{ transform: `scaleX(${percentage / 100})` }}
             ></div>
 
-           
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
-               
                 <div
                   className={`w-12 h-12 ${colors[index]} rounded-lg flex items-center justify-center shadow-lg`}
                 >
@@ -172,13 +169,11 @@ function SubmissionsVertical({
                   </span>
                 </div>
 
-              
                 <span className="text-gray-800 text-lg font-semibold flex-1">
                   {choice.text}
                 </span>
               </div>
 
-             
               <div
                 className={`p-2 rounded-full shadow-lg size-12 text-center text-white ${colors[index]}`}
               >

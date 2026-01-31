@@ -14,7 +14,6 @@ interface RouterContext {
   user: User | null;
 }
 
-
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>

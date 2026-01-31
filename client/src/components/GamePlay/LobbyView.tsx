@@ -26,7 +26,7 @@ export default function LobbyView() {
         roomCode={room.id}
       />
 
-      <LobbyFooter isHost={isHost}/>
+      <LobbyFooter isHost={isHost} />
     </div>
   );
 }

@@ -97,9 +97,9 @@ export const createQuizStore = (initialState: QuizState) => {
       },
     })),
   );
-}; 
+};
 
-type QuizStore = ReturnType<typeof createQuizStore>
+type QuizStore = ReturnType<typeof createQuizStore>;
 
 export const QuizStoreContext = createContext<QuizStore | null>(null);
 

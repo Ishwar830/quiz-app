@@ -3,7 +3,7 @@ import { KeyManager } from "./redis/KeyManager.js";
 import { QuizManager } from "./QuizManager.ts";
 import EventEmitter from "node:events";
 import type { GameState, QuestionInfo, QuizMeta, Room } from "./types.d.ts";
-import { SubmissionManager } from "./SubmissionManager.ts";
+import { ScoreManager } from "./ScoreManager.ts";
 
 export const GameEventEmitter = new EventEmitter();
 
@@ -19,6 +19,7 @@ const initializeGameState = async (room: Room) => {
     quizEndedAt: null,
     currentQuestionInfo: null,
     countdownInfo: null,
+    finalRankings: null,
   };
 
   await redisClient.json.set(
@@ -66,16 +67,19 @@ const updateGameState = async (roomId: string, updates: Partial<GameState>) => {
 };
 
 const endQuiz = async (roomId: string) => {
+  const finalRankings = await ScoreManager.getLeaderboard(roomId);
+
   const gameState = await updateGameState(roomId, {
     status: "FINISHED",
     quizEndedAt: Date.now(),
     currentQuestionInfo: null,
     countdownInfo: null,
+    finalRankings
   });
 
-  const leaderboard = await SubmissionManager.getLeaderboard(gameState.room.id);
-  console.log(leaderboard);
-  GameEventEmitter.emit("quizEnded", { gameState, leaderboard });
+  
+  console.log(finalRankings);
+  GameEventEmitter.emit("quizEnded", gameState);
 };
 
 const hasQuestionEnded = (questionInfo: QuestionInfo | null) => {
@@ -83,8 +87,8 @@ const hasQuestionEnded = (questionInfo: QuestionInfo | null) => {
   return !questionInfo || currentTime > questionInfo.submissionEndTime;
 };
 
-const hasMoreQuestions = (questionOrder: number, quizMeta: QuizMeta) => {
-  return questionOrder <= quizMeta.totalQuestions;
+const hasMoreQuestions = (nextQuestionOrder: number, quizMeta: QuizMeta) => {
+  return nextQuestionOrder <= quizMeta.totalQuestions;
 };
 
 const prepareNextQuestion = async (roomId: string) => {

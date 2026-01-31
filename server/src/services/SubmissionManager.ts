@@ -1,77 +1,47 @@
 import redisClient from "../lib/redis.ts";
-import { MemberManager } from "./MemberManager.ts";
 import { KeyManager } from "./redis/KeyManager.ts";
-import type { Submission } from "./types.d.ts";
+import type { Submission, SubmissionPayload } from "./types.d.ts";
+import { ScoreManager } from "./ScoreManager.ts";
 
-const submitAnswer = async (submissionData: Submission) => {
-  const { roomId, questionId, userId, choiceId } = submissionData;
+const submitAnswer = async (submissionPayload: SubmissionPayload) => {
+  const { roomId, questionId, userId, choiceId } = submissionPayload;
   const submissionKey = KeyManager.submission(roomId, userId, questionId);
 
   const hasSubmittedBefore = await redisClient.exists(submissionKey);
-  if (!hasSubmittedBefore) {
-    const score = await calculateScore(submissionData);
-    await Promise.all([
-      redisClient.json.set(submissionKey, "$", submissionData as any),
-      incrementSubmissionCount(roomId, questionId, choiceId),
-      updateLeaderboard(roomId, userId, score),
-    ]);
+
+  if (hasSubmittedBefore) {
+    const score = await ScoreManager.getMemberScore(roomId, userId);
+
+    const submission = (await redisClient.json.get(
+      submissionKey,
+    )) as unknown as Submission;
+
+    return { ...submission, score };
   }
 
-  const updatedScore = await getMemberScore(roomId, userId);
+  const isCorrectChoice = await checkCorrectChoice(submissionPayload);
+  const submissionData: Submission = {
+    ...submissionPayload,
+    isCorrect: isCorrectChoice,
+  };
 
-  const submission = (await redisClient.json.get(
-    submissionKey,
-  )) as unknown as Submission;
+  await Promise.all([
+    redisClient.json.set(submissionKey, "$", submissionData as any),
+    incrementSubmissionCount(roomId, questionId, choiceId),
+  ]);
 
-  return { ...submission, score: updatedScore };
+  const score = await ScoreManager.calculateAndUpdateScore(submissionData);
+
+  return { ...submissionData, score };
 };
 
-const calculateScore = async (submissionData: Submission) => {
-  const { questionId, choiceId } = submissionData;
+const checkCorrectChoice = async (submissionPayload: SubmissionPayload) => {
+  const { questionId, choiceId } = submissionPayload;
   const correctChoiceId = await redisClient.get(KeyManager.answer(questionId));
   if (!correctChoiceId) throw new Error("correct choice not found");
 
   const isCorrect = correctChoiceId === choiceId;
-  return isCorrect ? 10 : 0;
-};
-
-const updateLeaderboard = async (
-  roomId: string,
-  userId: string,
-  score: number,
-) => {
-  return await redisClient.zIncrBy(
-    KeyManager.leaderboard(roomId),
-    score,
-    userId,
-  );
-};
-
-const getMemberScore = async (roomId: string, userId: string) => {
-  const score = await redisClient.zScore(
-    KeyManager.leaderboard(roomId),
-    userId,
-  );
-  return score ?? 0;
-};
-
-const getLeaderboard = async (roomId: string) => {
-  const res = await redisClient.zRangeWithScores(
-    KeyManager.leaderboard(roomId),
-    0,
-    -1,
-    {
-      REV: true,
-    },
-  );
-
-  const userIds = res.map(({ value }) => value);
-  const names = await MemberManager.getMemberNames(roomId, userIds);
-  return res.map(({ value, score }, index) => ({
-    userId: value,
-    name: names[index],
-    score,
-  }));
+  return isCorrect;
 };
 
 const incrementSubmissionCount = async (
@@ -133,6 +103,4 @@ export const SubmissionManager = {
   submitAnswer,
   getSubmissionCountForQuestion,
   getUserSubmissions,
-  getLeaderboard,
-  getMemberScore,
 } as const;
