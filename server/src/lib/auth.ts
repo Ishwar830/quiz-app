@@ -5,6 +5,12 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/index.js";
 import * as userSchema from "../db/schema/users.js";
 
+let trustedOrigins: Array<string> = [];
+const nodeEnv = process.env.NODE_ENV;
+if(nodeEnv == "development"){
+  trustedOrigins.push(process.env.CLIENT_URL!);
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     schema: userSchema,
@@ -16,7 +22,7 @@ export const auth = betterAuth({
     maxPasswordLength: 16,
   },
   plugins: [anonymous()],
-  trustedOrigins: [process.env.CLIENT_URL!],
+  trustedOrigins,
   session: {
     cookieCache: {
       enabled: true,
