@@ -1,18 +1,28 @@
-import { TrendingUp } from 'lucide-react';
 import { useCountdownInfo, useGameRoom } from '@/stores/GameStore';
-import { useMember } from '@/stores/MemberStore';
 import { useTimer } from '@/hooks/useTimer';
 
 export default function CountDownView() {
   const { quizMeta } = useGameRoom();
-  const { role } = useMember();
-
   const { title } = quizMeta;
+
   return (
-    <div className="min-h-dvh max-w-2xl mx-auto p-4 grid grid-rows-[60px_1fr_120px]">
-      <p className="self-center text-2xl">{title}</p>
-      <CountdownTimer />
-      {role === 'PLAYER' && <Stats />}
+    <div className="min-h-dvh max-w-2xl mx-auto px-6 py-12 flex flex-col justify-between items-center gap-6">
+      <header className="flex flex-col items-center">
+        <h1 className="text-2xl font-black tracking-tight text-slate-900 text-center uppercase">
+          {title}
+        </h1>
+        <div className="h-1 w-12 bg-slate-900 mt-2" />
+      </header>
+
+      <main>
+        <CountdownTimer />
+      </main>
+
+      <footer>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center max-w-70">
+          Please stay on this screen. The question will begin automatically.
+        </p>
+      </footer>
     </div>
   );
 }
@@ -23,27 +33,14 @@ function CountdownTimer() {
   const timeLeft = useTimer(endTime);
 
   return (
-    <div className="place-self-center">
-      <div className="grid justify-center place-items-center gap-4 p-2">
-        <p className="text-3xl">Get Ready !!!</p>
-        <div className="grid place-items-center rounded-full size-32  bg-gray-200">
-          <p className="text-8xl font-medium">{timeLeft}</p>
-        </div>
+    <div className="flex flex-col items-center gap-12">
+      <div className="text-8xl bg-slate-100 font-bold tracking-tighter tabular-nums flex items-center justify-center  shadow-2xl rounded-full size-50 sm:size-60 border-4 border-slate-600">
+        <span>{timeLeft}</span>
       </div>
-    </div>
-  );
-}
 
-function Stats() {
-  const { score } = useMember();
-  return (
-    <div className="flex items-start">
-      <div className="border rounded-lg p-3 grid bg-slate-100">
-        <div className="flex items-center gap-2">
-          <TrendingUp /> <span className="text-lg">Score</span>
-        </div>
-        <p className="text-3xl text-center">{score ?? 0}</p>
-      </div>
+      <p className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">
+        Get Ready
+      </p>
     </div>
   );
 }

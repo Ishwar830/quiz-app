@@ -56,5 +56,5 @@ export function GameLayout() {
   if (gameStatus == 'WAITING') return <LobbyView />;
   if (gameStatus == 'COUNTDOWN') return <CountDownView />;
   if (gameStatus == 'QUESTION_ACTIVE') return <QuizView />;
-  return <LeaderBoardView />;
+  return <LeaderBoardView />;  
 }
