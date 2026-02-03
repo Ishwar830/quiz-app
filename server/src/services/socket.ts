@@ -111,6 +111,14 @@ async function handleSubmission(
 
   const submission = await SubmissionManager.submitAnswer(submissionPayload);
 
+  const p = new Promise((res) =>
+    setTimeout(() => {
+      res();
+    }, 2000),
+  );
+
+  await p;
+
   callback({ success: true, submission });
 }
 
@@ -129,12 +137,9 @@ function setupGameEventHandlers() {
     },
   );
 
-  GameEventEmitter.on(
-    "quizEnded",
-    (gameState: GameState) => {
-      io.to(gameState.room.id).emit("quiz:end", gameState);
-    },
-  );
+  GameEventEmitter.on("quizEnded", (gameState: GameState) => {
+    io.to(gameState.room.id).emit("quiz:end", gameState);
+  });
 
   GameEventEmitter.on("submissionCountUpdate", (payload) => {
     const { roomId, data } = payload;

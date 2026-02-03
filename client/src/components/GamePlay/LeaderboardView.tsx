@@ -14,7 +14,7 @@ import { useMember, useMemberSubmissions } from '@/stores/MemberStore';
 
 export default function LeaderBoardView() {
   return (
-    <div className="min-h-screen w-full bg-[#fdfaf1] text-slate-900 font-sans selection:bg-orange-200">
+    <div className="min-h-screen w-full text-text-900">
       <div className="max-w-3xl mx-auto p-4 sm:p-6 flex flex-col gap-6">
         <GameSummary />
         <Rankings />
@@ -35,15 +35,15 @@ function GameSummary() {
   const streak = calculateLongestStreak(submissions);
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-slate-100 shadow-lg">
+    <div className="overflow-hidden rounded-2xl bg-vibrant-coral-50 shadow-lg">
       <div className="p-6 sm:p-8 grid gap-4">
         <div className="flex items-center gap-4 mb-4">
-          <div className="size-14 border-2 border-slate-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-            <Trophy size={32} className="drop-shadow-md" />
+          <div className="size-14 border-2 border-slate-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
+            <Trophy size={32} className="drop-shadow-md stroke-gray-100" />
           </div>
           <div>
             <p className="text-xs font-bold uppercase tracking-wider mb-1">
-              Hosted by {hostname}
+              Hosted by <span className="text-sm">{hostname}</span>
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
               {title}
@@ -51,8 +51,8 @@ function GameSummary() {
           </div>
         </div>
 
-        {member.role !== 'SPECTATOR' ? (
-          <p className="text-slate-600 leading-relaxed">{description}</p>
+        {member.role === 'SPECTATOR' ? (
+          <p className="text-sm leading-relaxed">{description}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <StatCard
@@ -60,21 +60,21 @@ function GameSummary() {
               label="Score"
               value={member.score}
               subtext="Points"
-              colorClass="bg-emerald-500/10 border-emerald-500/20"
+              colorClass="bg-emerald-500/50 border-emerald-500/20"
             />
             <StatCard
-              icon={<Zap className="stroke-amber-400" size={20} />}
+              icon={<Zap className="fill-amber-400 stroke-none" size={20} />}
               label="Accuracy"
               value={`${accuracy}%`}
               subtext="Correct"
-              colorClass="bg-amber-500/10 border-amber-500/20"
+              colorClass="bg-amber-500/50 border-amber-500/20"
             />
             <StatCard
-              icon={<Flame className="stroke-rose-400" size={20} />}
+              icon={<Flame className="fill-rose-400 stroke-none" size={20} />}
               label="Best Streak"
               value={streak}
               subtext="In a row"
-              colorClass="bg-rose-500/10 border-rose-500/20"
+              colorClass="bg-rose-500/50 border-rose-500/20"
             />
           </div>
         )}
@@ -95,7 +95,7 @@ function StatCard({ icon, label, value, subtext, colorClass }: any) {
         </span>
       </div>
       <div className="text-3xl font-black tracking-tight">{value}</div>
-      <div className="text-xs text-slate-600 font-medium mt-1">{subtext}</div>
+      <div className="text-xs text-text-800 font-medium mt-1">{subtext}</div>
     </div>
   );
 }
@@ -110,9 +110,12 @@ function Rankings() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <h2 className="text-2xl font-bold flex items-center gap-2">
-        <Medal size={24} />
-        Rankings
+      <h2 className="text-2xl font-bold font-cascadia tracking-wider">
+        <span className='flex items-center gap-4'>
+          <Medal size={24} />
+          Rankings
+        </span>
+        <div className="h-1 w-1/3 bg-vibrant-coral-200 mt-2" />
       </h2>
 
       {topThree.length > 0 && (
@@ -132,7 +135,7 @@ function Rankings() {
               player={topThree[0]}
               rank={1}
               color="bg-amber-300"
-              accent="text-amber-400"
+              accent="text-amber-600"
               height="h-40"
               isWinner
             />
@@ -159,8 +162,8 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
   const member = useMember();
 
   return (
-    <div className="bg-slate-100 rounded-xl border-2 border-slate-600 overflow-hidden shadow-inner">
-      <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-slate-900/80 text-xs font-semibold text-slate-200 uppercase tracking-wider border-b border-slate-800">
+    <div className="bg-pale-sky-50 rounded-xl border-2 border-slate-600 overflow-hidden shadow-lg">
+      <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-pale-sky-800/80 text-xs font-semibold text-slate-200 uppercase tracking-wider border-b border-slate-800">
         <div>Rank</div>
         <div>Player</div>
         <div className="text-center">Score</div>
@@ -174,10 +177,10 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
             <div
               key={r.id}
               className={`grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center transition-colors 
-                  ${isMe ? 'bg-slate-200/10 hover:bg-indigo-500/20' : 'hover:bg-slate-400/40'}
+                  ${isMe ? 'bg-slate-200/10 hover:bg-indigo-500/20' : 'hover:bg-pale-sky-300/40'}
                 `}
             >
-              <div className="text-center font-mono font-bold">{r.rank}</div>
+              <div className="text-center font-bold">{r.rank}</div>
               <div className="flex items-center gap-3">
                 <Avatar name={r.name} />
                 <span
@@ -191,7 +194,7 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
                   )}
                 </span>
               </div>
-              <div className="text-center font-mono font-bold">
+              <div className="text-center font-semibold">
                 {r.score.toLocaleString()}
               </div>
             </div>
@@ -200,7 +203,7 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
       </div>
 
       {rankings.length === 0 && (
-        <div className="p-8 text-center text-slate-500">
+        <div className="p-8 text-center">
           <MoreHorizontal className="mx-auto mb-2 opacity-50" />
           <p>No more players to show</p>
         </div>
@@ -249,11 +252,11 @@ function PodiumStep({
 
       <div className="text-center mb-2 z-10">
         <div
-          className={`font-bold truncate max-w-20 sm:max-w-30 ${isWinner ? 'text-slate-800' : 'text-slate-600'}`}
+          className={`font-bold truncate max-w-20 sm:max-w-30 ${isWinner ? 'text-text-950' : 'text-text-800'}`}
         >
           {player.name}
         </div>
-        <div className={`text-sm font-mono font-bold ${accent}`}>
+        <div className={`font-bold ${accent}`}>
           {player.score}
         </div>
       </div>

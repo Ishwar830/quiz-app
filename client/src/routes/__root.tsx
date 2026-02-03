@@ -22,7 +22,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         pauseOnHover={false}
         pauseOnFocusLoss={false}
       />
-      <Outlet />
+      <div className='min-h-dvh bg-gray-50 font-sora text-text-900'>
+        <Outlet />
+      </div>
     </>
   ),
 });

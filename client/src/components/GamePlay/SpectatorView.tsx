@@ -1,27 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import {
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from 'chart.js';
-import type { ChartOptions } from 'chart.js';
 import type { Question } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
 import { useQuestionInfo } from '@/stores/GameStore';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-);
 
 interface QuestionAnalytics {
   questionId: string;
@@ -52,81 +32,76 @@ export default function SpectatorView() {
 
   return (
     <div className="flex flex-col">
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
+      <div className="bg-pale-sky-50 p-6 rounded-2xl shadow-md mb-4 overflow-hidden">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight wrap-break-word">
           {question.text}
         </h2>
       </div>
       <div className="flex-1 hidden sm:block">
-        <SubmissionsBarChart question={question} analytics={analytics} />
+        <SubmissionsVertical question={question} analytics={analytics} />
       </div>
       <div className="flex-1 sm:hidden">
-        <SubmissionsVertical question={question} analytics={analytics} />
+        <SubmissionsHorizontal question={question} analytics={analytics} />
       </div>
     </div>
   );
 }
 
-function SubmissionsBarChart({
+function SubmissionsVertical({
   question,
   analytics,
 }: {
   question: Question;
   analytics: QuestionAnalytics;
 }) {
-  const options: ChartOptions<'bar'> = {
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: false,
-        },
-        ticks: {
-          stepSize: 1,
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-    },
+  const totalSubmissions = analytics.totalSubmissions;
+
+  const getPercentageForSubmission = (count: number) => {
+    return totalSubmissions === 0
+      ? 0
+      : Math.floor((count / totalSubmissions) * 100);
   };
 
-  const chartData = question.choices.map((choice) => {
-    return {
-      x: choice.text,
-      y: analytics.info[choice.id],
-    };
-  });
+  const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500'];
 
   return (
-    <Bar
-      options={options}
-      data={{
-        labels: question.choices.map((choice) => choice.text),
-        datasets: [
-          {
-            label: 'Submission Count',
-            data: chartData,
-            backgroundColor: [
-              'rgba(255, 99, 132)',
-              'rgba(255, 159, 64)',
-              'rgba(255, 205, 86)',
-              'rgba(75, 192, 192)',
-            ],
-            borderRadius: {
-              topLeft: 4,
-              topRight: 4,
-            },
-          },
-        ],
-      }}
-    />
+    <div className="grid h-full grid-cols-4 gap-4">
+      {question.choices.map((choice, index) => {
+        const count = analytics.info[choice.id] ?? 0;
+        const percentage = getPercentageForSubmission(count);
+
+        return (
+          <div
+            key={choice.id}
+            className="grid grid-rows-[1fr_40px] overflow-hidden"
+          >
+            <div className="relative  border-b-4 border-slate-700 ">
+              <div
+                className={`absolute bottom-0 z-10 mb-2 left-1/2 -translate-x-1/2`}
+              >
+                <span className="rounded-full bg-vibrant-coral-50 shadow-sm text-slate-800 font-semibold size-10 grid place-items-center">
+                  {count}
+                </span>
+              </div>
+              <div
+                className={`h-full rounded-tl-lg opacity-80 rounded-tr-lg ${colors[index]}  origin-bottom transition-transform duration-500`}
+                style={{ transform: `scaleY(${percentage / 100})` }}
+              ></div>
+            </div>
+
+            <div
+              className={`place-self-center p-1 px-2 text-slate-50 shadow-md shadow-gray-200 text-sm rounded-md truncate ${colors[index]}`}
+            >
+              {choice.text}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-function SubmissionsVertical({
+function SubmissionsHorizontal({
   question,
   analytics,
 }: {
