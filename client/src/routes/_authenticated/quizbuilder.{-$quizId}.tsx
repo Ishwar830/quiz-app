@@ -26,9 +26,5 @@ async function fetchQuiz(quizId: string) {
 
 function RouteComponent() {
   const quiz = Route.useLoaderData();
-  return (
-    <div>
-      <QuizBuilder quiz={quiz} />
-    </div>
-  );
+  return <QuizBuilder quiz={quiz} />;
 }

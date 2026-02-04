@@ -28,7 +28,7 @@ export function generateMockQuestion() {
     text: '',
     choices,
     order: 1,
-    timeLimitSeconds: 20,
+    timeLimitSeconds: 10,
     correctChoiceId: choices[0].id,
   };
 

@@ -23,17 +23,19 @@ export function QuizBuilder({ quiz }: { quiz: QuizState }) {
 
   return (
     <QuizStoreContext.Provider value={store}>
-      <div className="p-6 grid gap-2">
-        <div className="flex justify-between mb-4">
-          <p className="text-2xl">Quiz Builder</p>
+      <div className="p-4 grid gap-2 max-w-3xl mx-auto">
+        <div className="flex justify-between mb-4 items-center">
+          <p className="text-2xl bg-secondary-200 rounded-xs rounded-br-2xl rounded-tl-2xl p-1 px-2 font-cascadia tracking-wider">
+            Quiz Builder
+          </p>
           <SaveQuizButton />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 border-b-2 border-secondary-500 pb-2">
           <QuizTitle />
           <QuizDescription />
           <QuizTopic />
         </div>
-        <div>
+        <div className="mt-4">
           <QuestionContainer />
         </div>
       </div>
@@ -76,7 +78,14 @@ function SaveQuizButton() {
     }
   };
 
-  return <Button onClick={saveQuiz}>Save</Button>;
+  return (
+    <Button
+      className="bg-primary-400 text-text-800 transition-transform hover:scale-105 hover:bg-primary-500 shadow-sm"
+      onClick={saveQuiz}
+    >
+      Save
+    </Button>
+  );
 }
 
 function QuizTitle() {
@@ -85,9 +94,7 @@ function QuizTitle() {
 
   return (
     <Field>
-      <FieldLabel htmlFor="title" className="text-xl">
-        Title
-      </FieldLabel>
+      <FieldLabel htmlFor="title">Title</FieldLabel>
       <Input
         id="title"
         type="text"
@@ -106,9 +113,7 @@ function QuizDescription() {
 
   return (
     <Field>
-      <FieldLabel htmlFor="description" className="text-xl">
-        Description
-      </FieldLabel>
+      <FieldLabel htmlFor="description">Description</FieldLabel>
       <Input
         id="description"
         type="text"
@@ -128,9 +133,7 @@ function QuizTopic() {
   return (
     <>
       <div className="flex gap-2 items-center">
-        <FieldLabel htmlFor="topic" className="text-xl">
-          Topic
-        </FieldLabel>
+        <FieldLabel htmlFor="topic">Topic</FieldLabel>
         <Input
           className="max-w-60"
           id="topic"
@@ -147,7 +150,7 @@ function QuizTopic() {
               setTopicToAdd('');
             }
           }}
-          className="grid place-items-center size-10 rounded-full hover:bg-gray-100"
+          className="grid place-items-center size-10 rounded-full hover:bg-accent-50"
         >
           <PlusCircle />
         </button>
@@ -156,14 +159,14 @@ function QuizTopic() {
         {topics.map((topic, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-2 text-sm rounded-xl bg-slate-200 text-gray-800 p-1 px-2"
+            className="flex items-center gap-2 text-sm rounded-xl bg-accent-100 p-1 px-2"
           >
             <span>{topic}</span>
             <button
-              className="rounded-full p-1 bg-red-600 hover:cursor-grab"
+              className="rounded-full p-1 bg-rose-300 hover:cursor-pointer"
               onClick={() => removeTopic(idx)}
             >
-              <X stroke="white" size={12} />
+              <X size={12} />
             </button>
           </div>
         ))}
@@ -180,11 +183,12 @@ function QuestionContainer() {
       <div>
         <div className="flex items-center gap-4 mb-4">
           <p className="text-xl">Questions</p>
-          <span className="rounded-full size-6 bg-gray-200 text-center">
+          <span className="rounded-full size-6 bg-accent-200 text-center">
             {questionsIds.length}
           </span>
         </div>
         <Button
+          className="bg-secondary-400 hover:bg-secondary-500 shadow-md border"
           onClick={() => {
             if (questionsIds.length >= 20) {
               toast.error('Maximum Question limit reached', {
@@ -198,7 +202,7 @@ function QuestionContainer() {
           Add Question
         </Button>
       </div>
-      <div className="pl-2 grid gap-4">
+      <div className="pl-4 grid gap-4">
         {questionsIds.map((id, idx) => (
           <Question key={id} questionId={id} idx={idx} />
         ))}
@@ -207,12 +211,21 @@ function QuestionContainer() {
   );
 }
 
-function Question({ questionId, idx }: { questionId: string; idx: number }) {
+function Question({ questionId}: { questionId: string; idx: number }) {
   const question = useQuizQuestionById(questionId)!;
-  const { updateQuestionText, updateQuestionTimeLimit } = useQuizActions();
+  const { updateQuestionText, updateQuestionTimeLimit, removeQuestion } =
+    useQuizActions();
   return (
     <div className="grid gap-2">
-      <p className="mb-2">Q. {idx + 1}</p>
+      <div className="flex items-center gap-4 border-b-2 pb-2 border-secondary-300 w-fit">
+        <p>Q. {question.order}</p>
+        <button
+          className="bg-red-400 rounded-full size-6 grid place-items-center hover:cursor-pointer"
+          onClick={() => removeQuestion(questionId)}
+        >
+          <X size={20}/>
+        </button>
+      </div>
       <div className="flex flex-row gap-4">
         <Input
           id={question.id}
@@ -283,7 +296,7 @@ function Choice({
     <div
       className={cn(
         'flex items-center gap-2 p-1',
-        isCorrectChoice && 'bg-gray-200 rounded-md border-slate-800',
+        isCorrectChoice && 'bg-lime-200 rounded-md',
       )}
     >
       <Checkbox

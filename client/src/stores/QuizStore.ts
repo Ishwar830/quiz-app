@@ -54,7 +54,11 @@ export const createQuizStore = (initialState: QuizState) => {
             }));
           }),
         removeQuestion: (questionId: string) =>
-          set((s) => s.questions.filter(({ id }) => id !== questionId)),
+          set((s) => {
+            s.questions = s.questions
+              .filter(({ id }) => id !== questionId)
+              .map((q, idx) => ({ ...q, order: idx + 1 }));
+          }),
         updateQuestionText: (id, text) =>
           set((s) => {
             const question = s.questions.find((q) => q.id === id);
