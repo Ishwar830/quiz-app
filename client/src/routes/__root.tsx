@@ -22,7 +22,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         pauseOnHover={false}
         pauseOnFocusLoss={false}
       />
-      <div className='min-h-dvh bg-gray-50 font-sora text-text-900'>
+      <div className='min-h-dvh bg-background-50/50 text-text-900 font-sora'>
         <Outlet />
       </div>
     </>

@@ -32,8 +32,8 @@ export default function SpectatorView() {
 
   return (
     <div className="flex flex-col">
-      <div className="bg-pale-sky-50 p-6 rounded-2xl shadow-md mb-4 overflow-hidden">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight wrap-break-word">
+      <div className="bg-primary-100 border p-6 rounded-xl shadow-md mb-4 overflow-hidden">
+        <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
           {question.text}
         </h2>
       </div>
@@ -71,15 +71,12 @@ function SubmissionsVertical({
         const percentage = getPercentageForSubmission(count);
 
         return (
-          <div
-            key={choice.id}
-            className="grid grid-rows-[1fr_40px] overflow-hidden"
-          >
-            <div className="relative  border-b-4 border-slate-700 ">
+          <div key={choice.id} className="grid grid-rows-[1fr_40px]">
+            <div className="relative border-b-4 border-gray-700 ">
               <div
                 className={`absolute bottom-0 z-10 mb-2 left-1/2 -translate-x-1/2`}
               >
-                <span className="rounded-full bg-vibrant-coral-50 shadow-sm text-slate-800 font-semibold size-10 grid place-items-center">
+                <span className="rounded-full bg-secondary-100 shadow-sm font-semibold size-10 grid place-items-center">
                   {count}
                 </span>
               </div>
@@ -89,10 +86,12 @@ function SubmissionsVertical({
               ></div>
             </div>
 
-            <div
-              className={`place-self-center p-1 px-2 text-slate-50 shadow-md shadow-gray-200 text-sm rounded-md truncate ${colors[index]}`}
-            >
-              {choice.text}
+            <div className="grid items-center text-center">
+              <div
+                className={`truncate rounded-sm p-1 px-2 ${colors[index]} text-white  text-sm`}
+              >
+                {choice.text}
+              </div>
             </div>
           </div>
         );

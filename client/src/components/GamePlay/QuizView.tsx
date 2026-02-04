@@ -32,7 +32,7 @@ export default function QuizView() {
   return (
     <div className="min-h-dvh max-w-2xl mx-auto p-4 grid gap-4 grid-rows-[100px_1fr_80px]">
       <QuizViewHeader />
-      {member.role !== 'SPECTATOR' ? (
+      {member.role === 'SPECTATOR' ? (
         <SpectatorView />
       ) : (
         <div>
@@ -53,7 +53,7 @@ function NextButton() {
   return (
     <div className="flex justify-center">
       <button
-        className="size-16 p-2 shadow-lg shadow-gray-200/50 font-semibold bg-deep-space-blue-800 text-white rounded-full"
+        className="size-16 p-2 shadow-lg font-semibold bg-primary-500 border rounded-full"
         onClick={handleNextClick}
       >
         Next
@@ -68,23 +68,23 @@ function QuizViewHeader() {
   const questionInfo = useQuestionInfo();
 
   return (
-    <div className="p-4 border-b-4 border-deep-space-blue-400 grid gap-4">
-      <div className="flex justify-between mx-2">
-        <h1 className="text-xl">{quizMeta.title}</h1>
-        <p className="flex gap-2 items-baseline">
-          <span className="text-sm">Question</span>
+    <div className="p-4 bg-linear-to-br from-secondary-100 to-secondary-50 rounded-xl border grid gap-4">
+      <div className="flex justify-between items-center mx-2">
+        <h1>{quizMeta.title}</h1>
+        <p className="flex gap-2 items-center">
+          <span className="text-xs">Question</span>
           <span className="font-semibold text-lg">
             {questionInfo.order} / {quizMeta.totalQuestions}
           </span>
         </p>
       </div>
       <div className="flex items-center justify-between mx-2">
-        {member.role !== 'PLAYER' && (
+        {member.role === 'PLAYER' && (
           <div className="flex gap-2 text-lg items-center">
-            <TrendingUp className='text-lime-600'/>
-            <p className="flex gap-2 items-center text-muted">
-              <span className="text-sm text-slate-800">Score</span>
-              <span className="font-semibold text-xl text-slate-600">{member.score}</span>
+            <TrendingUp className="text-lime-600" />
+            <p className="flex gap-2 items-center">
+              <span className="text-sm">Score</span>
+              <span className="font-semibold text-xl">{member.score}</span>
             </p>
           </div>
         )}
@@ -100,13 +100,13 @@ function QuestionTimer({ endTime }: { endTime: number }) {
   const timeLeft = useTimer(endTime);
 
   return (
-    <div className="flex items-center justify-between gap-2">
+    <div className="flex items-center justify-between gap-2 w-15">
       <span>
-        <Clock size={18} className='mb-1'/>
+        <Clock size={18} className="mb-1" />
       </span>
       <span
         className={cn('text-2xl font-bold', {
-          'text-vibrant-coral-400 animate-pulse': timeLeft < 5,
+          'text-red-600 animate-pulse': timeLeft < 5,
         })}
       >
         {timeLeft}s

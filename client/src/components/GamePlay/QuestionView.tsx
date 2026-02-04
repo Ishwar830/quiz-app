@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { CheckIcon, Loader2, X } from 'lucide-react';
 import type { Submission } from '@/stores/MemberStore';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,9 @@ export default function QuestionView({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const activeChoiceId = submission?.choiceId ?? null;
 
-  const [optimisticChoiceId, setOptimisticChoiceId] = useState<string | null>(null);
+  const [optimisticChoiceId, setOptimisticChoiceId] = useState<string | null>(
+    null,
+  );
 
   const handleSubmit = (choiceId: string) => {
     if (hasQuestionEnded || activeChoiceId || isSubmitting) return;
@@ -48,8 +50,8 @@ export default function QuestionView({
 
   return (
     <>
-      <div className="bg-pale-sky-50 p-6 rounded-2xl shadow-md mb-4 overflow-hidden">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight wrap-break-word">
+      <div className="bg-primary-100 border p-6 rounded-xl shadow-md mb-4 overflow-hidden">
+        <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
           {question.text}
         </h2>
       </div>
@@ -57,7 +59,8 @@ export default function QuestionView({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {question.choices.map((choice, index) => {
           let status: SubmissionStatus = 'idle';
-          const isChoiceSelected = optimisticChoiceId === choice.id || activeChoiceId == choice.id;
+          const isChoiceSelected =
+            optimisticChoiceId === choice.id || activeChoiceId == choice.id;
           const isCorrectChoice = submission?.isCorrect ?? null;
           if (isChoiceSelected) {
             if (isSubmitting) status = 'submitting';
@@ -76,58 +79,6 @@ export default function QuestionView({
               index={index}
             />
           );
-          // return (
-          //   <button
-          //     key={choice.id}
-          //     onClick={() => handleSubmit(choice.id)}
-          //     disabled={hasQuestionEnded}
-          //     className={cn(
-          //       'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border-2 transition-all transform duration-200 overflow-hidden wrap-break-word gap-2',
-          //       isSelected
-          //         ? 'border-deep-space-blue-500 bg-deep-space-blue-50 shadow-sm scale-[1.02]'
-          //         : 'border-slate-200 hover:border-deep-space-blue-400 hover:shadow-sm',
-          //       {
-          //         'border-lime-400 bg-lime-50':
-          //           submission && isSelected && isCorrectChoice,
-          //         'border-vibrant-coral-400 bg-vibrant-coral-50':
-          //           submission && isSelected && !isCorrectChoice,
-          //       },
-          //     )}
-          //   >
-          //     <span
-          //       className={cn(
-          //         'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
-          //         isSelected
-          //           ? 'bg-deep-space-blue-500 text-white'
-          //           : 'bg-gray-200 text-slate-600',
-          //       )}
-          //     >
-          //       {String.fromCharCode(65 + index)}
-          //     </span>
-
-          //     <span
-          //       className={cn(
-          //         'text-lg font-medium',
-          //         isSelected ? 'text-deep-space-blue-800' : 'text-gray-700',
-          //       )}
-          //     >
-          //       {choice.text}
-          //     </span>
-
-          //     <span>
-          //       {isSelected && isSubmitting && (
-          //         <Loader2 className="text-gray-500 animate-spin" />
-          //       )}
-          //       {isSelected &&
-          //         submission &&
-          //         (isCorrectChoice ? (
-          //           <CheckIcon className="text-lime-600" />
-          //         ) : (
-          //           <X className="text-vibrant-coral-600" />
-          //         ))}
-          //     </span>
-          //   </button>
-          // );
         })}
       </div>
     </>
@@ -153,43 +104,43 @@ function QuestionChoice({
   handleSubmit,
   hasQuestionEnded,
 }: QuestionChoiceProps) {
+  const labelColors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-red-500',
+  ];
+
   return (
     <button
       onClick={() => handleSubmit(id)}
       disabled={hasQuestionEnded}
       className={cn(
-        'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border-2 transition-all transform duration-200 overflow-hidden wrap-break-word gap-2',
-        status !== 'idle'
-          ? 'border-deep-space-blue-500 bg-deep-space-blue-50 shadow-sm scale-[1.02]'
-          : 'border-slate-200 hover:border-deep-space-blue-400 hover:shadow-sm',
+        'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border hover:ring-2 hover:ring-secondary-200 transition-transform transform duration-200 overflow-hidden wrap-break-word gap-2 shadow-sm',
+        status !== 'idle' && 'bg-primary-50 scale-[1.02]',
         {
-          'border-lime-400 bg-lime-50': status === 'correct',
-          'border-vibrant-coral-400 bg-vibrant-coral-50':
-            status === 'incorrect',
+          'border-lime-400 bg-lime-100': status === 'correct',
+          'border-red-400 bg-red-100': status === 'incorrect',
         },
       )}
     >
       <span
         className={cn(
           'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
-          status !== 'idle'
-            ? 'bg-deep-space-blue-500 text-white'
-            : 'bg-gray-200 text-slate-600',
+          `${labelColors[index]} text-white`,
         )}
       >
         {String.fromCharCode(65 + index)}
       </span>
 
-      <span className="text-lg font-medium text-deep-space-blue-800">
-        {text}
-      </span>
+      <span className="text-lg font-medium">{text}</span>
 
       <span>
         {status === 'submitting' && (
           <Loader2 className="text-gray-500 animate-spin" />
         )}
         {status === 'correct' && <CheckIcon className="text-lime-600" />}
-        {status === 'incorrect' && <X className="text-vibrant-coral-600" />}
+        {status === 'incorrect' && <X className="text-red-600" />}
       </span>
     </button>
   );

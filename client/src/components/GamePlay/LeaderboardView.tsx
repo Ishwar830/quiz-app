@@ -14,7 +14,7 @@ import { useMember, useMemberSubmissions } from '@/stores/MemberStore';
 
 export default function LeaderBoardView() {
   return (
-    <div className="min-h-screen w-full text-text-900">
+    <div className="min-h-dvh w-full">
       <div className="max-w-3xl mx-auto p-4 sm:p-6 flex flex-col gap-6">
         <GameSummary />
         <Rankings />
@@ -36,10 +36,10 @@ function GameSummary() {
 
   return (
     <div className="overflow-hidden rounded-2xl bg-vibrant-coral-50 shadow-lg">
-      <div className="p-6 sm:p-8 grid gap-4">
+      <div className="p-6 sm:p-8 grid gap-4 bg-linear-to-br from-primary-200 to-primary-100 border">
         <div className="flex items-center gap-4 mb-4">
-          <div className="size-14 border-2 border-slate-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
-            <Trophy size={32} className="drop-shadow-md stroke-gray-100" />
+          <div className="size-14 border-2 border-gray-800 bg-white rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
+            <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
             <p className="text-xs font-bold uppercase tracking-wider mb-1">
@@ -60,21 +60,21 @@ function GameSummary() {
               label="Score"
               value={member.score}
               subtext="Points"
-              colorClass="bg-emerald-500/50 border-emerald-500/20"
+              colorClass="bg-emerald-500/50"
             />
             <StatCard
               icon={<Zap className="fill-amber-400 stroke-none" size={20} />}
               label="Accuracy"
               value={`${accuracy}%`}
               subtext="Correct"
-              colorClass="bg-amber-500/50 border-amber-500/20"
+              colorClass="bg-amber-500/50"
             />
             <StatCard
               icon={<Flame className="fill-rose-400 stroke-none" size={20} />}
               label="Best Streak"
               value={streak}
               subtext="In a row"
-              colorClass="bg-rose-500/50 border-rose-500/20"
+              colorClass="bg-rose-500/50"
             />
           </div>
         )}
@@ -86,9 +86,9 @@ function GameSummary() {
 function StatCard({ icon, label, value, subtext, colorClass }: any) {
   return (
     <div
-      className={`flex relative flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-600 ${colorClass} backdrop-blur-sm`}
+      className={`flex relative flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-600 ${colorClass} backdrop-blur-sm`}
     >
-      <div className="absolute p-1 rounded-md px-2 bg-slate-100 top-0 -translate-y-1/2 flex items-center gap-2 mb-2">
+      <div className="absolute p-1 rounded-md px-2 bg-white border top-0 -translate-y-1/2 flex items-center gap-2 mb-2">
         {icon}
         <span className="text-xs font-semibold uppercase tracking-wide">
           {label}
@@ -111,7 +111,7 @@ function Rankings() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <h2 className="text-2xl font-bold font-cascadia tracking-wider">
-        <span className='flex items-center gap-4'>
+        <span className="flex items-center gap-4">
           <Medal size={24} />
           Rankings
         </span>
@@ -119,7 +119,7 @@ function Rankings() {
       </h2>
 
       {topThree.length > 0 && (
-        <div className="grid border-b-2 border-slate-600 grid-cols-3 gap-2 sm:gap-4 items-end mb-8 pt-4">
+        <div className="grid border-b-4 border-accent-500 grid-cols-3 gap-2 sm:gap-4 items-end mb-8 pt-4">
           {topThree[1] && (
             <PodiumStep
               player={topThree[1]}
@@ -162,8 +162,8 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
   const member = useMember();
 
   return (
-    <div className="bg-pale-sky-50 rounded-xl border-2 border-slate-600 overflow-hidden shadow-lg">
-      <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-pale-sky-800/80 text-xs font-semibold text-slate-200 uppercase tracking-wider border-b border-slate-800">
+    <div className="overflow-hidden bg-linear-to-b from-secondary-50 to-secondary-100 rounded-xl border-2 border-gray-600 shadow-lg">
+      <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-secondary-300 text-xs font-semibold uppercase tracking-wider border-b border-gray-800">
         <div>Rank</div>
         <div>Player</div>
         <div className="text-center">Score</div>
@@ -177,18 +177,18 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
             <div
               key={r.id}
               className={`grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center transition-colors 
-                  ${isMe ? 'bg-slate-200/10 hover:bg-indigo-500/20' : 'hover:bg-pale-sky-300/40'}
+                  ${isMe ? 'bg-primary-50 hover:bg-primary-200' : 'hover:bg-secondary-200'}
                 `}
             >
               <div className="text-center font-bold">{r.rank}</div>
-              <div className="flex items-center gap-3">
+              <div className="grid grid-cols-[auto_1fr] items-center gap-3 overflow-hidden">
                 <Avatar name={r.name} />
                 <span
-                  className={`font-medium truncate ${isMe ? 'text-slate-800' : 'text-slate-800'}`}
+                  className='font-medium truncate'
                 >
                   {r.name}
                   {isMe && (
-                    <span className="text-xs ml-2 py-0.5 px-1.5 rounded bg-slate-600 text-slate-100">
+                    <span className="text-xs ml-2 py-0.5 px-1.5 rounded bg-primary-700 text-white">
                       YOU
                     </span>
                   )}
@@ -256,9 +256,7 @@ function PodiumStep({
         >
           {player.name}
         </div>
-        <div className={`font-bold ${accent}`}>
-          {player.score}
-        </div>
+        <div className={`font-bold ${accent}`}>{player.score}</div>
       </div>
 
       <div

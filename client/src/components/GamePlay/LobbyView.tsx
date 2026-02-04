@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Copy, Hash, TrophyIcon } from 'lucide-react';
+import { Check, Copy, Hash, Play, Trophy } from 'lucide-react';
 import { useMember } from '@/stores/MemberStore';
 import { useGameRoom } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
@@ -13,7 +13,7 @@ export default function LobbyView() {
   const { title, description, topics, totalQuestions } = room.quizMeta;
 
   return (
-    <div className="min-h-dvh max-w-2xl p-4 mx-auto">
+    <div className="min-h-dvh max-w-3xl p-4 mx-auto">
       <LobbyHeader
         title={title}
         description={description}
@@ -39,21 +39,23 @@ interface LobbyHeaderProps {
 
 function LobbyHeader({ title, description, hostname }: LobbyHeaderProps) {
   return (
-    <div className="bg-linear-to-r from-gray-800 to-gray-900 p-4 sm:px-8 sm:py-10 text-white rounded-lg">
-      <div className="grid gap-4 overflow-hidden">
-        <div className="flex items-center gap-3">
-          <div className="size-12 bg-gray-500 rounded-lg grid place-items-center">
-            <TrophyIcon size={32} stroke="white" />
+    <div className="overflow-hidden bg-linear-to-br from-primary-200 to-primary-100 border p-4 sm:px-8 sm:py-10 shadow-md text-deep-space-blue-800 rounded-lg">
+      <div className="grid gap-4">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="size-14 border-2 border-gray-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white">
+            <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
-            <p className="text-gray-400 text-sm font-medium mb-1">
-              Hosted by <span className="text-gray-100">{hostname}</span>
+            <p className="text-xs font-bold uppercase tracking-wider mb-1">
+              Hosted by <span className="text-sm">{hostname}</span>
             </p>
-            <h1 className="text-3xl font-bold tracking-wide">{title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              {title}
+            </h1>
           </div>
         </div>
 
-        <p className="text-gray-200 leading-relaxed">{description}</p>
+        <p className="leading-relaxed text-sm">{description}</p>
       </div>
     </div>
   );
@@ -77,18 +79,22 @@ function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
   return (
     <div className="grid gap-4 py-4">
       <div className="flex flex-col gap-4">
-        <ul className="flex gap-2">
-          {topics.map((topic, index) => (
-            <li
-              className="list-none border text-sm rounded-lg p-1 bg-gray-200"
-              key={index}
-            >
-              {topic}
-            </li>
-          ))}
-        </ul>
+        <div className="grid gap-2">
+          <h2 className="border-b-2 border-secondary-500 w-fit">Topics</h2>
+          <ul className="flex gap-2">
+            {topics.map((topic, index) => (
+              <li
+                className="list-none border text-sm rounded-lg p-1 px-2 bg-accent-100"
+                key={index}
+              >
+                {topic}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div>
-          <div className="rounded-sm border bg-gray-100 p-2 w-fit">
+          <div className="rounded-sm border shadow-sm p-2 w-fit">
             <div className="flex items-center gap-1">
               <Hash size={16} />
               <span>Questions</span>
@@ -99,24 +105,18 @@ function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
       </div>
 
       <div>
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-semibold text-deep-space-blue-700 uppercase tracking-wider mb-3">
           Room Code
         </h2>
         <button
           onClick={copyCode}
-          className="flex items-center gap-4 justify-center w-full bg-gray-900 rounded-xl px-6 py-4 hover:bg-gray-800"
+          className="flex items-center gap-4 justify-center w-full bg-secondary-400 rounded-xl px-6 py-4 hover:bg-secondary-500 border text-white"
           aria-label="Copy room code"
         >
-          <span className="text-3xl font-mono font-bold text-white tracking-widest text-center">
+          <span className="text-3xl font-cascadia font-bold tracking-widest text-center">
             {roomCode}
           </span>
-          <span className="text-white">
-            {copied ? (
-              <Check className="w-6 h-6 text-green-600" />
-            ) : (
-              <Copy className="w-6 h-6" />
-            )}
-          </span>
+          <span className="w-6 h-6">{copied ? <Check /> : <Copy />}</span>
         </button>
       </div>
     </div>
@@ -135,12 +135,13 @@ function LobbyFooter({ isHost }: { isHost: boolean }) {
       {isHost ? (
         <button
           onClick={handleStartQuiz}
-          className="w-full bg-gray-900 text-white font-bold py-5 rounded-xl text-lg"
+          className="w-full flex justify-center items-center gap-2 bg-primary-400 hover:bg-primary-500 hover:scale-[1.02] transition-transform duration-100 border shadow-md font-bold py-5 rounded-xl text-lg"
         >
+          <Play className="fill-white stroke-gray-50" />
           Start Quiz
         </button>
       ) : (
-        <p className="text-center text-lg text-gray-500 mt-4 animate-pulse">
+        <p className="text-center text-lg mt-4 animate-pulse">
           Waiting for host to start quiz...
         </p>
       )}

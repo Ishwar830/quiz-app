@@ -111,14 +111,6 @@ async function handleSubmission(
 
   const submission = await SubmissionManager.submitAnswer(submissionPayload);
 
-  const p = new Promise((res) =>
-    setTimeout(() => {
-      res();
-    }, 2000),
-  );
-
-  await p;
-
   callback({ success: true, submission });
 }
 
