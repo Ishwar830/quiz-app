@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedQuizzesRouteImport } from './routes/_authenticated/quizzes'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedRoomsRoomIdRouteImport } from './routes/_authenticated/rooms.$roomId'
+import { Route as AuthenticatedQuizzesQuizIdRouteImport } from './routes/_authenticated/quizzes_.$quizId'
 import { Route as AuthenticatedQuizbuilderChar123QuizIdChar125RouteImport } from './routes/_authenticated/quizbuilder.{-$quizId}'
 
 const SignupRoute = SignupRouteImport.update({
@@ -53,6 +54,12 @@ const AuthenticatedRoomsRoomIdRoute =
     path: '/rooms/$roomId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedQuizzesQuizIdRoute =
+  AuthenticatedQuizzesQuizIdRouteImport.update({
+    id: '/quizzes_/$quizId',
+    path: '/quizzes/$quizId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedQuizbuilderChar123QuizIdChar125Route =
   AuthenticatedQuizbuilderChar123QuizIdChar125RouteImport.update({
     id: '/quizbuilder/{-$quizId}',
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/quizzes': typeof AuthenticatedQuizzesRoute
   '/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
+  '/quizzes/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
 }
 export interface FileRoutesByTo {
@@ -76,6 +84,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/quizzes': typeof AuthenticatedQuizzesRoute
   '/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
+  '/quizzes/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
 }
 export interface FileRoutesById {
@@ -87,6 +96,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/quizzes': typeof AuthenticatedQuizzesRoute
   '/_authenticated/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
+  '/_authenticated/quizzes_/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/_authenticated/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
 }
 export interface FileRouteTypes {
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/quizzes'
     | '/quizbuilder/{-$quizId}'
+    | '/quizzes/$quizId'
     | '/rooms/$roomId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/quizzes'
     | '/quizbuilder/{-$quizId}'
+    | '/quizzes/$quizId'
     | '/rooms/$roomId'
   id:
     | '__root__'
@@ -117,6 +129,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/quizzes'
     | '/_authenticated/quizbuilder/{-$quizId}'
+    | '/_authenticated/quizzes_/$quizId'
     | '/_authenticated/rooms/$roomId'
   fileRoutesById: FileRoutesById
 }
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRoomsRoomIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/quizzes_/$quizId': {
+      id: '/_authenticated/quizzes_/$quizId'
+      path: '/quizzes/$quizId'
+      fullPath: '/quizzes/$quizId'
+      preLoaderRoute: typeof AuthenticatedQuizzesQuizIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/quizbuilder/{-$quizId}': {
       id: '/_authenticated/quizbuilder/{-$quizId}'
       path: '/quizbuilder/{-$quizId}'
@@ -192,6 +212,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedQuizzesRoute: typeof AuthenticatedQuizzesRoute
   AuthenticatedQuizbuilderChar123QuizIdChar125Route: typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
+  AuthenticatedQuizzesQuizIdRoute: typeof AuthenticatedQuizzesQuizIdRoute
   AuthenticatedRoomsRoomIdRoute: typeof AuthenticatedRoomsRoomIdRoute
 }
 
@@ -200,6 +221,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedQuizzesRoute: AuthenticatedQuizzesRoute,
   AuthenticatedQuizbuilderChar123QuizIdChar125Route:
     AuthenticatedQuizbuilderChar123QuizIdChar125Route,
+  AuthenticatedQuizzesQuizIdRoute: AuthenticatedQuizzesQuizIdRoute,
   AuthenticatedRoomsRoomIdRoute: AuthenticatedRoomsRoomIdRoute,
 }
 

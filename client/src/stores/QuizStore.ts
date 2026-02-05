@@ -23,6 +23,8 @@ export interface QuizState {
   description: string;
   topics: Array<string>;
   questions: Array<Question>;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface QuizActions {

@@ -54,10 +54,12 @@ export function QuizCard({ quizInfo }: QuizCardProps) {
         </CardContent>
       </div>
       <CardFooter className="grid grid-cols-2 p-0 min-h-12 items-stretch font-semibold">
-        <button className="flex items-center justify-center gap-2 bg-secondary-200 hover:cursor-pointer hover:bg-secondary-300">
-          <Eye size={20} />
-          Preview
-        </button>
+        <Link to="/quizzes/$quizId" params={{ quizId: quizInfo.id }}>
+          <button className="size-full flex items-center justify-center gap-2 bg-secondary-200 hover:cursor-pointer hover:bg-secondary-300">
+            <Eye size={20} />
+            Preview
+          </button>
+        </Link>
         <StartQuizButton quizId={quizInfo.id} />
       </CardFooter>
     </Card>

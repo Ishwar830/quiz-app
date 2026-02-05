@@ -51,3 +51,12 @@ export function calulateTimeLeft(endTime: number) {
   const timeLeft = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
   return timeLeft;
 }
+
+export async function fetchQuiz(quizId: string) {
+  const res = await fetch(`/api/quizzes/${quizId}`);
+  if (!res.ok) {
+    throw new Error('Failed to get quiz');
+  }
+  const { data } = await res.json();
+  return data as QuizState;
+}
