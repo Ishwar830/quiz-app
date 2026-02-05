@@ -80,7 +80,7 @@ function SaveQuizButton() {
 
   return (
     <Button
-      className="bg-primary-400 text-text-800 transition-transform hover:scale-105 hover:bg-primary-500 shadow-sm"
+      className="bg-primary-400 text-black transition-transform hover:scale-105 hover:bg-primary-500 shadow-sm"
       onClick={saveQuiz}
     >
       Save
@@ -188,7 +188,7 @@ function QuestionContainer() {
           </span>
         </div>
         <Button
-          className="bg-secondary-400 hover:bg-secondary-500 shadow-md border"
+          className="bg-secondary-300 hover:bg-secondary-400 shadow-md border"
           onClick={() => {
             if (questionsIds.length >= 20) {
               toast.error('Maximum Question limit reached', {

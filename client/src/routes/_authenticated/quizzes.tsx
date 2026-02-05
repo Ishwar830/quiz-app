@@ -43,7 +43,7 @@ function SearchBar() {
 
 function QuizContainer({ quizzes }: { quizzes: Array<QuizMeta> }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
       {quizzes.map((quiz) => (
         <QuizCard key={quiz.id} quizInfo={quiz} />
       ))}
