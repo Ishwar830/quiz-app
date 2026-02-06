@@ -17,17 +17,15 @@ export interface Question {
   correctChoiceId: string;
 }
 
-export interface QuizState {
+export interface QuizFormState {
   id: string;
   title: string;
   description: string;
   topics: Array<string>;
   questions: Array<Question>;
-  createdAt: number;
-  updatedAt: number;
 }
 
-interface QuizActions {
+interface QuizFormActions {
   actions: {
     addQuestion: (question: Question) => void;
     updateQuestionText: (questionId: string, text: string) => void;
@@ -42,8 +40,8 @@ interface QuizActions {
   };
 }
 
-export const createQuizStore = (initialState: QuizState) => {
-  return createStore<QuizState & QuizActions>()(
+export const createQuizStore = (initialState: QuizFormState) => {
+  return createStore<QuizFormState & QuizFormActions>()(
     immer((set) => ({
       ...initialState,
       actions: {
@@ -109,13 +107,13 @@ type QuizStore = ReturnType<typeof createQuizStore>;
 
 export const QuizStoreContext = createContext<QuizStore | null>(null);
 
-function useQuizStore<T>(selector: (state: QuizState & QuizActions) => T): T {
+function useQuizStore<T>(selector: (state: QuizFormState & QuizFormActions) => T): T {
   const ctx = useContext(QuizStoreContext);
   if (!ctx) throw new Error('Invalid use of useGameStore hook');
   return useStore(ctx, selector);
 }
 
-export const useQuizActions = () => useQuizStore((s) => s.actions);
+export const useQuizFormActions = () => useQuizStore((s) => s.actions);
 export const useQuizTopics = () => useQuizStore((s) => s.topics);
 export const useQuizTitle = () => useQuizStore((s) => s.title);
 export const useQuizDescription = () => useQuizStore((s) => s.description);

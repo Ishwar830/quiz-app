@@ -1,14 +1,6 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { ToastContainer } from 'react-toastify';
-
-interface User {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  email: string;
-  name: string;
-  image?: string | null | undefined;
-}
+import type { User } from 'better-auth';
 
 interface RouterContext {
   user: User | null;

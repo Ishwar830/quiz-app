@@ -44,16 +44,13 @@ export function JoinRoomForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">
-        Join an Existing Room
-      </h2>
-
+    <div className="bg-white">
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1">
           <Field>
             <FieldLabel htmlFor="roomCode">Room Code</FieldLabel>
             <Input
+              className="text-sm"
               onChange={(e) => setRoomCode(e.target.value)}
               id="roomCode"
               placeholder="Enter Room Code to join..."
@@ -87,7 +84,7 @@ export function JoinRoomForm() {
           </RadioGroup>
         </div>
         <FieldError errors={errors} />
-        <button className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors mt-2">
+        <button className="w-full bg-primary-400 hover:bg-primary-500  text-black font-medium py-2.5 px-4 rounded-lg transition-colors mt-2">
           Join Room
         </button>
       </form>

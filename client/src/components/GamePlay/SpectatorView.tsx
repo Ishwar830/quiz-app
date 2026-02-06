@@ -76,7 +76,7 @@ function SubmissionsVertical({
               <div
                 className={`absolute bottom-0 z-10 mb-2 left-1/2 -translate-x-1/2`}
               >
-                <span className="rounded-full bg-secondary-100 shadow-sm font-semibold size-10 grid place-items-center">
+                <span className="rounded-full bg-accent-200 shadow-sm font-semibold size-10 grid place-items-center">
                   {count}
                 </span>
               </div>

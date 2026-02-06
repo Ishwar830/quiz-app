@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Check, Copy, Hash, Play, Trophy } from 'lucide-react';
+import {
+  Check,
+  CircleQuestionMarkIcon,
+  Copy,
+  Play,
+  Trophy,
+} from 'lucide-react';
 import { useMember } from '@/stores/MemberStore';
 import { useGameRoom } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
@@ -94,12 +100,11 @@ function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
         </div>
 
         <div>
-          <div className="rounded-sm border shadow-sm p-2 w-fit">
-            <div className="flex items-center gap-1">
-              <Hash size={16} />
-              <span>Questions</span>
+          <div className="rounded-sm border bg-primary-50 p-2 w-fit">
+            <div className="flex items-center gap-2">
+              <CircleQuestionMarkIcon size={16} />
+              <span>{totalQuestions} Questions</span>
             </div>
-            <p className="text-center text-2xl">{totalQuestions}</p>
           </div>
         </div>
       </div>

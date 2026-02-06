@@ -5,20 +5,20 @@ import { Field, FieldLabel } from './ui/field';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
-import type { AnswerChoice, QuizState } from '@/stores/QuizStore';
+import type { AnswerChoice, QuizFormState } from '@/stores/QuizFormStore';
 import {
   QuizStoreContext,
   createQuizStore,
-  useQuizActions,
   useQuizDescription,
+  useQuizFormActions,
   useQuizQuestionById,
   useQuizQuestionIds,
   useQuizTitle,
   useQuizTopics,
-} from '@/stores/QuizStore';
-import { cn, generateMockQuestion } from '@/lib/utils';
+} from '@/stores/QuizFormStore';
+import { cn, generateMockFormQuestion } from '@/lib/utils';
 
-export function QuizBuilder({ quiz }: { quiz: QuizState }) {
+export function QuizBuilder({ quiz }: { quiz: QuizFormState }) {
   const [store] = useState(createQuizStore(quiz));
 
   return (
@@ -90,7 +90,7 @@ function SaveQuizButton() {
 
 function QuizTitle() {
   const title = useQuizTitle();
-  const { updateTitle } = useQuizActions();
+  const { updateTitle } = useQuizFormActions();
 
   return (
     <Field>
@@ -109,7 +109,7 @@ function QuizTitle() {
 
 function QuizDescription() {
   const description = useQuizDescription();
-  const { updateDescription } = useQuizActions();
+  const { updateDescription } = useQuizFormActions();
 
   return (
     <Field>
@@ -128,7 +128,7 @@ function QuizDescription() {
 
 function QuizTopic() {
   const topics = useQuizTopics();
-  const { addTopic, removeTopic } = useQuizActions();
+  const { addTopic, removeTopic } = useQuizFormActions();
   const [topicToAdd, setTopicToAdd] = useState('');
   return (
     <>
@@ -177,7 +177,7 @@ function QuizTopic() {
 
 function QuestionContainer() {
   const questionsIds = useQuizQuestionIds();
-  const { addQuestion } = useQuizActions();
+  const { addQuestion } = useQuizFormActions();
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -196,7 +196,7 @@ function QuestionContainer() {
               });
               return;
             }
-            addQuestion(generateMockQuestion());
+            addQuestion(generateMockFormQuestion());
           }}
         >
           Add Question
@@ -211,10 +211,10 @@ function QuestionContainer() {
   );
 }
 
-function Question({ questionId}: { questionId: string; idx: number }) {
+function Question({ questionId }: { questionId: string; idx: number }) {
   const question = useQuizQuestionById(questionId)!;
   const { updateQuestionText, updateQuestionTimeLimit, removeQuestion } =
-    useQuizActions();
+    useQuizFormActions();
   return (
     <div className="grid gap-2">
       <div className="flex items-center gap-4 border-b-2 pb-2 border-secondary-300 w-fit">
@@ -223,7 +223,7 @@ function Question({ questionId}: { questionId: string; idx: number }) {
           className="bg-red-400 rounded-full size-6 grid place-items-center hover:cursor-pointer"
           onClick={() => removeQuestion(questionId)}
         >
-          <X size={20}/>
+          <X size={20} />
         </button>
       </div>
       <div className="flex flex-row gap-4">
@@ -288,7 +288,7 @@ function Choice({
   choice: AnswerChoice;
   correctChoiceId: string;
 }) {
-  const { updateChoice, updateCorrectChoice } = useQuizActions();
+  const { updateChoice, updateCorrectChoice } = useQuizFormActions();
 
   const isCorrectChoice = choice.id == correctChoiceId;
 

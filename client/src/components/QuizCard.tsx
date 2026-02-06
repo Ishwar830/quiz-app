@@ -35,7 +35,7 @@ export function QuizCard({ quizInfo }: QuizCardProps) {
   const formattedDate = formatDate(quizInfo.createdAt);
 
   return (
-    <Card className="relative w-full justify-between max-w-100 p-0 overflow-hidden shadow-md hover:scale-102 transition-transform duration-300">
+    <Card className="relative w-full justify-between max-w-100 p-0 overflow-hidden hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300">
       <div className="pt-4 flex-1 flex flex-col h-full justify-between">
         <QuizConfigs quizId={quizInfo.id} />
         <CardHeader>
@@ -117,7 +117,7 @@ function QuizConfigs({ quizId }: { quizId: string }) {
             <MoreVertical size={20} />
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-fit p-2 px-3">
+        <PopoverContent className="w-fit p-2 px-3 font-sora">
           <div className="grid gap-2">
             <button>
               <Link

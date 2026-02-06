@@ -68,7 +68,7 @@ function QuizViewHeader() {
   const questionInfo = useQuestionInfo();
 
   return (
-    <div className="p-4 bg-linear-to-br from-secondary-100 to-secondary-50 rounded-xl border grid gap-4">
+    <div className="p-4 shadow-sm rounded-xl border grid gap-4">
       <div className="flex justify-between items-center mx-2">
         <h1>{quizMeta.title}</h1>
         <p className="flex gap-2 items-center">

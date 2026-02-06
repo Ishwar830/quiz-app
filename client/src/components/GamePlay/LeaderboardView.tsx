@@ -7,6 +7,7 @@ import {
   Trophy,
   Zap,
 } from 'lucide-react';
+import UserAvatar from '../UserAvatar';
 import type { Submission } from '@/stores/MemberStore';
 import type { RankInfo } from '@/stores/GameStore';
 import { useGameRoom, useRankings } from '@/stores/GameStore';
@@ -182,10 +183,8 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
             >
               <div className="text-center font-bold">{r.rank}</div>
               <div className="grid grid-cols-[auto_1fr] items-center gap-3 overflow-hidden">
-                <Avatar name={r.name} />
-                <span
-                  className='font-medium truncate'
-                >
+                <UserAvatar name={r.name} />
+                <span className="font-medium truncate">
                   {r.name}
                   {isMe && (
                     <span className="text-xs ml-2 py-0.5 px-1.5 rounded bg-primary-700 text-white">
@@ -236,7 +235,7 @@ function PodiumStep({
         <div
           className={`rounded-full p-1 ${isWinner ? 'bg-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.4)]' : 'bg-slate-700'}`}
         >
-          <Avatar name={player.name} size={isWinner ? 'lg' : 'md'} />
+          <UserAvatar name={player.name} size={isWinner ? 'lg' : 'sm'} />
         </div>
         {isWinner && (
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce">
@@ -266,49 +265,6 @@ function PodiumStep({
           className={`absolute inset-0 bg-linear-to-b from-white/10 to-transparent opacity-50`}
         ></div>
       </div>
-    </div>
-  );
-}
-
-function Avatar({
-  name,
-  size = 'sm',
-}: {
-  name: string;
-  size?: 'sm' | 'md' | 'lg';
-}) {
-  const initials = name.slice(0, 2).toUpperCase();
-
-  const colors = [
-    'bg-red-500',
-    'bg-orange-500',
-    'bg-amber-500',
-    'bg-green-500',
-    'bg-emerald-500',
-    'bg-teal-500',
-    'bg-cyan-500',
-    'bg-blue-500',
-    'bg-indigo-500',
-    'bg-violet-500',
-    'bg-purple-500',
-    'bg-fuchsia-500',
-    'bg-pink-500',
-    'bg-rose-500',
-  ];
-  const colorIndex = name.charCodeAt(0) % colors.length;
-  const bgColor = colors[colorIndex];
-
-  const sizeClasses = {
-    sm: 'size-8 text-xs',
-    md: 'size-12 text-base',
-    lg: 'size-16 text-xl',
-  };
-
-  return (
-    <div
-      className={`${sizeClasses[size]} ${bgColor} rounded-full flex items-center justify-center text-white font-bold shadow-inner ring-2 ring-white/10`}
-    >
-      {initials}
     </div>
   );
 }

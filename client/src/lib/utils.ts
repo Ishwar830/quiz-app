@@ -2,13 +2,18 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { nanoid } from 'nanoid';
 import type { ClassValue } from 'clsx';
-import type { Question, QuizState } from '@/stores/QuizStore';
+import type { Question, QuizFormState } from '@/stores/QuizFormStore';
+
+export interface Quiz extends QuizFormState {
+  createdAt: number | Date;
+  updatedAt: number | Date;
+}
 
 export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(timestamp: number) {
+export function formatDate(timestamp: number | Date) {
   const formattedDate = new Date(timestamp).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -18,7 +23,7 @@ export function formatDate(timestamp: number) {
   return formattedDate;
 }
 
-export function generateMockQuestion() {
+export function generateMockFormQuestion() {
   const choices = Array.from({ length: 4 }).map((_, idx) => ({
     id: nanoid(),
     text: `Choice ${idx + 1}`,
@@ -35,8 +40,8 @@ export function generateMockQuestion() {
   return question;
 }
 
-export function generateMockQuizData() {
-  const quiz: QuizState = {
+export function generateMockQuizFormData() {
+  const quiz: QuizFormState = {
     id: nanoid(),
     title: '',
     topics: [],
@@ -58,5 +63,5 @@ export async function fetchQuiz(quizId: string) {
     throw new Error('Failed to get quiz');
   }
   const { data } = await res.json();
-  return data as QuizState;
+  return data as Quiz;
 }

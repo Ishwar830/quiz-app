@@ -12,10 +12,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from './ui/accordion';
-import type { AnswerChoice, Question, QuizState } from '@/stores/QuizStore';
+import type { AnswerChoice, Question } from '@/stores/QuizFormStore';
+import type { Quiz } from '@/lib/utils';
 import { cn, formatDate } from '@/lib/utils';
 
-export function QuizPreview({ quiz }: { quiz: QuizState }) {
+export function QuizPreview({ quiz }: { quiz: Quiz }) {
   return (
     <div className="p-4 space-y-6">
       <PreviewHeader quiz={quiz} />
@@ -24,7 +25,7 @@ export function QuizPreview({ quiz }: { quiz: QuizState }) {
   );
 }
 
-function PreviewHeader({ quiz }: { quiz: QuizState }) {
+function PreviewHeader({ quiz }: { quiz: Quiz }) {
   return (
     <Card>
       <CardHeader>
@@ -104,7 +105,7 @@ function Question({ question }: { question: Question }) {
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <ul className='ml-8 p-2 grid gap-2'>
+        <ul className="ml-8 p-2 grid gap-2">
           {question.choices.map((choice) => (
             <Choice
               key={choice.id}
@@ -126,7 +127,12 @@ function Choice({
   choice: AnswerChoice;
 }) {
   return (
-    <li className={cn('bg-gray-100 p-1 rounded-lg px-2', isCorrect && 'bg-lime-300')}>
+    <li
+      className={cn(
+        'bg-gray-100 p-1 rounded-lg px-2',
+        isCorrect && 'bg-lime-300',
+      )}
+    >
       {choice.text}
     </li>
   );
