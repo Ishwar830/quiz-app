@@ -1,4 +1,11 @@
-import { ArrowRight, Library, PlaySquare, Sparkles, SquarePlus, Users } from 'lucide-react';
+import {
+  ArrowRight,
+  Library,
+  PlaySquare,
+  Sparkles,
+  SquarePlus,
+  Users,
+} from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
@@ -10,6 +17,7 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { JoinRoomForm } from './JoinRoomForm';
+import { AiRoomForm } from './AiRoomForm';
 import type { User } from 'better-auth';
 
 export function Dashboard({ user }: { user: User }) {
@@ -55,9 +63,9 @@ function DashboardContent() {
       <div className="grid gap-4">
         <CreateRoomCard />
         <JoinRoomCard />
-        <AIRoomCard/>
+        <AIRoomCard />
         <BrowseQuizCard />
-        <BuildQuizCard/>
+        <BuildQuizCard />
       </div>
     </main>
   );
@@ -72,7 +80,7 @@ function CreateRoomCard() {
           <CardTitle className="flex gap-2 items-center">
             <span>Create Room</span>
             <span className="group-hover:translate-x-1 duration-300">
-              <ArrowRight size={16} className='stroke-green-600' />
+              <ArrowRight size={16} className="stroke-green-600" />
             </span>
           </CardTitle>
           <CardDescription>Host a game</CardDescription>
@@ -92,7 +100,7 @@ function JoinRoomCard() {
             <CardTitle className="flex gap-2 items-center">
               <span>Join Room</span>
               <span className="group-hover:translate-x-1 duration-300">
-                <ArrowRight size={16} className='stroke-blue-600' />
+                <ArrowRight size={16} className="stroke-blue-600" />
               </span>
             </CardTitle>
             <CardDescription className="text-start">
@@ -125,7 +133,7 @@ function BrowseQuizCard() {
           <CardTitle className="flex gap-2 items-center">
             <span>My Quiz Collection</span>
             <span className="group-hover:translate-x-1 duration-300">
-              <ArrowRight size={16} className='stroke-secondary-600' />
+              <ArrowRight size={16} className="stroke-secondary-600" />
             </span>
           </CardTitle>
           <CardDescription>Browse your quizzes</CardDescription>
@@ -135,7 +143,7 @@ function BrowseQuizCard() {
   );
 }
 
-function BuildQuizCard(){
+function BuildQuizCard() {
   return (
     <Link to="/quizbuilder/{-$quizId}">
       <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
@@ -152,9 +160,9 @@ function BuildQuizCard(){
       </Card>
     </Link>
   );
-} 
+}
 
-function AIRoomCard(){
+function AIRoomCard() {
   return (
     <Dialog>
       <DialogTrigger>
@@ -175,14 +183,12 @@ function AIRoomCard(){
       </DialogTrigger>
       <DialogContent className="font-sora">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            AI Quiz
-          </DialogTitle>
+          <DialogTitle className="text-lg font-semibold">AI Quiz</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             Enter topics to generate quiz
           </DialogDescription>
         </DialogHeader>
-        {"Todo"}
+        <AiRoomForm />
       </DialogContent>
     </Dialog>
   );

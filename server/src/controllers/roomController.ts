@@ -7,6 +7,7 @@ import type { RoomMember } from "../services/types.d.ts";
 import { GameStateManager } from "../services/GameStateManager.ts";
 import { SubmissionManager } from "../services/SubmissionManager.ts";
 import { MemberManager } from "../services/MemberManager.ts";
+import getAIGeneratedQuiz from "../services/genAI.ts";
 
 export const createRoomHandler: RequestHandler = async (req, res) => {
   const user = req.user!;
@@ -16,6 +17,8 @@ export const createRoomHandler: RequestHandler = async (req, res) => {
     name: user.name,
     role: "SPECTATOR",
   };
+
+  console.log("room creation");
 
   const quiz = await DBQueryHandler.getQuizById(quizId);
 
@@ -68,7 +71,26 @@ export const getRoomHandler: RequestHandler = async (req, res) => {
     },
   };
 
-  return res.json(
-    ApiResponse.success(resData),
+  return res.json(ApiResponse.success(resData));
+};
+
+export const createAIRoomHandler: RequestHandler = async (req, res) => {
+  const user = req.user!;
+  const { role, topics, questionCount, timeLimitSeconds } = req.body;
+
+  const host = {
+    id: user.id,
+    name: user.name,
+    role,
+  };
+
+  const quiz = await getAIGeneratedQuiz(
+    topics,
+    questionCount,
+    timeLimitSeconds,
   );
+  await QuizManager.storeQuiz(quiz);
+  const {questions, ...quizMeta} = quiz;
+  const room = await RoomManager.createRoom(host, quizMeta);
+  res.json(ApiResponse.success(room));
 };

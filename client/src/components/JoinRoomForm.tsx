@@ -23,7 +23,7 @@ export function JoinRoomForm() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`/api/rooms/${roomCode}?role=${role}`, {
+      const res = await fetch(`/api/rooms/join/${roomCode}?role=${role}`, {
         method: 'POST',
       });
 

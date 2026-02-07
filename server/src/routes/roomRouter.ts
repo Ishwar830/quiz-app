@@ -7,5 +7,13 @@ export const roomRouter = Router();
 roomRouter.use(authMiddleware);
 
 roomRouter.post("/", RoomController.createRoomHandler);
-roomRouter.post("/:roomId", RoomController.joinRoomHandler);
+roomRouter.post("/join/:roomId", RoomController.joinRoomHandler);
 roomRouter.get("/:roomId", RoomController.getRoomHandler);
+roomRouter.post(
+  "/ai",
+  (req, res, next) => {
+    console.log("AI request");
+    next();
+  },
+  RoomController.createAIRoomHandler,
+);
