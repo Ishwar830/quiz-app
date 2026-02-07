@@ -13,13 +13,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Cascadia Mono';
-  src: url('./assets/fonts/CascadiaMono.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 body {
   @apply m-0;
@@ -270,7 +263,6 @@ code {
   --color-accent-950: hsl(var(--accent-950));
 
   --font-sora: 'Sora', sans-serif;
-  --font-cascadia: 'Cascadia Mono', 'Courier New', monospace;
 }
 
 @layer base {

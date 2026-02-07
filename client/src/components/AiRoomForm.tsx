@@ -1,15 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Loader2, PlusCircle, X } from 'lucide-react';
+import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-  FieldTitle,
-} from './ui/field';
+import { Field, FieldError, FieldLabel, FieldSet } from './ui/field';
 import { Input } from './ui/input';
 import type { ValidationError } from './LoginCard';
 import type { FormEvent } from 'react';
@@ -77,7 +71,7 @@ export function AiRoomForm() {
   return (
     <div className="bg-white">
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-6">
           <div className="flex gap-2">
             <Field>
               <FieldLabel htmlFor="questionCount">
@@ -116,31 +110,23 @@ export function AiRoomForm() {
             addTopic={addTopic}
             removeTopic={removeTopic}
           />
-          <RadioGroup
-            defaultValue="PLAYER"
-            className="max-w-sm"
-            onValueChange={(val) => setRole(val)}
-          >
-            <p className="text-sm mt-4">Role</p>
-            <FieldLabel htmlFor="player-role">
-              <Field orientation="horizontal">
-                <FieldContent>
-                  <FieldTitle>Player</FieldTitle>
-                  <FieldDescription>Participate in quiz.</FieldDescription>
-                </FieldContent>
+          <FieldSet className="flex flex-row items-baseline">
+            <p className="text-sm font-semibold">Role</p>
+            <RadioGroup
+              defaultValue="PLAYER"
+              className="flex gap-6 ml-4"
+              onValueChange={(val) => setRole(val)}
+            >
+              <div className="flex gap-2 items-center">
+                <Label htmlFor="player-role">Player</Label>
                 <RadioGroupItem value="PLAYER" id="player-role" />
-              </Field>
-            </FieldLabel>
-            <FieldLabel htmlFor="spectator-role">
-              <Field orientation="horizontal">
-                <FieldContent>
-                  <FieldTitle>Spectator</FieldTitle>
-                  <FieldDescription>Spectate other players</FieldDescription>
-                </FieldContent>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Label htmlFor="spectator-role">Spectator</Label>
                 <RadioGroupItem value="SPECTATOR" id="spectator-role" />
-              </Field>
-            </FieldLabel>
-          </RadioGroup>
+              </div>
+            </RadioGroup>
+          </FieldSet>
         </div>
         <FieldError errors={errors} />
         <button
@@ -172,7 +158,7 @@ function QuizTopicsField({
 }: QuizTopicsFieldProps) {
   const [topicToAdd, setTopicToAdd] = useState('');
   return (
-    <>
+    <div className="space-y-2.5">
       <div className="flex gap-2 items-center">
         <FieldLabel htmlFor="topic">Topic</FieldLabel>
         <Input
@@ -205,6 +191,7 @@ function QuizTopicsField({
           >
             <span>{topic}</span>
             <button
+              type="button"
               className="rounded-full p-1 bg-rose-300 hover:cursor-pointer"
               onClick={() => removeTopic(idx)}
             >
@@ -213,6 +200,6 @@ function QuizTopicsField({
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

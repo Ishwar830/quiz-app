@@ -118,7 +118,7 @@ function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
           className="flex items-center gap-4 justify-center w-full bg-secondary-400 rounded-xl px-6 py-4 hover:bg-secondary-500 border text-white"
           aria-label="Copy room code"
         >
-          <span className="text-3xl font-cascadia font-bold tracking-widest text-center">
+          <span className="text-3xl font-bold tracking-widest text-center">
             {roomCode}
           </span>
           <span className="w-6 h-6">{copied ? <Check /> : <Copy />}</span>

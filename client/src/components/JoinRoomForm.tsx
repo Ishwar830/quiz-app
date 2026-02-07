@@ -1,13 +1,12 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
+import { Label } from '@radix-ui/react-label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import {
   Field,
-  FieldContent,
-  FieldDescription,
   FieldError,
   FieldLabel,
-  FieldTitle,
+  FieldSet,
 } from './ui/field';
 import { Input } from './ui/input';
 import type { ValidationError } from './LoginCard';
@@ -46,7 +45,7 @@ export function JoinRoomForm() {
   return (
     <div className="bg-white">
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-6">
           <Field>
             <FieldLabel htmlFor="roomCode">Room Code</FieldLabel>
             <Input
@@ -57,31 +56,23 @@ export function JoinRoomForm() {
               required
             />
           </Field>
-          <RadioGroup
-            defaultValue="PLAYER"
-            className="max-w-sm"
-            onValueChange={(val) => setRole(val)}
-          >
-            <p className="text-sm mt-4">Role</p>
-            <FieldLabel htmlFor="player-role">
-              <Field orientation="horizontal">
-                <FieldContent>
-                  <FieldTitle>Player</FieldTitle>
-                  <FieldDescription>Participate in quiz.</FieldDescription>
-                </FieldContent>
+          <FieldSet className="flex flex-row items-baseline">
+            <p className="text-sm font-semibold">Role</p>
+            <RadioGroup
+              defaultValue="PLAYER"
+              className="flex gap-6 ml-4"
+              onValueChange={(val) => setRole(val)}
+            >
+              <div className="flex gap-2 items-center">
+                <Label htmlFor="player-role">Player</Label>
                 <RadioGroupItem value="PLAYER" id="player-role" />
-              </Field>
-            </FieldLabel>
-            <FieldLabel htmlFor="spectator-role">
-              <Field orientation="horizontal">
-                <FieldContent>
-                  <FieldTitle>Spectator</FieldTitle>
-                  <FieldDescription>Spectate other players</FieldDescription>
-                </FieldContent>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Label htmlFor="spectator-role">Spectator</Label>
                 <RadioGroupItem value="SPECTATOR" id="spectator-role" />
-              </Field>
-            </FieldLabel>
-          </RadioGroup>
+              </div>
+            </RadioGroup>
+          </FieldSet>
         </div>
         <FieldError errors={errors} />
         <button className="w-full bg-primary-400 hover:bg-primary-500  text-black font-medium py-2.5 px-4 rounded-lg transition-colors mt-2">

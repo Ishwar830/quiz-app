@@ -111,7 +111,7 @@ function Rankings() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <h2 className="text-2xl font-bold font-cascadia tracking-wider">
+      <h2 className="text-2xl font-bold tracking-wider">
         <span className="flex items-center gap-4">
           <Medal size={24} />
           Rankings

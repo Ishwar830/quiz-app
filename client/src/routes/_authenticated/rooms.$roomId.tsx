@@ -31,7 +31,7 @@ function RouteComponent() {
   const [memberStore] = useState(() => createMemberStore(memberState));
 
   return (
-    <SocketProvider user={user}>
+    <SocketProvider user={user!}>
       <GameStoreContext.Provider value={gameStore}>
         <MemberStoreContext.Provider value={memberStore}>
           <GameLayout />

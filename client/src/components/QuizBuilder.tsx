@@ -25,7 +25,7 @@ export function QuizBuilder({ quiz }: { quiz: QuizFormState }) {
     <QuizStoreContext.Provider value={store}>
       <div className="p-4 grid gap-2 max-w-3xl mx-auto">
         <div className="flex justify-between mb-4 items-center">
-          <p className="text-2xl bg-secondary-200 rounded-xs rounded-br-2xl rounded-tl-2xl p-1 px-2 font-cascadia tracking-wider">
+          <p className="text-2xl font-semibold text-secondary-500">
             Quiz Builder
           </p>
           <SaveQuizButton />
@@ -80,7 +80,7 @@ function SaveQuizButton() {
 
   return (
     <Button
-      className="bg-primary-400 text-black transition-transform hover:scale-105 hover:bg-primary-500 shadow-sm"
+      className="bg-primary-400 text-text-800 transition-transform duration-200 hover:scale-105 hover:bg-primary-500 shadow-sm"
       onClick={saveQuiz}
     >
       Save
@@ -150,7 +150,7 @@ function QuizTopic() {
               setTopicToAdd('');
             }
           }}
-          className="grid place-items-center size-10 rounded-full hover:bg-accent-50"
+          className="grid place-items-center size-10 rounded-full hover:bg-accent-100 hover:cursor-pointer"
         >
           <PlusCircle />
         </button>
@@ -188,7 +188,7 @@ function QuestionContainer() {
           </span>
         </div>
         <Button
-          className="bg-secondary-300 hover:bg-secondary-400 shadow-md border"
+          className="border-secondary-200 border-2 text-secondary-400 bg-white hover:bg-secondary-400 hover:text-white"
           onClick={() => {
             if (questionsIds.length >= 20) {
               toast.error('Maximum Question limit reached', {

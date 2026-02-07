@@ -8,7 +8,7 @@ export default function CountDownView() {
   return (
     <div className="min-h-dvh max-w-3xl mx-auto px-6 py-12 flex flex-col justify-between items-center gap-6">
       <header className="flex flex-col items-center">
-        <h1 className="text-2xl font-cascadia tracking-wider font-black truncate text-center uppercase">
+        <h1 className="text-2xl tracking-wider font-black truncate text-center uppercase">
           {title}
         </h1>
         <div className="h-1 w-12 bg-primary-500 mt-2" />

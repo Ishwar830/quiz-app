@@ -22,7 +22,7 @@ import type { User } from 'better-auth';
 
 export function Dashboard({ user }: { user: User }) {
   return (
-    <div className="p-2">
+    <div className="p-4 w-full max-w-3xl mx-auto">
       <DashboardHeader
         username={user.name}
         imageUrl={user.image ?? undefined}
@@ -45,8 +45,8 @@ function DashboardHeader({
         <UserAvatar name={username} imageUrl={imageUrl} size="lg" />
         <div>
           <div className="text-xl">
-            Welcome{' '}
-            <span className="text-2xl text-secondary-500">{username}</span>
+            Welcome
+            <span className="text-2xl ml-2 font-medium text-secondary-500">{username}</span>
           </div>
           <p className="text-sm text-muted-foreground">
             Ready to challenge friends or build something ?
