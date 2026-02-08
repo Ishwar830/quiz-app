@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const aiModel = "gemini-2.5-flash";
 
-const AIQuestionSchema = z.object({
+const QuestionSchema = z.object({
   text: z.string().describe("Question text"),
   choices: z.array(z.string()).length(4).describe("Choice Array for Question"),
   correctChoiceIndex: z
@@ -17,21 +17,22 @@ const AIQuestionSchema = z.object({
     .describe("0-based index of correct answer from choices array"),
 });
 
-const AIQuizSchema = z.object({
+const QuizMetaSchema = z.object({
   title: z.string().describe("Quiz title"),
   description: z.string().describe("Short description about the quiz"),
   topics: z.array(z.string()).describe("Quiz topics"),
-  questions: z.array(AIQuestionSchema).describe("Array of questions in quiz"),
 });
 
 const AIResponseSchema = z.object({
-  error: z
-    .string()
+  error: z.string().nullable().default(null),
+  quizMeta: QuizMetaSchema.nullable()
+    .default(null)
+    .describe("Meta information about Quiz"),
+  questions: z
+    .array(QuestionSchema)
     .nullable()
     .default(null)
-    .describe("Error Message if unable to generate quiz"),
-  data: AIQuizSchema.nullable()
-    .default(null).describe("Generated Quiz")
+    .describe("Array of quiz questions"),
 });
 
 export default async function getAIGeneratedQuiz(
@@ -73,9 +74,9 @@ async function generateQuiz(topics: Array<string>, questionCount: number) {
     model: aiModel,
     contents: getPrompt(topics, questionCount),
     config: {
-      systemInstruction: `You are a Quiz Wizard who generates engaging quizzes.
+      systemInstruction: `You are a Quiz Wizard who makes engaging quizzes.
         Before generating the quiz, ensure the topics provided are valid and not some random keystrokes, gibberish, or nonsense (e.g., "dfsdfs", "asdf").
-        If they are invalid do not generate the quiz and response with error message only`,
+        If they are invalid do not generate the quiz and response with error message`,
       thinkingConfig: {
         thinkingBudget: 0,
       },
@@ -84,15 +85,18 @@ async function generateQuiz(topics: Array<string>, questionCount: number) {
     },
   });
 
-  const { error, data } = AIResponseSchema.parse(
+  const { error, quizMeta, questions } = AIResponseSchema.parse(
     JSON.parse(response.text as string),
   );
 
-  console.log(error, data);
+  console.log(error, quizMeta, questions);
 
   if (error !== null) throw new Error(error);
 
-  return data!;
+  return {
+    ...quizMeta!,
+    questions: questions!,
+  };
 }
 
 function getPrompt(topics: Array<string>, questionCount: number) {

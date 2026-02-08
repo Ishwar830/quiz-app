@@ -23,7 +23,7 @@ export function QuizBuilder({ quiz }: { quiz: QuizFormState }) {
 
   return (
     <QuizStoreContext.Provider value={store}>
-      <div className="p-4 grid gap-2 max-w-3xl mx-auto">
+      <div className="grid gap-2">
         <div className="flex justify-between mb-4 items-center">
           <p className="text-2xl font-semibold text-secondary-500">
             Quiz Builder

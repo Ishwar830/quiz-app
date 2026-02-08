@@ -18,7 +18,7 @@ import { cn, formatDate } from '@/lib/utils';
 
 export function QuizPreview({ quiz }: { quiz: Quiz }) {
   return (
-    <div className="p-4 space-y-6">
+    <div className="space-y-6">
       <PreviewHeader quiz={quiz} />
       <QuestionsContainer questions={quiz.questions} />
     </div>
@@ -53,17 +53,17 @@ function PreviewHeader({ quiz }: { quiz: Quiz }) {
 
 function QuizTopics({ topics }: { topics: Array<string> }) {
   return (
-    <div className="flex gap-4 flex-wrap">
+    <ul className="flex gap-4 flex-wrap">
       {topics.map((topic) => (
-        <span
+        <li
           className="text-xs flex items-center gap-2 rounded-md bg-accent-100 p-1 px-2"
           key={topic}
         >
           <TagIcon size={12} />
           {topic}
-        </span>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 

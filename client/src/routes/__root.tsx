@@ -37,7 +37,7 @@ function RouteComponent() {
         pauseOnHover={false}
         pauseOnFocusLoss={false}
       />
-      <div className="min-h-dvh relative bg-background-50/50 font-sora">
+      <div className="min-h-dvh grid grid-rows-[auto_1fr] relative bg-slate-50 font-sora">
         <Header />
         <main>
           <Outlet />
@@ -60,7 +60,7 @@ function Header() {
 
   const { user } = Route.useRouteContext();
   return (
-    <header className="sticky z-10 top-0 w-full py-4 px-4 md:px-12 shadow-xs bg-white/70 backdrop-blur-sm">
+    <header className="sticky z-10 top-0 w-full py-4 px-4 md:px-12 shadow-xs bg-slate-100/70 backdrop-blur-sm">
       <div className="h-full relative flex justify-between items-center">
         <span className="font-semibold text-2xl tracking-wider text-secondary-500">
           Quizzy
@@ -108,7 +108,7 @@ function Menu({
     },
     {
       title: 'Quiz Builder',
-      href: '/quizbuilder/{-$quizId}',
+      href: '/quizbuilder',
     },
   ];
   const navigate = useNavigate();

@@ -15,11 +15,9 @@ import { useMember, useMemberSubmissions } from '@/stores/MemberStore';
 
 export default function LeaderBoardView() {
   return (
-    <div className="min-h-dvh w-full">
-      <div className="max-w-3xl mx-auto p-4 sm:p-6 flex flex-col gap-6">
-        <GameSummary />
-        <Rankings />
-      </div>
+    <div className="flex flex-col gap-6">
+      <GameSummary />
+      <Rankings />
     </div>
   );
 }
@@ -36,7 +34,7 @@ function GameSummary() {
   const streak = calculateLongestStreak(submissions);
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-vibrant-coral-50 shadow-lg">
+    <div className="overflow-hidden rounded-2xl bg-vibrant-coral-50 shadow-sm">
       <div className="p-6 sm:p-8 grid gap-4 bg-linear-to-br from-primary-200 to-primary-100 border">
         <div className="flex items-center gap-4 mb-4">
           <div className="size-14 border-2 border-gray-800 bg-white rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
@@ -110,17 +108,17 @@ function Rankings() {
   const restList = sortedRankings.slice(3);
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="grid gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <h2 className="text-2xl font-bold tracking-wider">
         <span className="flex items-center gap-4">
           <Medal size={24} />
           Rankings
         </span>
-        <div className="h-1 w-1/3 bg-vibrant-coral-200 mt-2" />
+        <div className="h-1 w-1/3 bg-secondary-300 mt-2" />
       </h2>
 
       {topThree.length > 0 && (
-        <div className="grid border-b-4 border-accent-500 grid-cols-3 gap-2 sm:gap-4 items-end mb-8 pt-4">
+        <div className="grid border-b-4 border-accent-500 grid-cols-3 gap-2 sm:gap-4 items-end mt-6">
           {topThree[1] && (
             <PodiumStep
               player={topThree[1]}

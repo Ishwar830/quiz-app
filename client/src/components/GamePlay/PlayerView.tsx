@@ -6,7 +6,7 @@ import { useSocket } from '@/socket';
 import { useQuestionInfo } from '@/stores/GameStore';
 import { useMemberActions, useMemberSubmissions } from '@/stores/MemberStore';
 
-export default function QuestionView({
+export default function PlayerView({
   hasQuestionEnded,
 }: {
   hasQuestionEnded: boolean;
@@ -49,39 +49,31 @@ export default function QuestionView({
   };
 
   return (
-    <>
-      <div className="bg-primary-100 border p-6 rounded-xl shadow-md mb-4 overflow-hidden">
-        <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
-          {question.text}
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {question.choices.map((choice, index) => {
-          let status: SubmissionStatus = 'idle';
-          const isChoiceSelected =
-            optimisticChoiceId === choice.id || activeChoiceId == choice.id;
-          const isCorrectChoice = submission?.isCorrect ?? null;
-          if (isChoiceSelected) {
-            if (isSubmitting) status = 'submitting';
-            if (isCorrectChoice) status = 'correct';
-            if (isCorrectChoice !== null && !isCorrectChoice)
-              status = 'incorrect';
-          }
-          return (
-            <QuestionChoice
-              key={choice.id}
-              id={choice.id}
-              status={status}
-              text={choice.text}
-              hasQuestionEnded={hasQuestionEnded}
-              handleSubmit={handleSubmit}
-              index={index}
-            />
-          );
-        })}
-      </div>
-    </>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {question.choices.map((choice, index) => {
+        let status: SubmissionStatus = 'idle';
+        const isChoiceSelected =
+          optimisticChoiceId === choice.id || activeChoiceId == choice.id;
+        const isCorrectChoice = submission?.isCorrect ?? null;
+        if (isChoiceSelected) {
+          if (isSubmitting) status = 'submitting';
+          if (isCorrectChoice) status = 'correct';
+          if (isCorrectChoice !== null && !isCorrectChoice)
+            status = 'incorrect';
+        }
+        return (
+          <QuestionChoice
+            key={choice.id}
+            id={choice.id}
+            status={status}
+            text={choice.text}
+            hasQuestionEnded={hasQuestionEnded}
+            handleSubmit={handleSubmit}
+            index={index}
+          />
+        );
+      })}
+    </div>
   );
 }
 
@@ -116,7 +108,7 @@ function QuestionChoice({
       onClick={() => handleSubmit(id)}
       disabled={hasQuestionEnded}
       className={cn(
-        'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border hover:ring-2 hover:ring-secondary-200 transition-transform transform duration-200 overflow-hidden wrap-break-word gap-2 shadow-sm',
+        'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border hover:cursor-pointer hover:scale-102 transition-transform transform duration-300 overflow-hidden wrap-break-word gap-2 shadow-sm',
         status !== 'idle' && 'bg-primary-50 scale-[1.02]',
         {
           'border-lime-400 bg-lime-100': status === 'correct',

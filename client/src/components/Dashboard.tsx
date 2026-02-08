@@ -22,13 +22,13 @@ import type { User } from 'better-auth';
 
 export function Dashboard({ user }: { user: User }) {
   return (
-    <div className="p-4 w-full max-w-3xl mx-auto">
+    <>
       <DashboardHeader
         username={user.name}
         imageUrl={user.image ?? undefined}
       />
       <DashboardContent />
-    </div>
+    </>
   );
 }
 
@@ -44,9 +44,9 @@ function DashboardHeader({
       <div className="flex gap-4 items-center">
         <UserAvatar name={username} imageUrl={imageUrl} size="lg" />
         <div>
-          <div className="text-xl">
-            Welcome
-            <span className="text-2xl ml-2 font-medium text-secondary-500">{username}</span>
+          <div className="text-lg flex flex-wrap items-baseline gap-x-2">
+            <span>Welcome</span>
+            <span className="text-2xl font-medium text-secondary-500">{username}</span>
           </div>
           <p className="text-sm text-muted-foreground">
             Ready to challenge friends or build something ?
@@ -110,11 +110,11 @@ function JoinRoomCard() {
         </Card>
       </DialogTrigger>
       <DialogContent className="font-sora">
-        <DialogHeader>
+        <DialogHeader className='text-start'>
           <DialogTitle className="text-lg font-semibold">
             Join an Existing Room
           </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
+          <DialogDescription className="text-sm text-muted-foreground text-pretty">
             Enter room code and your role to join the quiz session
           </DialogDescription>
         </DialogHeader>
@@ -182,7 +182,7 @@ function AIRoomCard() {
         </Card>
       </DialogTrigger>
       <DialogContent className="font-sora">
-        <DialogHeader>
+        <DialogHeader className='text-start'>
           <DialogTitle className="text-lg font-semibold">AI Quiz</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             Enter topics to generate quiz

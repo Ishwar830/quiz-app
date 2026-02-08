@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Question } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
 import { useQuestionInfo } from '@/stores/GameStore';
+import { cn } from '@/lib/utils';
 
 interface QuestionAnalytics {
   questionId: string;
@@ -31,19 +32,14 @@ export default function SpectatorView() {
   }, [question.id]);
 
   return (
-    <div className="flex flex-col">
-      <div className="bg-primary-100 border p-6 rounded-xl shadow-md mb-4 overflow-hidden">
-        <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
-          {question.text}
-        </h2>
-      </div>
-      <div className="flex-1 hidden sm:block">
+    <>
+      <div className="flex-1 place-content-end hidden sm:block">
         <SubmissionsVertical question={question} analytics={analytics} />
       </div>
       <div className="flex-1 sm:hidden">
         <SubmissionsHorizontal question={question} analytics={analytics} />
       </div>
-    </div>
+    </>
   );
 }
 
@@ -65,7 +61,7 @@ function SubmissionsVertical({
   const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500'];
 
   return (
-    <div className="grid h-full grid-cols-4 gap-4">
+    <div className="grid grid-cols-4 gap-4">
       {question.choices.map((choice, index) => {
         const count = analytics.info[choice.id] ?? 0;
         const percentage = getPercentageForSubmission(count);
@@ -126,7 +122,7 @@ function SubmissionsHorizontal({
         return (
           <div
             key={choice.id}
-            className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl transform transition-all duration-300 hover:scale-102 relative overflow-hidden"
+            className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-sm transform transition-all duration-300 hover:scale-102 relative overflow-hidden"
           >
             <div
               className={`absolute inset-0 ${colors[index]} opacity-20 origin-left transition-transform duration-500`}
@@ -135,24 +131,28 @@ function SubmissionsHorizontal({
 
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
-                <div
-                  className={`w-12 h-12 ${colors[index]} rounded-lg flex items-center justify-center shadow-lg`}
+                <span
+                  className={cn(
+                    'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
+                    `${colors[index]} text-white`,
+                  )}
                 >
-                  <span className="text-xl font-bold text-white">
-                    {String.fromCharCode(index + 65)}
-                  </span>
-                </div>
+                  {String.fromCharCode(65 + index)}
+                </span>
 
                 <span className="text-gray-800 text-lg font-semibold flex-1">
                   {choice.text}
                 </span>
               </div>
 
-              <div
-                className={`p-2 rounded-full shadow-lg size-12 text-center text-white ${colors[index]}`}
+              <span
+                className={cn(
+                  'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
+                  `${colors[index]} text-white`,
+                )}
               >
-                <span className="text-xl font-bold">{count}</span>
-              </div>
+                {count}
+              </span>
             </div>
           </div>
         );

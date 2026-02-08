@@ -14,7 +14,7 @@ function RouteComponent() {
   const quizData = Route.useLoaderData();
   console.log(quizData);
   return (
-    <div>
+    <div className='space-y-4'>
       <p>Quiz Preview</p>
       <div>
         <QuizPreview quiz={quizData} />

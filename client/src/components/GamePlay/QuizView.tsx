@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Clock, TrendingUp } from 'lucide-react';
+import { ArrowRight, Clock, GhostIcon, TrendingUp } from 'lucide-react';
 import SpectatorView from './SpectatorView';
-import QuestionView from './QuestionView';
+import PlayerView from './PlayerView';
 import { useGameRoom, useQuestionInfo } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
 import { useMember } from '@/stores/MemberStore';
@@ -12,9 +12,6 @@ export default function QuizView() {
   const questionInfo = useQuestionInfo();
   const [hasQuestionEnded, setHasQuestionEnded] = useState(false);
   const member = useMember();
-  const room = useGameRoom();
-
-  const isHost = member.id === room.host.id;
 
   useEffect(() => {
     setHasQuestionEnded(false);
@@ -30,16 +27,14 @@ export default function QuizView() {
   }, [questionInfo.id]);
 
   return (
-    <div className="min-h-dvh max-w-2xl mx-auto p-4 grid gap-4 grid-rows-[100px_1fr_80px]">
-      <QuizViewHeader />
+    <div className="flex flex-col gap-4 h-full">
+      <QuizViewHeader hasQuestionEnded={hasQuestionEnded} />
+      <QuestionText text={questionInfo.text} />
       {member.role === 'SPECTATOR' ? (
         <SpectatorView />
       ) : (
-        <div>
-          <QuestionView hasQuestionEnded={hasQuestionEnded} />
-        </div>
+        <PlayerView hasQuestionEnded={hasQuestionEnded} />
       )}
-      {isHost && hasQuestionEnded && <NextButton />}
     </div>
   );
 }
@@ -51,26 +46,46 @@ function NextButton() {
   };
 
   return (
-    <div className="flex justify-center">
-      <button
-        className="size-16 p-2 shadow-lg font-semibold bg-primary-500 border rounded-full"
-        onClick={handleNextClick}
-      >
-        Next
-      </button>
-    </div>
+    <button
+      onClick={handleNextClick}
+      className="flex gap-2 items-center group hover:cursor-pointer border-b-4 border-primary-500"
+    >
+      <span className="text-sm font-semibold">Next</span>
+      <ArrowRight
+        size={16}
+        className="stroke-secondary-400 group-hover:translate-x-1 transition-all duration-200"
+      />
+    </button>
   );
 }
 
-function QuizViewHeader() {
+function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
+  const room = useGameRoom();
   const { quizMeta } = useGameRoom();
   const member = useMember();
   const questionInfo = useQuestionInfo();
 
+  const isHost = room.host.id === member.id;
+
   return (
     <div className="p-4 shadow-sm rounded-xl border grid gap-4">
       <div className="flex justify-between items-center mx-2">
-        <h1>{quizMeta.title}</h1>
+        {member.role === 'PLAYER' ? (
+          <div className="flex gap-2 text-lg items-center">
+            <TrendingUp className="text-lime-600" />
+            <p className="flex gap-2 items-center">
+              <span className="text-sm">Score</span>
+              <span className="font-semibold text-xl">{member.score}</span>
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-2 items-center">
+            <GhostIcon className="stroke-secondary-400" />
+            <span className="text-sm text-primary-700 border-b-2 border-secondary-400">
+              Spectator Mode
+            </span>
+          </div>
+        )}
         <p className="flex gap-2 items-center">
           <span className="text-xs">Question</span>
           <span className="font-semibold text-lg">
@@ -79,19 +94,19 @@ function QuizViewHeader() {
         </p>
       </div>
       <div className="flex items-center justify-between mx-2">
-        {member.role === 'PLAYER' && (
-          <div className="flex gap-2 text-lg items-center">
-            <TrendingUp className="text-lime-600" />
-            <p className="flex gap-2 items-center">
-              <span className="text-sm">Score</span>
-              <span className="font-semibold text-xl">{member.score}</span>
-            </p>
-          </div>
-        )}
-        <div>
-          <QuestionTimer endTime={questionInfo.submissionEndTime} />
-        </div>
+        <QuestionTimer endTime={questionInfo.submissionEndTime} />
+        {isHost && hasQuestionEnded && <NextButton />}
       </div>
+    </div>
+  );
+}
+
+function QuestionText({ text }: { text: string }) {
+  return (
+    <div className="bg-primary-100 border p-6 rounded-xl shadow-sm mb-4 overflow-hidden">
+      <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
+        {text}
+      </h2>
     </div>
   );
 }

@@ -10,5 +10,9 @@ export const Route = createFileRoute('/_authenticated')({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <div className="size-full max-w-3xl mx-auto p-4">
+      <Outlet />
+    </div>
+  );
 }

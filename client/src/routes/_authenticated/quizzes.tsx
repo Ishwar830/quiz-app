@@ -7,7 +7,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { QuizCard } from '@/components/QuizCard';
-import { QuizCardSkeleton } from '@/components/Skeletons';
+import { QuizCardSkeleton, Skeleton } from '@/components/Skeletons';
 
 export const Route = createFileRoute('/_authenticated/quizzes')({
   component: RouteComponent,
@@ -20,7 +20,7 @@ export const Route = createFileRoute('/_authenticated/quizzes')({
 function RouteComponent() {
   const quizzes = Route.useLoaderData();
   return (
-    <div>
+    <div className="space-y-4">
       <h1>My Quizzes</h1>
       <SearchBar />
       <QuizContainer quizzes={quizzes} />
@@ -43,7 +43,7 @@ function SearchBar() {
 
 function QuizContainer({ quizzes }: { quizzes: Array<QuizMeta> }) {
   return (
-    <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 gap-6">
       {quizzes.map((quiz) => (
         <QuizCard key={quiz.id} quizInfo={quiz} />
       ))}
@@ -64,13 +64,17 @@ async function getUserQuizzes() {
 
 function LoadingCardContainer() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-      <QuizCardSkeleton />
-      <QuizCardSkeleton />
-      <QuizCardSkeleton />
-      <QuizCardSkeleton />
-      <QuizCardSkeleton />
-      <QuizCardSkeleton />
+    <div className="space-y-4">
+      <h1>My Quizzes</h1>
+      <Skeleton className="h-8 rounded-lg" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+      </div>
     </div>
   );
 }

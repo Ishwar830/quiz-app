@@ -4,6 +4,7 @@ import {
   CircleQuestionMarkIcon,
   Copy,
   Play,
+  TagIcon,
   Trophy,
 } from 'lucide-react';
 import { useMember } from '@/stores/MemberStore';
@@ -19,20 +20,16 @@ export default function LobbyView() {
   const { title, description, topics, totalQuestions } = room.quizMeta;
 
   return (
-    <div className="min-h-dvh max-w-3xl p-4 mx-auto">
+    <div className="space-y-4">
       <LobbyHeader
         title={title}
         description={description}
         hostname={room.host.name}
       />
 
-      <LobbyContent
-        topics={topics}
-        totalQuestions={totalQuestions}
-        roomCode={room.id}
-      />
+      <LobbyContent topics={topics} totalQuestions={totalQuestions} />
 
-      <LobbyFooter isHost={isHost} />
+      <LobbyFooter isHost={isHost} roomCode={room.id} />
     </div>
   );
 }
@@ -70,10 +67,48 @@ function LobbyHeader({ title, description, hostname }: LobbyHeaderProps) {
 interface LobbyContentProps {
   topics: Array<string>;
   totalQuestions: number;
-  roomCode: string;
 }
 
-function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
+function LobbyContent({ topics, totalQuestions }: LobbyContentProps) {
+  return (
+    <div className="grid gap-4 py-4">
+      <div className="flex flex-col gap-4">
+        <div className="grid gap-2">
+          <h2 className="border-b-2 border-secondary-500 w-fit">Topics</h2>
+          <ul className="flex gap-4 flex-wrap">
+            {topics.map((topic) => (
+              <li
+                className="text-xs flex items-center gap-2 rounded-md bg-accent-100 p-1 px-2"
+                key={topic}
+              >
+                <TagIcon size={12} />
+                {topic}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <div className="rounded-lg text-sm border bg-secondary-200 p-2 w-fit">
+            <div className="flex items-center gap-2">
+              <CircleQuestionMarkIcon size={16} />
+              <span>{totalQuestions} Questions</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LobbyFooter({
+  isHost,
+  roomCode,
+}: {
+  isHost: boolean;
+  roomCode: string;
+}) {
+  const socket = useSocket();
   const [copied, setCopied] = useState(false);
 
   const copyCode = () => {
@@ -82,33 +117,12 @@ function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleStartQuiz = () => {
+    if (isHost) socket.emit('quiz:start');
+  };
+
   return (
-    <div className="grid gap-4 py-4">
-      <div className="flex flex-col gap-4">
-        <div className="grid gap-2">
-          <h2 className="border-b-2 border-secondary-500 w-fit">Topics</h2>
-          <ul className="flex gap-2">
-            {topics.map((topic, index) => (
-              <li
-                className="list-none border text-sm rounded-lg p-1 px-2 bg-accent-100"
-                key={index}
-              >
-                {topic}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <div className="rounded-sm border bg-primary-50 p-2 w-fit">
-            <div className="flex items-center gap-2">
-              <CircleQuestionMarkIcon size={16} />
-              <span>{totalQuestions} Questions</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <>
       <div>
         <h2 className="text-sm font-semibold text-deep-space-blue-700 uppercase tracking-wider mb-3">
           Room Code
@@ -124,23 +138,10 @@ function LobbyContent({ topics, totalQuestions, roomCode }: LobbyContentProps) {
           <span className="w-6 h-6">{copied ? <Check /> : <Copy />}</span>
         </button>
       </div>
-    </div>
-  );
-}
-
-function LobbyFooter({ isHost }: { isHost: boolean }) {
-  const socket = useSocket();
-
-  const handleStartQuiz = () => {
-    if (isHost) socket.emit('quiz:start');
-  };
-
-  return (
-    <>
       {isHost ? (
         <button
           onClick={handleStartQuiz}
-          className="w-full flex justify-center items-center gap-2 bg-primary-400 hover:bg-primary-500 hover:scale-[1.02] transition-transform duration-100 border shadow-md font-bold py-5 rounded-xl text-lg"
+          className="w-full flex justify-center items-center gap-2 bg-primary-400 hover:bg-primary-500 hover:scale-[1.02] transition-all duration-300 border shadow-md font-bold py-5 rounded-xl text-lg"
         >
           <Play className="fill-white stroke-gray-50" />
           Start Quiz
