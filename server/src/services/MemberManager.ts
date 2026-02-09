@@ -34,25 +34,9 @@ const getMemberInfo = async (roomId: string, userId: string) => {
   return member;
 };
 
-const incrementMemberScoreBy = async (
-  roomId: string,
-  userId: string,
-  score: number,
-) => {
-  return await redisClient.hIncrBy(
-    KeyManager.member(roomId, userId),
-    "score",
-    score,
-  );
-};
-
 const cacheMemberName = async (roomId: string, member: RoomMember) => {
   const cacheKey = KeyManager.memberNames(roomId);
   await redisClient.hSet(cacheKey, member.id, member.name);
-};
-
-const addToPlayerList = async (roomId: string, userId: string) => {
-  await redisClient.sAdd(KeyManager.playerList(roomId), userId);
 };
 
 const getMemberNamesWithIds = async (
@@ -69,6 +53,5 @@ const getMemberNamesWithIds = async (
 export const MemberManager = {
   addMember,
   getMemberInfo,
-  incrementMemberScoreBy,
   getMemberNamesWithIds,
 } as const;

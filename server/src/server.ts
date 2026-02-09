@@ -1,11 +1,9 @@
-import "dotenv/config";
+import { env } from "./env.ts";
 import express from "express";
 import apiRouter from "./apiRouter.ts";
 import { initRedis } from "./lib/redis.ts";
 import { initSocket } from "./services/socket.ts";
 import path from "node:path";
-
-const PORT = process.env.PORT || 8000;
 
 await initRedis();
 
@@ -13,7 +11,7 @@ const app = express();
 
 app.use("/api", apiRouter);
 
-if (process.env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production") {
   const distPath = path.resolve(import.meta.dirname, "../../../client/dist");
   app.use(express.static(distPath));
 
@@ -26,6 +24,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+const PORT = env.PORT;
 const server = app.listen(PORT, () => {
   console.log(`Server started at port: ${PORT}`);
 });

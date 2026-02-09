@@ -1,4 +1,4 @@
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import { questions, quiz } from "../db/schema/quizzes.ts";
 import type { QuizPayload } from "../lib/zod_schemas.ts";

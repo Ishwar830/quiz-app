@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { env } from "../env.ts";
 import { betterAuth } from "better-auth";
 import { anonymous } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -6,9 +6,8 @@ import { db } from "../db/index.js";
 import * as userSchema from "../db/schema/users.js";
 
 let trustedOrigins: Array<string> = [];
-const nodeEnv = process.env.NODE_ENV;
-if(nodeEnv == "development"){
-  trustedOrigins.push(process.env.CLIENT_URL!);
+if (env.NODE_ENV == "development") {
+  trustedOrigins.push(env.CLIENT_URL!);
 }
 
 export const auth = betterAuth({
@@ -29,4 +28,5 @@ export const auth = betterAuth({
       maxAge: 10 * 60, // 10 mins
     },
   },
+  secret: env.BETTER_AUTH_SECRET,
 });

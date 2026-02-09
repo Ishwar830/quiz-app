@@ -1,4 +1,4 @@
-import { RedisClientType, SCHEMA_FIELD_TYPE } from "redis";
+import { SCHEMA_FIELD_TYPE } from "redis";
 import redisClient from "../../lib/redis.ts";
 
 export const initializeIndexes = async () => {

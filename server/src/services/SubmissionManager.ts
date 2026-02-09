@@ -80,7 +80,7 @@ const getSubmissionCountForQuestion = async (
   questionId: string,
 ) => {
   const result = await redisClient.hGetAll(
-    `submissionCount:${roomId}:${questionId}`,
+    KeyManager.submissionCount(roomId, questionId),
   );
 
   const totalSubmissions = Object.values(result).reduce(

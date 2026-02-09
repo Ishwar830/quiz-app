@@ -140,3 +140,7 @@ vite.config.ts.timestamp-*
 
 #tanstack-router
 .tanstack
+
+#docker volume data
+redis_data
+postgres_data

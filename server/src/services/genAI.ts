@@ -1,9 +1,9 @@
-import "dotenv/config";
+import { env } from "../env.ts";
 import { GoogleGenAI } from "@google/genai";
 import z from "zod";
 import { nanoid } from "nanoid";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 const aiModel = "gemini-2.5-flash";
 
 const QuestionSchema = z.object({

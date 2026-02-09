@@ -9,11 +9,4 @@ roomRouter.use(authMiddleware);
 roomRouter.post("/", RoomController.createRoomHandler);
 roomRouter.post("/join/:roomId", RoomController.joinRoomHandler);
 roomRouter.get("/:roomId", RoomController.getRoomHandler);
-roomRouter.post(
-  "/ai",
-  (req, res, next) => {
-    console.log("AI request");
-    next();
-  },
-  RoomController.createAIRoomHandler,
-);
+roomRouter.post("/ai", RoomController.createAIRoomHandler);
