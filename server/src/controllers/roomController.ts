@@ -2,7 +2,6 @@ import { RequestHandler } from "express";
 import { RoomManager } from "../services/room/RoomManager.ts";
 import {QuizRepository} from "../services/db_queries/QuizRepository.ts";
 import { ApiResponse } from "../lib/utils.ts";
-import { QuizManager } from "../services/quiz/QuizManager.ts";
 import type { RoomMember } from "../services/types.d.ts";
 import { GameStateManager } from "../services/game/GameStateManager.ts";
 import { SubmissionManager } from "../services/game/SubmissionManager.ts";
@@ -26,10 +25,7 @@ export const createRoomHandler: RequestHandler = async (req, res) => {
     return res.status(400).json(ApiResponse.error("Quiz doesnt exist"));
   }
 
-  await QuizManager.storeQuiz(quiz);
-  const quizMeta = await QuizManager.getQuizMeta(quiz.id);
-
-  const room = await RoomManager.createRoom(host, quizMeta!);
+  const room = await RoomManager.createRoom(host, quiz);
 
   res.json(ApiResponse.success(room));
 };
@@ -89,8 +85,7 @@ export const createAIRoomHandler: RequestHandler = async (req, res) => {
     questionCount,
     timeLimitSeconds,
   );
-  await QuizManager.storeQuiz(quiz);
-  const { questions, ...quizMeta } = quiz;
-  const room = await RoomManager.createRoom(host, quizMeta);
+
+  const room = await RoomManager.createRoom(host, quiz);
   res.json(ApiResponse.success(room));
 };

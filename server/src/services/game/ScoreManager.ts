@@ -39,7 +39,7 @@ const getLeaderboard = async (roomId: string) => {
     },
   );
 
-  if(res.length == 0) return [];
+  if (res.length == 0) return [];
 
   const playerIds = res.map((r) => r.value);
   const playerNames = await MemberManager.getMemberNamesWithIds(
@@ -47,7 +47,7 @@ const getLeaderboard = async (roomId: string) => {
     playerIds,
   );
   return res.map(({ value: id, score }, index) => ({
-    id,
+    userId: id,
     score,
     rank: index + 1,
     name: playerNames[index] ?? "Random User",

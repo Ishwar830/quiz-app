@@ -33,6 +33,7 @@ const getQuizById = async (quizId: string) => {
       },
     },
   });
+  
   return result;
 };
 

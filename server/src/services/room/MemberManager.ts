@@ -17,7 +17,10 @@ const addMember = async (roomId: string, member: RoomMember) => {
   }
 
   if (member.role == "PLAYER") {
-    await ScoreManager.updateLeaderboard(roomId, member.id, 0);
+    await Promise.all([
+      ScoreManager.updateLeaderboard(roomId, member.id, 0),
+      updateRoomPlayerList(roomId, member.id),
+    ]);
   }
 
   await redisClient.hSet(memberKey, member as any);
@@ -50,8 +53,17 @@ const getMemberNamesWithIds = async (
   return names;
 };
 
+const updateRoomPlayerList = async (roomId: string, userId: string) => {
+  await redisClient.sAdd(KeyManager.players(roomId), userId);
+};
+
+const getRoomPlayerList = async (roomId: string) => {
+  return await redisClient.sMembers(KeyManager.players(roomId));
+};
+
 export const MemberManager = {
   addMember,
   getMemberInfo,
   getMemberNamesWithIds,
+  getRoomPlayerList,
 } as const;

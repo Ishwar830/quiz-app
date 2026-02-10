@@ -10,5 +10,5 @@ export const KeyManager = {
   answer: (questionId: string) => `answer:${questionId}`,
   leaderboard: (roomId: string) => `leaderboard:${roomId}`,
   memberNames: (roomId: string) => `room:${roomId}:names`,
-  playerList: (roomId: string) => `room:${roomId}:players`,
+  players: (roomId: string) => `room:${roomId}:players`,
 };

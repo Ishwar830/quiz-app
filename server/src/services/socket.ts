@@ -105,7 +105,7 @@ async function handleSubmission(
   const submissionPayload = {
     roomId,
     userId,
-    submittedAt: Date.now(),
+    submittedAt: new Date(),
     ...submissionData,
   };
 

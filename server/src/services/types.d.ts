@@ -44,7 +44,7 @@ export interface CountdownInfo {
 }
 
 export interface RankInfo {
-  id: string;
+  userId: string;
   rank: number;
   name: string;
   score: number;
@@ -65,8 +65,26 @@ export interface Submission {
   userId: string;
   questionId: string;
   choiceId: string;
-  submittedAt: number;
+  submittedAt: Date;
   isCorrect: boolean;
+}
+
+interface GameQuestion extends Question {
+  startedAt: Date;
+  endedAt: Date;
+}
+
+interface GameDataPayload {
+  hostId: string;
+  quizTitle: string;
+  quizDescription: string | null;
+  quizTopics: Array<string>;
+  createdAt: Date;
+  startedAt: Date;
+  endedAt: Date;
+  gameQuestions: Array<GameQuestion>;
+  gameSubmissions: Array<Submission>;
+  gameRankings: Array<RankInfo>;
 }
 
 export type SubmissionPayload = Omit<Submission, "isCorrect">;

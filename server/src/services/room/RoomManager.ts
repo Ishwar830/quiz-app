@@ -2,21 +2,34 @@ import redisClient from "../../lib/redis.ts";
 import { GameStateManager } from "../game/GameStateManager.ts";
 import { MemberManager } from "../room/MemberManager.ts";
 import { KeyManager } from "../redis/KeyManager.ts";
-import type { Room, QuizMeta, RoomMember } from "../types.d.ts";
+import type { Room, RoomMember, Quiz } from "../types.d.ts";
+import { QuestionManager } from "../game/QuestionManager.ts";
 
-const createRoom = async (host: RoomMember, quizMeta: QuizMeta) => {
+const createRoom = async (host: RoomMember, quiz: Quiz) => {
+  const { questions, ...restQuizInfo } = quiz;
+
   const room: Room = {
     id: generateRoomCode(),
     host,
-    quizMeta,
+    quizMeta: {
+      ...restQuizInfo,
+      totalQuestions: questions.length,
+    },
   };
 
-  const key = KeyManager.room(room.id);
-  await redisClient.json.set(key, "$", room as any);
-  await joinRoom(room.id, host);
-  await GameStateManager.initializeGameState(room);
+  await Promise.all([
+    saveRoom(room),
+    joinRoom(room.id, host),
+    GameStateManager.initializeGameState(room),
+    QuestionManager.initializeQuestionList(room.id, quiz.questions),
+  ]);
+
   const generatedRoom = await getRoomInfo(room.id);
   return generatedRoom;
+};
+
+const saveRoom = async (room: Room) => {
+  return await redisClient.json.set(KeyManager.room(room.id), "$", room as any);
 };
 
 const joinRoom = async (roomId: string, member: RoomMember) => {

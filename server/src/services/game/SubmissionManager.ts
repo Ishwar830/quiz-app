@@ -1,6 +1,7 @@
 import redisClient from "../../lib/redis.ts";
 import { KeyManager } from "../redis/KeyManager.ts";
 import type { Submission, SubmissionPayload } from "../types.js";
+import { QuestionManager } from "./QuestionManager.ts";
 import { ScoreManager } from "./ScoreManager.ts";
 
 const submitAnswer = async (submissionPayload: SubmissionPayload) => {
@@ -36,8 +37,11 @@ const submitAnswer = async (submissionPayload: SubmissionPayload) => {
 };
 
 const checkCorrectChoice = async (submissionPayload: SubmissionPayload) => {
-  const { questionId, choiceId } = submissionPayload;
-  const correctChoiceId = await redisClient.get(KeyManager.answer(questionId));
+  const { roomId, questionId, choiceId } = submissionPayload;
+  const correctChoiceId = await QuestionManager.getCorrectChoiceId(
+    roomId,
+    questionId,
+  );
   if (!correctChoiceId) throw new Error("correct choice not found");
 
   const isCorrect = correctChoiceId === choiceId;
@@ -56,9 +60,8 @@ const incrementSubmissionCount = async (
   );
 };
 
-const getUserSubmissions = async (roomId: string, userId: string) => {
+const fetchSubmissions = async (query: string) => {
   const INDEX_KEY = "idx:submissions";
-  const query = `@roomId:(${roomId}) @userId:(${userId})`;
 
   type QueryResponse = {
     total: number;
@@ -70,8 +73,13 @@ const getUserSubmissions = async (roomId: string, userId: string) => {
     query,
   )) as unknown as QueryResponse;
 
-  const userSubmissions: Submission[] = documents.map(({ value }) => value);
+  const submissions = documents.map(({ value }) => value);
+  return submissions;
+};
 
+const getUserSubmissions = async (roomId: string, userId: string) => {
+  const query = `@roomId:(${roomId}) @userId:(${userId})`;
+  const userSubmissions = await fetchSubmissions(query);
   return userSubmissions;
 };
 
@@ -99,8 +107,15 @@ const getSubmissionCountForQuestion = async (
   };
 };
 
+const getSubmissionsByRoomId = async (roomId: string) => {
+  const query = `@roomId:(${roomId})`;
+  const submissions = await fetchSubmissions(query);
+  return submissions;
+};
+
 export const SubmissionManager = {
   submitAnswer,
   getSubmissionCountForQuestion,
   getUserSubmissions,
+  getSubmissionsByRoomId,
 } as const;

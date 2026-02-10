@@ -3,12 +3,14 @@ import { drizzle as drizzleNeon } from "drizzle-orm/neon-serverless";
 import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import * as userSchema from "./schema/users.ts";
 import * as quizSchema from "./schema/quizzes.ts";
+import * as gameSchema from "./schema/game.ts";
 import { Pool as NeonPool } from "@neondatabase/serverless";
 import { Pool as PgPool } from "pg";
 
 const schema = {
   ...userSchema,
   ...quizSchema,
+  ...gameSchema,
 };
 
 const isProduction = env.NODE_ENV === "production";
