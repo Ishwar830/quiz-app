@@ -1,6 +1,6 @@
-import redisClient from "../lib/redis.ts";
-import { KeyManager } from "./redis/KeyManager.ts";
-import type { Submission, SubmissionPayload } from "./types.d.ts";
+import redisClient from "../../lib/redis.ts";
+import { KeyManager } from "../redis/KeyManager.ts";
+import type { Submission, SubmissionPayload } from "../types.js";
 import { ScoreManager } from "./ScoreManager.ts";
 
 const submitAnswer = async (submissionPayload: SubmissionPayload) => {

@@ -1,8 +1,8 @@
-import redisClient from "../lib/redis.ts";
-import { KeyManager } from "./redis/KeyManager.ts";
-import { RoomManager } from "./RoomManager.ts";
-import { ScoreManager } from "./ScoreManager.ts";
-import type { RoomMember } from "./types.d.ts";
+import redisClient from "../../lib/redis.ts";
+import { KeyManager } from "../redis/KeyManager.ts";
+import { RoomManager } from "../room/RoomManager.ts";
+import { ScoreManager } from "../game/ScoreManager.ts";
+import type { RoomMember } from "../types.js";
 
 const addMember = async (roomId: string, member: RoomMember) => {
   const room = await RoomManager.getRoomInfo(roomId);

@@ -1,11 +1,11 @@
 import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "node:http";
-import { MemberManager } from "./MemberManager.ts";
-import { GameStateManager } from "./GameStateManager.ts";
-import { GameEventEmitter } from "./GameStateManager.ts";
-import { RoomManager } from "./RoomManager.ts";
-import { SubmissionManager } from "./SubmissionManager.ts";
-import { setupAnalyticsHandler } from "./AnalyticsManager.ts";
+import { MemberManager } from "./room/MemberManager.ts";
+import { GameStateManager } from "./game/GameStateManager.ts";
+import { GameEventEmitter } from "./game/GameStateManager.ts";
+import { RoomManager } from "./room/RoomManager.ts";
+import { SubmissionManager } from "./game/SubmissionManager.ts";
+import { setupAnalyticsHandler } from "./game/AnalyticsManager.ts";
 import type { GameState } from "./types.d.ts";
 
 export let io: Server;

@@ -1,6 +1,6 @@
-import redisClient from "../lib/redis.ts";
-import { KeyManager } from "./redis/KeyManager.ts";
-import type { Quiz, Question, QuizMeta } from "./types.d.ts";
+import redisClient from "../../lib/redis.ts";
+import { KeyManager } from "../redis/KeyManager.ts";
+import type { Quiz, Question, QuizMeta } from "../types.d.ts"
 
 const storeQuiz = async (quiz: Quiz) => {
   const key = KeyManager.quiz(quiz.id);

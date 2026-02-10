@@ -1,9 +1,9 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { db } from "../db/index.ts";
-import { questions, quiz } from "../db/schema/quizzes.ts";
-import type { QuizPayload } from "../lib/zod_schemas.ts";
+import { db } from "../../db/index.ts";
+import { questions, quiz } from "../../db/schema/quizzes.ts";
+import type { QuizPayload } from "../../lib/zod_schemas.ts";
 
-export const getUserQuizzes = async (userId: string) => {
+const getUserQuizzes = async (userId: string) => {
   const res = await db.query.quiz.findMany({
     where: eq(quiz.userId, userId),
     with: {
@@ -24,7 +24,7 @@ export const getUserQuizzes = async (userId: string) => {
   return result;
 };
 
-export const getQuizById = async (quizId: string) => {
+const getQuizById = async (quizId: string) => {
   const result = await db.query.quiz.findFirst({
     where: eq(quiz.id, quizId),
     with: {
@@ -36,7 +36,7 @@ export const getQuizById = async (quizId: string) => {
   return result;
 };
 
-export const createOrUpdateQuiz = async (
+const createOrUpdateQuiz = async (
   userId: string,
   quizId: string,
   data: QuizPayload,
@@ -50,7 +50,7 @@ export const createOrUpdateQuiz = async (
   return await createQuiz(userId, data);
 };
 
-export const deleteQuiz = async (quizId: string, userId: string) => {
+const deleteQuiz = async (quizId: string, userId: string) => {
   await db
     .delete(quiz)
     .where(and(eq(quiz.id, quizId), eq(quiz.userId, userId)));
@@ -130,3 +130,10 @@ const updateQuiz = async (
     return updatedQuiz.id;
   });
 };
+
+export const QuizRepository = {
+  getUserQuizzes,
+  getQuizById,
+  deleteQuiz,
+  createOrUpdateQuiz,
+} as const;

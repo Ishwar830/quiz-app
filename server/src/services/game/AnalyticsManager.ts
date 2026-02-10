@@ -1,6 +1,6 @@
 import { GameEventEmitter } from "./GameStateManager.ts";
 import { SubmissionManager } from "./SubmissionManager.ts";
-import type { GameState } from "./types.d.ts";
+import type { GameState } from "../types.js";
 
 const AnalyticConfigs = {
   UPDATE_INTERVAL: 2, // seconds

@@ -1,8 +1,8 @@
-import redisClient from "../lib/redis.ts";
-import { KeyManager } from "./redis/KeyManager.js";
-import { QuizManager } from "./QuizManager.ts";
+import redisClient from "../../lib/redis.ts";
+import { KeyManager } from "../redis/KeyManager.ts";
+import { QuizManager } from "../quiz/QuizManager.ts";
 import EventEmitter from "node:events";
-import type { GameState, QuestionInfo, QuizMeta, Room } from "./types.d.ts";
+import type { GameState, QuestionInfo, QuizMeta, Room } from "../types.js";
 import { ScoreManager } from "./ScoreManager.ts";
 
 export const GameEventEmitter = new EventEmitter();
@@ -74,10 +74,9 @@ const endQuiz = async (roomId: string) => {
     quizEndedAt: Date.now(),
     currentQuestionInfo: null,
     countdownInfo: null,
-    finalRankings
+    finalRankings,
   });
 
-  
   console.log(finalRankings);
   GameEventEmitter.emit("quizEnded", gameState);
 };

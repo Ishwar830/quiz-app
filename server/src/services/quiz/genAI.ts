@@ -1,4 +1,4 @@
-import { env } from "../env.ts";
+import { env } from "../../env.ts";
 import { GoogleGenAI } from "@google/genai";
 import z from "zod";
 import { nanoid } from "nanoid";

@@ -1,7 +1,7 @@
-import redisClient from "../lib/redis.ts";
-import { MemberManager } from "./MemberManager.ts";
-import { KeyManager } from "./redis/KeyManager.ts";
-import { Submission } from "./types.js";
+import redisClient from "../../lib/redis.ts";
+import { MemberManager } from "../room/MemberManager.ts";
+import { KeyManager } from "../redis/KeyManager.ts";
+import { Submission } from "../types.js";
 
 const updateLeaderboard = async (
   roomId: string,

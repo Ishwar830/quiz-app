@@ -1,8 +1,8 @@
-import redisClient from "../lib/redis.ts";
-import { GameStateManager } from "./GameStateManager.ts";
-import { MemberManager } from "./MemberManager.ts";
-import { KeyManager } from "./redis/KeyManager.ts";
-import type { Room, QuizMeta, RoomMember } from "./types.d.ts";
+import redisClient from "../../lib/redis.ts";
+import { GameStateManager } from "../game/GameStateManager.ts";
+import { MemberManager } from "../room/MemberManager.ts";
+import { KeyManager } from "../redis/KeyManager.ts";
+import type { Room, QuizMeta, RoomMember } from "../types.d.ts";
 
 const createRoom = async (host: RoomMember, quizMeta: QuizMeta) => {
   const room: Room = {

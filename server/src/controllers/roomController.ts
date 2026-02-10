@@ -1,13 +1,13 @@
 import { RequestHandler } from "express";
-import { RoomManager } from "../services/RoomManager.ts";
-import * as DBQueryHandler from "../services/DBQueryManager.ts";
+import { RoomManager } from "../services/room/RoomManager.ts";
+import {QuizRepository} from "../services/db_queries/QuizRepository.ts";
 import { ApiResponse } from "../lib/utils.ts";
-import { QuizManager } from "../services/QuizManager.ts";
+import { QuizManager } from "../services/quiz/QuizManager.ts";
 import type { RoomMember } from "../services/types.d.ts";
-import { GameStateManager } from "../services/GameStateManager.ts";
-import { SubmissionManager } from "../services/SubmissionManager.ts";
-import { MemberManager } from "../services/MemberManager.ts";
-import getAIGeneratedQuiz from "../services/genAI.ts";
+import { GameStateManager } from "../services/game/GameStateManager.ts";
+import { SubmissionManager } from "../services/game/SubmissionManager.ts";
+import { MemberManager } from "../services/room/MemberManager.ts";
+import getAIGeneratedQuiz from "../services/quiz/genAI.ts";
 
 export const createRoomHandler: RequestHandler = async (req, res) => {
   const user = req.user!;
@@ -20,7 +20,7 @@ export const createRoomHandler: RequestHandler = async (req, res) => {
 
   console.log("room creation");
 
-  const quiz = await DBQueryHandler.getQuizById(quizId);
+  const quiz = await QuizRepository.getQuizById(quizId);
 
   if (!quiz) {
     return res.status(400).json(ApiResponse.error("Quiz doesnt exist"));
@@ -90,7 +90,7 @@ export const createAIRoomHandler: RequestHandler = async (req, res) => {
     timeLimitSeconds,
   );
   await QuizManager.storeQuiz(quiz);
-  const {questions, ...quizMeta} = quiz;
+  const { questions, ...quizMeta } = quiz;
   const room = await RoomManager.createRoom(host, quizMeta);
   res.json(ApiResponse.success(room));
 };
