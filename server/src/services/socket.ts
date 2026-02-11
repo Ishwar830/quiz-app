@@ -30,7 +30,6 @@ export function initSocket(server: HttpServer) {
 function onConnection(socket: Socket) {
   socket.on("room:join", (roomId: string) => handleRoomJoin(socket, roomId));
   socket.on("quiz:start", () => handleQuizStart(socket));
-  socket.on("question:next", () => handleNextQuestionTrigger(socket));
   socket.on("question:submit", (submission, callback) =>
     handleSubmission(socket, submission, callback),
   );
@@ -77,16 +76,6 @@ async function handleQuizStart(socket: Socket) {
 
     await GameStateManager.startQuiz(roomId);
   } catch (err) {
-    socket.emit("room:permission-error", (err as Error).message);
-  }
-}
-
-async function handleNextQuestionTrigger(socket: Socket) {
-  const roomId = socket.data.roomId;
-
-  try {
-    await GameStateManager.prepareNextQuestion(roomId);
-  } catch (err) {
     socket.emit("error", (err as Error).message);
   }
 }
@@ -116,14 +105,14 @@ async function handleSubmission(
 
 function setupGameEventHandlers() {
   GameEventEmitter.on(
-    "startQuestion",
+    "questionStarted",
     ({ room, currentQuestionInfo }: GameState) => {
       io.to(room.id).emit("question:update", currentQuestionInfo);
     },
   );
 
   GameEventEmitter.on(
-    "startCountdown",
+    "countdownStarted",
     ({ room, countdownInfo }: GameState) => {
       io.to(room.id).emit("question:countdown", countdownInfo!.endsAt);
     },

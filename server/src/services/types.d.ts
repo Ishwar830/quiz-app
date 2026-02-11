@@ -82,9 +82,9 @@ interface GameDataPayload {
   createdAt: Date;
   startedAt: Date;
   endedAt: Date;
-  gameQuestions: Array<GameQuestion>;
-  gameSubmissions: Array<Submission>;
-  gameRankings: Array<RankInfo>;
+  questions: Array<GameQuestion>;
+  submissions: Array<Submission>;
+  rankings: Array<RankInfo>;
 }
 
 export type SubmissionPayload = Omit<Submission, "isCorrect">;

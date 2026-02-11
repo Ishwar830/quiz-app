@@ -5,7 +5,6 @@ import {
   gameSubmissions,
   gameParticipants,
   gameQuestions,
-  gameRankings,
 } from "../../db/schema/game.ts";
 import { GameDataPayload } from "../types.js";
 import { and, eq } from "drizzle-orm";
@@ -13,48 +12,43 @@ import { and, eq } from "drizzle-orm";
 const saveGame = async (gameData: GameDataPayload) => {
   return await db.transaction(async (tx) => {
     const gameId = nanoid();
-    const {
-      hostId,
-      quizTitle,
-      quizDescription,
-      quizTopics,
-      createdAt,
-      startedAt,
-      endedAt,
-    } = gameData;
+    const { questions, rankings, submissions, ...gameMeta } = gameData;
 
-    const saveGameMeta = tx.insert(games).values({
+    await tx.insert(games).values({
       id: gameId,
-      hostId,
-      quizTitle,
-      quizDescription,
-      quizTopics,
-      createdAt,
-      startedAt,
-      endedAt,
+      ...gameMeta,
     });
 
-    const saveGameSubmissions = tx.insert(gameSubmissions).values(
-      gameData.gameSubmissions.map((gs) => ({
-        ...gs,
-        gameId,
-      })),
-    );
+    
 
-    const saveGameQuestions = tx
-      .insert(gameQuestions)
-      .values(gameData.gameQuestions.map((gq) => ({ ...gq, gameId })));
+    if (questions.length) {
+      await tx
+        .insert(gameQuestions)
+        .values(questions.map((gq) => ({ ...gq, gameId })));
+    }
 
-    const saveGameRankings = tx
-      .insert(gameRankings)
-      .values(gameData.gameRankings.map((gr) => ({ ...gr, gameId })));
+    const tasks = [];
 
-    await Promise.all([
-      saveGameMeta,
-      saveGameQuestions,
-      saveGameSubmissions,
-      saveGameRankings,
-    ]);
+    if (submissions.length) {
+      tasks.push(
+        tx.insert(gameSubmissions).values(
+          submissions.map((gs) => ({
+            ...gs,
+            gameId,
+          })),
+        ),
+      );
+    }
+
+    if (rankings.length) {
+      tasks.push(
+        tx
+          .insert(gameParticipants)
+          .values(rankings.map((gr) => ({ ...gr, gameId }))),
+      );
+    }
+
+    await Promise.all(tasks);
 
     return gameId;
   });
@@ -94,9 +88,9 @@ const getGameQuestions = async (gameId: string) => {
 };
 
 const getGameRankings = async (gameId: string) => {
-  return await db.query.gameRankings.findMany({
-    where: eq(gameRankings.gameId, gameId),
-    orderBy: gameRankings.rank,
+  return await db.query.gameParticipants.findMany({
+    where: eq(gameParticipants.gameId, gameId),
+    orderBy: gameParticipants.rank,
   });
 };
 

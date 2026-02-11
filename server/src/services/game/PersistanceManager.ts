@@ -21,16 +21,16 @@ export const persistGameData = async (roomId: string) => {
     createdAt: new Date(Date.now()),
     startedAt: new Date(gameState.quizStartedAt!),
     endedAt: new Date(gameState.quizEndedAt!),
-    gameSubmissions: submissions.map((s) => ({
+    submissions: submissions.map((s) => ({
       ...s,
       submittedAt: new Date(s.submittedAt),
     })),
-    gameRankings: rankings,
-    gameQuestions: questions.map((q) => ({
+    questions: questions.map((q) => ({
       ...q,
       startedAt: new Date(q.startedAt),
       endedAt: new Date(q.endedAt),
     })),
+    rankings,
   };
 
   await GameRepository.saveGame(gameDataPayload);

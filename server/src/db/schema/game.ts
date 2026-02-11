@@ -70,8 +70,8 @@ export const gameSubmissions = pgTable(
   ],
 );
 
-export const gameRankings = pgTable(
-  "game_rankings",
+export const gameParticipants = pgTable(
+  "game_participants",
   {
     id: text()
       .notNull()
@@ -85,35 +85,23 @@ export const gameRankings = pgTable(
     rank: integer().notNull(),
   },
   (t) => [
-    index("user_rank_index").on(t.userId),
-    index("game_rank_index").on(t.gameId),
-  ],
-);
-
-export const gameParticipants = pgTable(
-  "game_participants",
-  {
-    id: text()
-      .primaryKey()
-      .$defaultFn(() => nanoid()),
-    userId: text("user_id").notNull(),
-    gameId: text("game_id")
-      .notNull()
-      .references(() => games.id),
-  },
-  (t) => [
-    index("participant_user_index").on(t.userId),
-    index("participant_game_index").on(t.gameId),
+    index("participants_user_index").on(t.userId),
+    index("participants_game_index").on(t.gameId),
   ],
 );
 
 export const gameRelations = relations(games, ({ many }) => ({
   submissions: many(gameSubmissions),
   questions: many(gameQuestions),
-  rankings: many(gameRankings),
   participants: many(gameParticipants),
 }));
 
-export const gameParticipantsRelations = relations(gameParticipants, ({ one }) => ({
-  game: one(games),
-}));
+export const gameParticipantsRelations = relations(
+  gameParticipants,
+  ({ one }) => ({
+    game: one(games, {
+      fields: [gameParticipants.gameId],
+      references: [games.id],
+    }),
+  }),
+);

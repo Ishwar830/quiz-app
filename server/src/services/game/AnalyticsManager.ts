@@ -46,9 +46,9 @@ export function setupAnalyticsHandler() {
   });
 
   GameEventEmitter.on(
-    "startQuestion",
+    "questionStarted",
     ({ room, currentQuestionInfo }: GameState) => {
-      startAnalyticHandler(room.id, currentQuestionInfo?.id!);
+      startAnalyticHandler(room.id, currentQuestionInfo!.id);
     },
   );
 }

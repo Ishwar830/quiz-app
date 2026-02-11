@@ -7,7 +7,10 @@ export const KeyManager = {
     `submission:${roomId}:${userId}:${questionId}`,
   submissionCount: (roomId: string, questionId: string) =>
     `submissionCount:${roomId}:${questionId}`,
-  answer: (questionId: string) => `answer:${questionId}`,
+  answer: (roomId: string, questionId: string) =>
+    `room:${roomId}:question:${questionId}:answer`,
+  remainingQuestions: (roomId: string) => `room:${roomId}:remaining_questions`,
+  completedQuestions: (roomId: string) => `room:${roomId}:completed_questions`,
   leaderboard: (roomId: string) => `leaderboard:${roomId}`,
   memberNames: (roomId: string) => `room:${roomId}:names`,
   players: (roomId: string) => `room:${roomId}:players`,

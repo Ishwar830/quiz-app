@@ -1,7 +1,7 @@
 import redisClient from "../../lib/redis.ts";
 import { KeyManager } from "../redis/KeyManager.ts";
 import EventEmitter from "node:events";
-import type { GameState, QuestionInfo, QuizMeta, Room } from "../types.js";
+import type { GameState, QuestionInfo, Room } from "../types.js";
 import { ScoreManager } from "./ScoreManager.ts";
 import { QuestionManager } from "./QuestionManager.ts";
 import { persistGameData } from "./PersistanceManager.ts";
@@ -9,7 +9,8 @@ import { persistGameData } from "./PersistanceManager.ts";
 export const GameEventEmitter = new EventEmitter();
 
 const GameConfigs = {
-  COUNTDOWN_TIMER: 5, // seconds
+  COUNTDOWN_SEC: 5,
+  NEXT_QUESTION_BUFFER_SEC: 3,
 };
 
 const initializeGameState = async (room: Room) => {
@@ -107,13 +108,13 @@ const prepareNextQuestion = async (roomId: string) => {
     return;
   }
 
-  GameEventEmitter.emit("questionEnded", gameState);
+  // GameEventEmitter.emit("questionEnded", gameState);
   await setupCountdown(roomId);
   await startNextQuestion(roomId);
 };
 
 const setupCountdown = async (roomId: string) => {
-  const duration = GameConfigs.COUNTDOWN_TIMER;
+  const duration = GameConfigs.COUNTDOWN_SEC;
   const endsAt = Date.now() + duration * 1000;
 
   const gameState = await updateGameState(roomId, {
@@ -122,7 +123,7 @@ const setupCountdown = async (roomId: string) => {
     countdownInfo: { duration, endsAt },
   });
 
-  GameEventEmitter.emit("startCountdown", gameState);
+  GameEventEmitter.emit("countdownStarted", gameState);
 
   await new Promise<void>((resolve) => setTimeout(resolve, duration * 1000));
 };
@@ -153,8 +154,20 @@ const startNextQuestion = async (roomId: string) => {
   };
 
   const newState = await updateGameState(roomId, stateUpdates);
-  GameEventEmitter.emit("startQuestion", newState);
+  GameEventEmitter.emit("questionStarted", newState);
+
+  const nextQuestionStartTime =
+    questionInfo.timeLimitSeconds + GameConfigs.NEXT_QUESTION_BUFFER_SEC;
+
+  setTimeout(async () => {
+    const gameState = await getGameState(roomId);
+    GameEventEmitter.emit("questionEnded", gameState);
+  }, nextQuestionStartTime * 1000);
 };
+
+GameEventEmitter.on("questionEnded", (gameState: GameState) => {
+  prepareNextQuestion(gameState.room.id);
+});
 
 export const GameStateManager = {
   initializeGameState,

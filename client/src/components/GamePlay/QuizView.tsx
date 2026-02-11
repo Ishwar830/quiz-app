@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Clock, GhostIcon, TrendingUp } from 'lucide-react';
+import { Clock, GhostIcon, TrendingUp } from 'lucide-react';
 import SpectatorView from './SpectatorView';
 import PlayerView from './PlayerView';
 import { useGameRoom, useQuestionInfo } from '@/stores/GameStore';
-import { useSocket } from '@/socket';
 import { useMember } from '@/stores/MemberStore';
 import { calulateTimeLeft, cn } from '@/lib/utils';
 import { useTimer } from '@/hooks/useTimer';
@@ -39,33 +38,10 @@ export default function QuizView() {
   );
 }
 
-function NextButton() {
-  const socket = useSocket();
-  const handleNextClick = () => {
-    socket.emit('question:next');
-  };
-
-  return (
-    <button
-      onClick={handleNextClick}
-      className="flex gap-2 items-center group hover:cursor-pointer border-b-4 border-primary-500"
-    >
-      <span className="text-sm font-semibold">Next</span>
-      <ArrowRight
-        size={16}
-        className="stroke-secondary-400 group-hover:translate-x-1 transition-all duration-200"
-      />
-    </button>
-  );
-}
-
 function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
-  const room = useGameRoom();
   const { quizMeta } = useGameRoom();
   const member = useMember();
   const questionInfo = useQuestionInfo();
-
-  const isHost = room.host.id === member.id;
 
   return (
     <div className="p-4 shadow-sm rounded-xl border grid gap-4">
@@ -95,7 +71,12 @@ function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
       </div>
       <div className="flex items-center justify-between mx-2">
         <QuestionTimer endTime={questionInfo.submissionEndTime} />
-        {isHost && hasQuestionEnded && <NextButton />}
+        {hasQuestionEnded && (
+          <div className="flex gap-2 items-center">
+            <span className="size-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span className='text-xs text-muted-foreground'>Next Question will start soon</span>
+          </div>
+        )}
       </div>
     </div>
   );
