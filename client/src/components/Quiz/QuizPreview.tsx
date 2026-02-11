@@ -5,13 +5,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from './ui/card';
+} from '../ui/card';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from './ui/accordion';
+} from '../ui/accordion';
 import type { AnswerChoice, Question } from '@/stores/QuizFormStore';
 import type { Quiz } from '@/lib/utils';
 import { cn, formatDate } from '@/lib/utils';

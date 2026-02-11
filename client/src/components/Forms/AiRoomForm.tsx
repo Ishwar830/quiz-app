@@ -1,10 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Loader2, PlusCircle, X } from 'lucide-react';
-import { Label } from './ui/label';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Field, FieldError, FieldLabel, FieldSet } from './ui/field';
-import { Input } from './ui/input';
+import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Field, FieldError, FieldLabel, FieldSet } from '../ui/field';
+import { Input } from '../ui/input';
 import type { ValidationError } from './LoginCard';
 import type { FormEvent } from 'react';
 import { cn } from '@/lib/utils';

@@ -1,14 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Label } from '@radix-ui/react-label';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-  FieldSet,
-} from './ui/field';
-import { Input } from './ui/input';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Field, FieldError, FieldLabel, FieldSet } from '../ui/field';
+import { Input } from '../ui/input';
 import type { ValidationError } from './LoginCard';
 import type { FormEvent } from 'react';
 

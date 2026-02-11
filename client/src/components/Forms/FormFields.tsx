@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { Input } from './ui/input';
-import { Field, FieldLabel } from './ui/field';
+import { Input } from '../ui/input';
+import { Field, FieldLabel } from '../ui/field';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from './ui/input-group';
+} from '../ui/input-group';
 
 interface FieldProps {
   value: string;

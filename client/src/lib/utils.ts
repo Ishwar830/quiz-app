@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { nanoid } from 'nanoid';
 import type { ClassValue } from 'clsx';
 import type { Question, QuizFormState } from '@/stores/QuizFormStore';
+import type { Submission } from '@/stores/MemberStore';
 
 export interface Quiz extends QuizFormState {
   createdAt: number | Date;
@@ -64,4 +65,37 @@ export async function fetchQuiz(quizId: string) {
   }
   const { data } = await res.json();
   return data as Quiz;
+}
+
+export function calculateAccuracy(
+  submissions: Array<Pick<Submission, 'isCorrect'>>,
+  totalQuestions: number,
+) {
+  if (totalQuestions === 0) return 0;
+  const correctCount = submissions.reduce(
+    (curr, sub) => (sub.isCorrect ? curr + 1 : curr),
+    0,
+  );
+  return Math.ceil((correctCount / totalQuestions) * 100);
+}
+
+export function calculateLongestStreak(
+  submissions: Array<Pick<Submission, 'isCorrect' | 'submittedAt'>>,
+) {
+  const sortedSubmissions = [...submissions].sort(
+    (a, b) => a.submittedAt - b.submittedAt,
+  );
+
+  let longestStreak = 0;
+  let streakCounter = 0;
+  for (const sub of sortedSubmissions) {
+    if (sub.isCorrect) {
+      streakCounter++;
+      longestStreak = Math.max(streakCounter, longestStreak);
+    } else {
+      streakCounter = 0;
+    }
+  }
+
+  return longestStreak;
 }

@@ -1,10 +1,10 @@
 import { useContext, useState } from 'react';
 import { PlusCircle, Timer, X } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { Field, FieldLabel } from './ui/field';
-import { Input } from './ui/input';
-import { Checkbox } from './ui/checkbox';
-import { Button } from './ui/button';
+import { Field, FieldLabel } from '../ui/field';
+import { Input } from '../ui/input';
+import { Checkbox } from '../ui/checkbox';
+import { Button } from '../ui/button';
 import type { AnswerChoice, QuizFormState } from '@/stores/QuizFormStore';
 import {
   QuizStoreContext,

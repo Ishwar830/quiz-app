@@ -6,6 +6,7 @@ import { auth } from "./lib/auth.ts";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandlers.ts";
 import { quizRouter } from "./routes/quizRouter.ts";
 import { roomRouter } from "./routes/roomRouter.ts";
+import { gamesRouter } from "./routes/gamesRouter.ts";
 
 const apiRouter = Router();
 apiRouter.use(morgan("tiny"));
@@ -16,6 +17,7 @@ apiRouter.use(express.json());
 
 apiRouter.use("/quizzes", quizRouter);
 apiRouter.use("/rooms", roomRouter);
+apiRouter.use("/games", gamesRouter);
 
 apiRouter.use(notFoundHandler);
 

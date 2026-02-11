@@ -8,10 +8,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from './ui/card';
-import { Button } from './ui/button';
+} from '../ui/card';
+import { Button } from '../ui/button';
+import { FieldError, FieldSeparator } from '../ui/field';
 import { EmailField, PasswordField } from './FormFields';
-import { FieldError, FieldSeparator } from './ui/field';
 import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/authClient';
 

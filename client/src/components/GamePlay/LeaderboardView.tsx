@@ -1,17 +1,10 @@
-import {
-  Crown,
-  Flame,
-  Medal,
-  MoreHorizontal,
-  TrendingUp,
-  Trophy,
-  Zap,
-} from 'lucide-react';
+import { Crown, Medal, MoreHorizontal, Trophy } from 'lucide-react';
 import UserAvatar from '../UserAvatar';
-import type { Submission } from '@/stores/MemberStore';
+import { StatCardsGrid } from './StatCards';
 import type { RankInfo } from '@/stores/GameStore';
 import { useGameRoom, useRankings } from '@/stores/GameStore';
 import { useMember, useMemberSubmissions } from '@/stores/MemberStore';
+import { calculateAccuracy, calculateLongestStreak } from '@/lib/utils';
 
 export default function LeaderBoardView() {
   return (
@@ -53,48 +46,13 @@ function GameSummary() {
         {member.role === 'SPECTATOR' ? (
           <p className="text-sm leading-relaxed">{description}</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <StatCard
-              icon={<TrendingUp className="stroke-emerald-400" size={20} />}
-              label="Score"
-              value={member.score}
-              subtext="Points"
-              colorClass="bg-emerald-500/50"
-            />
-            <StatCard
-              icon={<Zap className="fill-amber-400 stroke-none" size={20} />}
-              label="Accuracy"
-              value={`${accuracy}%`}
-              subtext="Correct"
-              colorClass="bg-amber-500/50"
-            />
-            <StatCard
-              icon={<Flame className="fill-rose-400 stroke-none" size={20} />}
-              label="Best Streak"
-              value={streak}
-              subtext="In a row"
-              colorClass="bg-rose-500/50"
-            />
-          </div>
+          <StatCardsGrid
+            score={member.score ?? 0}
+            accuracy={accuracy}
+            streak={streak}
+          />
         )}
       </div>
-    </div>
-  );
-}
-
-function StatCard({ icon, label, value, subtext, colorClass }: any) {
-  return (
-    <div
-      className={`flex relative flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-600 ${colorClass} backdrop-blur-sm`}
-    >
-      <div className="absolute p-1 rounded-md px-2 bg-white border top-0 -translate-y-1/2 flex items-center gap-2 mb-2">
-        {icon}
-        <span className="text-xs font-semibold uppercase tracking-wide">
-          {label}
-        </span>
-      </div>
-      <div className="text-3xl font-black tracking-tight">{value}</div>
-      <div className="text-xs text-text-800 font-medium mt-1">{subtext}</div>
     </div>
   );
 }
@@ -265,35 +223,4 @@ function PodiumStep({
       </div>
     </div>
   );
-}
-
-function calculateAccuracy(
-  submissions: Array<Submission>,
-  totalQuestions: number,
-) {
-  if (totalQuestions === 0) return 0;
-  const correctCount = submissions.reduce(
-    (curr, sub) => (sub.isCorrect ? curr + 1 : curr),
-    0,
-  );
-  return Math.ceil((correctCount / totalQuestions) * 100);
-}
-
-function calculateLongestStreak(submissions: Array<Submission>) {
-  const sortedSubmissions = [...submissions].sort(
-    (a, b) => a.submittedAt - b.submittedAt,
-  );
-
-  let longestStreak = 0;
-  let streakCounter = 0;
-  for (const sub of sortedSubmissions) {
-    if (sub.isCorrect) {
-      streakCounter++;
-      longestStreak = Math.max(streakCounter, longestStreak);
-    } else {
-      streakCounter = 0;
-    }
-  }
-
-  return longestStreak;
 }

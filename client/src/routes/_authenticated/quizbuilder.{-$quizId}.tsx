@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { QuizBuilder } from '@/components/QuizBuilder';
+import { QuizBuilder } from '@/components/Quiz/QuizBuilder';
 import { fetchQuiz, generateMockQuizFormData } from '@/lib/utils';
 
 export const Route = createFileRoute('/_authenticated/quizbuilder/{-$quizId}')({

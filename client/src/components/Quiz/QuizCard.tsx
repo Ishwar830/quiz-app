@@ -7,7 +7,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Link, useNavigate, useRouter } from '@tanstack/react-router';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from './ui/card';
+} from '../ui/card';
 import { formatDate } from '@/lib/utils';
 
 export interface QuizMeta {

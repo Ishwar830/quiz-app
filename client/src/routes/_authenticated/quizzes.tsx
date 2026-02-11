@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Search } from 'lucide-react';
-import type { QuizMeta } from '@/components/QuizCard';
+import type { QuizMeta } from '@/components/Quiz/QuizCard';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group';
-import { QuizCard } from '@/components/QuizCard';
+import { QuizCard } from '@/components/Quiz/QuizCard';
 import { QuizCardSkeleton, Skeleton } from '@/components/Skeletons';
 
 export const Route = createFileRoute('/_authenticated/quizzes')({

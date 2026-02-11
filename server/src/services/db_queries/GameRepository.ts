@@ -7,7 +7,7 @@ import {
   gameQuestions,
 } from "../../db/schema/game.ts";
 import { GameDataPayload } from "../types.js";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 const saveGame = async (gameData: GameDataPayload) => {
   return await db.transaction(async (tx) => {
@@ -18,8 +18,6 @@ const saveGame = async (gameData: GameDataPayload) => {
       id: gameId,
       ...gameMeta,
     });
-
-    
 
     if (questions.length) {
       await tx
@@ -54,52 +52,101 @@ const saveGame = async (gameData: GameDataPayload) => {
   });
 };
 
-const getGameById = async (gameId: string) => {
-  return await db.query.games.findFirst({ where: eq(games.id, gameId) });
-};
-
 const getGamesByHostId = async (hostId: string) => {
-  return await db.query.games.findMany({
+  const res = await db.query.games.findMany({
     where: eq(games.hostId, hostId),
+    orderBy: (games, { desc }) => desc(games.createdAt),
+    with: {
+      participants: {
+        columns: { id: true },
+      },
+      submissions: {
+        columns: { id: true },
+      },
+    },
   });
+
+  return res.map((game) => ({
+    ...game,
+    submissionCount: game.submissions.length,
+    participantCount: game.participants.length,
+    submissions: undefined,
+    participants: undefined,
+  }));
 };
 
 const getGamesByUserId = async (userId: string) => {
-  const userGames = await db.query.gameParticipants.findMany({
-    where: eq(gameParticipants.id, userId),
+  const res = await db.query.gameParticipants.findMany({
+    where: eq(gameParticipants.userId, userId),
     with: {
       game: true,
     },
   });
 
+  const userGames = res.map((t) => ({
+    ...t.game,
+    rank: t.rank,
+    score: t.score,
+    hostId: undefined,
+  }));
+
   return userGames;
 };
 
-const getUserGameSubmissions = async (userId: string, gameId: string) => {
-  return await db.query.gameSubmissions.findMany({
-    where: and(eq(games.id, gameId), eq(gameSubmissions.userId, userId)),
-  });
-};
-
-const getGameQuestions = async (gameId: string) => {
-  return await db.query.gameQuestions.findMany({
-    where: eq(gameQuestions.gameId, gameId),
+const getFullGameDetails = async (gameId: string) => {
+  return await db.query.games.findFirst({
+    where: eq(games.id, gameId),
+    with: {
+      questions: {
+        orderBy: (questions, { asc }) => asc(questions.order),
+        with: {
+          submissions: true,
+        },
+      },
+      participants: {
+        orderBy: (participants, { asc }) => asc(participants.rank),
+      },
+    },
   });
 };
 
 const getGameRankings = async (gameId: string) => {
   return await db.query.gameParticipants.findMany({
     where: eq(gameParticipants.gameId, gameId),
-    orderBy: gameParticipants.rank,
+    orderBy: (gameParticipants, { asc }) => asc(gameParticipants.rank),
   });
+};
+
+const getGameDetailsForUser = async (gameId: string, userId: string) => {
+  const gameData = await db.query.games.findFirst({
+    where: eq(games.id, gameId),
+    with: {
+      questions: {
+        orderBy: (questions, { asc }) => [asc(questions.order)],
+      },
+      submissions: {
+        where: (submissions, { eq }) => eq(submissions.userId, userId),
+      },
+      participants: {
+        where: (participants, { eq }) => eq(participants.userId, userId),
+      },
+    },
+  });
+
+  if (!gameData) return null;
+
+  return {
+    ...gameData,
+    userRankInfo: gameData.participants[0] || null,
+    participants: undefined,
+  };
 };
 
 export const GameRepository = {
   saveGame,
-  getGameById,
+  getGameDetailsForUser,
   getGamesByHostId,
   getGamesByUserId,
-  getGameQuestions,
-  getUserGameSubmissions,
   getGameRankings,
+  getFullGameDetails,
 };

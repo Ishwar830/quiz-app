@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  GamepadIcon,
   Library,
   PlaySquare,
   Sparkles,
@@ -16,8 +17,8 @@ import {
   DialogHeader,
   DialogTrigger,
 } from './ui/dialog';
-import { JoinRoomForm } from './JoinRoomForm';
-import { AiRoomForm } from './AiRoomForm';
+import { JoinRoomForm } from './Forms/JoinRoomForm';
+import { AiRoomForm } from './Forms/AiRoomForm';
 import type { User } from 'better-auth';
 
 export function Dashboard({ user }: { user: User }) {
@@ -46,7 +47,9 @@ function DashboardHeader({
         <div>
           <div className="text-lg flex flex-wrap items-baseline gap-x-2">
             <span>Welcome</span>
-            <span className="text-2xl font-medium text-secondary-500">{username}</span>
+            <span className="text-2xl font-medium text-secondary-500">
+              {username}
+            </span>
           </div>
           <p className="text-sm text-muted-foreground">
             Ready to challenge friends or build something ?
@@ -64,6 +67,7 @@ function DashboardContent() {
         <CreateRoomCard />
         <JoinRoomCard />
         <AIRoomCard />
+        <PastGamesCard />
         <BrowseQuizCard />
         <BuildQuizCard />
       </div>
@@ -110,7 +114,7 @@ function JoinRoomCard() {
         </Card>
       </DialogTrigger>
       <DialogContent className="font-sora">
-        <DialogHeader className='text-start'>
+        <DialogHeader className="text-start">
           <DialogTitle className="text-lg font-semibold">
             Join an Existing Room
           </DialogTitle>
@@ -182,7 +186,7 @@ function AIRoomCard() {
         </Card>
       </DialogTrigger>
       <DialogContent className="font-sora">
-        <DialogHeader className='text-start'>
+        <DialogHeader className="text-start">
           <DialogTitle className="text-lg font-semibold">AI Quiz</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             Enter topics to generate quiz
@@ -191,5 +195,24 @@ function AIRoomCard() {
         <AiRoomForm />
       </DialogContent>
     </Dialog>
+  );
+}
+
+function PastGamesCard() {
+  return (
+    <Link to="/games">
+      <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
+        <CardContent className="space-y-3">
+          <GamepadIcon className="stroke-orange-500 rounded-2xl p-2 bg-orange-100 size-10" />
+          <CardTitle className="flex gap-2 items-center">
+            <span>Past Games</span>
+            <span className="group-hover:translate-x-1 duration-300">
+              <ArrowRight size={16} className="stroke-orange-600" />
+            </span>
+          </CardTitle>
+          <CardDescription>Check your past game participations</CardDescription>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

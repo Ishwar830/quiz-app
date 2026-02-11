@@ -96,7 +96,32 @@ export const gameRelations = relations(games, ({ many }) => ({
   participants: many(gameParticipants),
 }));
 
-export const gameParticipantsRelations = relations(
+export const gameQuestionRelations = relations(
+  gameQuestions,
+  ({ one, many }) => ({
+    game: one(games, {
+      fields: [gameQuestions.gameId],
+      references: [games.id],
+    }),
+    submissions: many(gameSubmissions),
+  }),
+);
+
+export const gameSubmissionRelations = relations(
+  gameSubmissions,
+  ({ one }) => ({
+    game: one(games, {
+      fields: [gameSubmissions.gameId],
+      references: [games.id],
+    }),
+    question: one(gameQuestions, {
+      fields: [gameSubmissions.questionId],
+      references: [gameQuestions.id],
+    }),
+  }),
+);
+
+export const gameParticipantRelations = relations(
   gameParticipants,
   ({ one }) => ({
     game: one(games, {

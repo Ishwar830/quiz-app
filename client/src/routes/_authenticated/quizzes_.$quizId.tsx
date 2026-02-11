@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { fetchQuiz } from '@/lib/utils';
-import { QuizPreview } from '@/components/QuizPreview';
+import { QuizPreview } from '@/components/Quiz/QuizPreview';
 
 export const Route = createFileRoute('/_authenticated/quizzes_/$quizId')({
   component: RouteComponent,

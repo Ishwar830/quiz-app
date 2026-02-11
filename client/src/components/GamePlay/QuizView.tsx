@@ -43,6 +43,8 @@ function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
   const member = useMember();
   const questionInfo = useQuestionInfo();
 
+  const isLastQuestion = questionInfo.order == quizMeta.totalQuestions;
+
   return (
     <div className="p-4 shadow-sm rounded-xl border grid gap-4">
       <div className="flex justify-between items-center mx-2">
@@ -74,7 +76,13 @@ function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
         {hasQuestionEnded && (
           <div className="flex gap-2 items-center">
             <span className="size-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span className='text-xs text-muted-foreground'>Next Question will start soon</span>
+            {isLastQuestion ? (
+              <span>Thanks for playing!</span>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                Next Question will start soon
+              </span>
+            )}
           </div>
         )}
       </div>
