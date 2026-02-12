@@ -4,9 +4,9 @@ import {
   CircleQuestionMarkIcon,
   Copy,
   Play,
-  TagIcon,
   Trophy,
 } from 'lucide-react';
+import { TopicList } from '../General/TopicList';
 import { useMember } from '@/stores/MemberStore';
 import { useGameRoom } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
@@ -45,12 +45,13 @@ function LobbyHeader({ title, description, hostname }: LobbyHeaderProps) {
     <div className="overflow-hidden bg-linear-to-br from-primary-200 to-primary-100 border p-4 sm:px-8 sm:py-10 shadow-md text-deep-space-blue-800 rounded-lg">
       <div className="grid gap-4">
         <div className="flex items-center gap-4 mb-4">
-          <div className="size-14 border-2 border-gray-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white">
+          <div className="shrink-0 grow-0 size-14 border-2 border-gray-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white">
             <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider mb-1">
-              Hosted by <span className="text-sm">{hostname}</span>
+            <p className="text-xs space-x-2">
+              <span>Hosted by</span>
+              <span className="text-sm font-bold">{hostname}</span>
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
               {title}
@@ -75,17 +76,11 @@ function LobbyContent({ topics, totalQuestions }: LobbyContentProps) {
       <div className="flex flex-col gap-4">
         <div className="grid gap-2">
           <h2 className="border-b-2 border-secondary-500 w-fit">Topics</h2>
-          <ul className="flex gap-4 flex-wrap">
+          <TopicList>
             {topics.map((topic) => (
-              <li
-                className="text-xs flex items-center gap-2 rounded-md bg-accent-100 p-1 px-2"
-                key={topic}
-              >
-                <TagIcon size={12} />
-                {topic}
-              </li>
+              <TopicList.Item key={topic}>{topic}</TopicList.Item>
             ))}
-          </ul>
+          </TopicList>
         </div>
 
         <div>

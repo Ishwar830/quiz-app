@@ -1,6 +1,6 @@
 import { Crown, Medal, MoreHorizontal, Trophy } from 'lucide-react';
 import UserAvatar from '../UserAvatar';
-import { StatCardsGrid } from './StatCards';
+import { StatCardsGrid } from '../General/StatCards';
 import type { RankInfo } from '@/stores/GameStore';
 import { useGameRoom, useRankings } from '@/stores/GameStore';
 import { useMember, useMemberSubmissions } from '@/stores/MemberStore';
@@ -30,12 +30,13 @@ function GameSummary() {
     <div className="overflow-hidden rounded-2xl bg-vibrant-coral-50 shadow-sm">
       <div className="p-6 sm:p-8 grid gap-4 bg-linear-to-br from-primary-200 to-primary-100 border">
         <div className="flex items-center gap-4 mb-4">
-          <div className="size-14 border-2 border-gray-800 bg-white rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
+          <div className="shrink-0 grow-0 size-14 border-2 border-gray-800 bg-white rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
             <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider mb-1">
-              Hosted by <span className="text-sm">{hostname}</span>
+            <p className="text-xs space-x-2">
+              <span>Hosted by</span>
+              <span className="text-sm font-bold">{hostname}</span>
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
               {title}
@@ -191,7 +192,7 @@ function PodiumStep({
         <div
           className={`rounded-full p-1 ${isWinner ? 'bg-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.4)]' : 'bg-slate-700'}`}
         >
-          <UserAvatar name={player.name} size={isWinner ? 'lg' : 'sm'} />
+          <UserAvatar name={player.name} size='lg'/>
         </div>
         {isWinner && (
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce">

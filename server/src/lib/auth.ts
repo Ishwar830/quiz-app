@@ -4,6 +4,7 @@ import { anonymous } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/index.js";
 import * as userSchema from "../db/schema/users.js";
+import { nanoid } from "nanoid";
 
 let trustedOrigins: Array<string> = [];
 if (env.NODE_ENV == "development") {
@@ -20,7 +21,15 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     maxPasswordLength: 16,
   },
-  plugins: [anonymous()],
+  plugins: [
+    anonymous({
+      generateName: () => {
+        const randomId = nanoid();
+        const randomUsername = `User-${randomId.slice(3, 6)}`;
+        return randomUsername;
+      },
+    }),
+  ],
   trustedOrigins,
   session: {
     cookieCache: {

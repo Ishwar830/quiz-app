@@ -1,10 +1,16 @@
 import { useContext, useState } from 'react';
-import { PlusCircle, Timer, X } from 'lucide-react';
+import { PlusCircle, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Field, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
 import { Button } from '../ui/button';
+import {
+  Accordion,
+} from '../ui/accordion';
+import { QuestionCard } from '../General/QuestionCard';
+import { TopicList } from '../General/TopicList';
+import { ChoiceList } from '../General/ChoiceList';
 import type { AnswerChoice, QuizFormState } from '@/stores/QuizFormStore';
 import {
   QuizStoreContext,
@@ -16,7 +22,7 @@ import {
   useQuizTitle,
   useQuizTopics,
 } from '@/stores/QuizFormStore';
-import { cn, generateMockFormQuestion } from '@/lib/utils';
+import { generateMockFormQuestion } from '@/lib/utils';
 
 export function QuizBuilder({ quiz }: { quiz: QuizFormState }) {
   const [store] = useState(createQuizStore(quiz));
@@ -155,12 +161,9 @@ function QuizTopic() {
           <PlusCircle />
         </button>
       </div>
-      <div className="flex gap-2 flex-wrap">
+      <TopicList>
         {topics.map((topic, idx) => (
-          <div
-            key={idx}
-            className="flex items-center gap-2 text-sm rounded-xl bg-accent-100 p-1 px-2"
-          >
+          <TopicList.Item key={idx}>
             <span>{topic}</span>
             <button
               className="rounded-full p-1 bg-rose-300 hover:cursor-pointer"
@@ -168,9 +171,9 @@ function QuizTopic() {
             >
               <X size={12} />
             </button>
-          </div>
+          </TopicList.Item>
         ))}
-      </div>
+      </TopicList>
     </>
   );
 }
@@ -180,13 +183,11 @@ function QuestionContainer() {
   const { addQuestion } = useQuizFormActions();
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <div className="flex items-center gap-4 mb-4">
-          <p className="text-xl">Questions</p>
-          <span className="rounded-full size-6 bg-accent-200 text-center">
-            {questionsIds.length}
-          </span>
-        </div>
+      <div className="flex items-center gap-4 mb-4">
+        <p className="text-xl">Questions</p>
+        <span className="rounded-full size-8 grid place-items-center bg-accent-200 text-center">
+          {questionsIds.length}
+        </span>
         <Button
           className="border-secondary-200 border-2 text-secondary-400 bg-white hover:bg-secondary-400 hover:text-white"
           onClick={() => {
@@ -202,84 +203,19 @@ function QuestionContainer() {
           Add Question
         </Button>
       </div>
-      <div className="pl-4 grid gap-4">
+      <Accordion
+        className="pl-4 grid gap-4"
+        type="multiple"
+      >
         {questionsIds.map((id, idx) => (
-          <Question key={id} questionId={id} idx={idx} />
+          <EditQuestionCard key={id} questionId={id} idx={idx} />
         ))}
-      </div>
+      </Accordion>
     </div>
   );
 }
 
-function Question({ questionId }: { questionId: string; idx: number }) {
-  const question = useQuizQuestionById(questionId)!;
-  const { updateQuestionText, updateQuestionTimeLimit, removeQuestion } =
-    useQuizFormActions();
-  return (
-    <div className="grid gap-2">
-      <div className="flex items-center gap-4 border-b-2 pb-2 border-secondary-300 w-fit">
-        <p>Q. {question.order}</p>
-        <button
-          className="bg-red-400 rounded-full size-6 grid place-items-center hover:cursor-pointer"
-          onClick={() => removeQuestion(questionId)}
-        >
-          <X size={20} />
-        </button>
-      </div>
-      <div className="flex flex-row gap-4">
-        <Input
-          id={question.id}
-          type="text"
-          value={question.text}
-          onChange={(e) => updateQuestionText(question.id, e.target.value)}
-          placeholder={`Question ${question.order}....`}
-        />
-        <div className="flex gap-2 items-center">
-          <Timer size={32} />
-          <Input
-            id={question.id + ' timeLimit'}
-            type="number"
-            min={10}
-            step={5}
-            max={60}
-            value={question.timeLimitSeconds}
-            onChange={(e) =>
-              updateQuestionTimeLimit(question.id, parseInt(e.target.value))
-            }
-          />
-        </div>
-      </div>
-      <li className="list-none">
-        <ChoiceContainer
-          questionId={question.id}
-          choices={question.choices}
-          correctChoiceId={question.correctChoiceId}
-        />
-      </li>
-    </div>
-  );
-}
-
-function ChoiceContainer({
-  questionId,
-  choices,
-  correctChoiceId,
-}: {
-  questionId: string;
-  choices: Array<AnswerChoice>;
-  correctChoiceId: string;
-}) {
-  return choices.map((choice) => (
-    <Choice
-      questionId={questionId}
-      key={choice.id}
-      choice={choice}
-      correctChoiceId={correctChoiceId}
-    />
-  ));
-}
-
-function Choice({
+function EditChoice({
   questionId,
   choice,
   correctChoiceId,
@@ -293,12 +229,7 @@ function Choice({
   const isCorrectChoice = choice.id == correctChoiceId;
 
   return (
-    <div
-      className={cn(
-        'flex items-center gap-2 p-1',
-        isCorrectChoice && 'bg-lime-200 rounded-md',
-      )}
-    >
+    <div className="flex gap-2 items-center">
       <Checkbox
         className="size-5"
         checked={isCorrectChoice}
@@ -311,5 +242,85 @@ function Choice({
         onChange={(e) => updateChoice(questionId, choice.id, e.target.value)}
       />
     </div>
+  );
+}
+
+function EditQuestionCard({ questionId }: { questionId: string; idx: number }) {
+  const question = useQuizQuestionById(questionId)!;
+  const { updateQuestionText, updateQuestionTimeLimit, removeQuestion } =
+    useQuizFormActions();
+
+  const correctChoice = question.choices.find(
+    (c) => c.id === question.correctChoiceId,
+  );
+
+  return (
+    <QuestionCard.Root value={questionId}>
+      <QuestionCard.Header>
+        <QuestionCard.OrderBadge order={question.order} />
+        <QuestionCard.HeaderContent>
+          <div className="grid gap-2 grid-cols-[1fr_32px]">
+            <QuestionCard.Text className="overflow-hidden wrap-break-word">
+              {question.text || `Question ${question.order}`}
+            </QuestionCard.Text>
+            <span
+              className="justify-self-center bg-red-400 self-start rounded-full size-6 grid place-items-center hover:cursor-pointer"
+              onClick={() => removeQuestion(questionId)}
+            >
+              <X size={20} />
+            </span>
+          </div>
+          <QuestionCard.MetaRow>
+            <QuestionCard.TimeLimit>
+              {question.timeLimitSeconds}
+            </QuestionCard.TimeLimit>
+            {correctChoice && (
+              <span className="p-1 px-2 text-xs text-green-700 bg-green-200 rounded-md">
+                {correctChoice.text}
+              </span>
+            )}
+          </QuestionCard.MetaRow>
+        </QuestionCard.HeaderContent>
+      </QuestionCard.Header>
+      <QuestionCard.Body>
+        <div className="flex flex-row gap-4">
+          <Input
+            id={question.id}
+            type="text"
+            value={question.text}
+            onChange={(e) => updateQuestionText(question.id, e.target.value)}
+            placeholder={`Question ${question.order}....`}
+            className="flex-1"
+          />
+          <QuestionCard.TimeLimit iconSize={16} className="min-w-10 shrink-0">
+            <Input
+              id={question.id + ' timeLimit'}
+              type="number"
+              min={10}
+              step={5}
+              max={60}
+              value={question.timeLimitSeconds}
+              onChange={(e) =>
+                updateQuestionTimeLimit(question.id, parseInt(e.target.value))
+              }
+            />
+          </QuestionCard.TimeLimit>
+        </div>
+        <ChoiceList>
+          {question.choices.map((c) => {
+            const isCorrect = c.id === question.correctChoiceId;
+            return (
+              <ChoiceList.Item key={c.id} isCorrect={isCorrect}>
+                <EditChoice
+                  questionId={question.id}
+                  correctChoiceId={question.correctChoiceId}
+                  choice={c}
+                />
+              </ChoiceList.Item>
+            );
+          })}
+        </ChoiceList>
+      </QuestionCard.Body>
+    </QuestionCard.Root>
   );
 }

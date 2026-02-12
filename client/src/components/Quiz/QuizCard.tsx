@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
+import { TopicList } from '../General/TopicList';
 import { formatDate } from '@/lib/utils';
 
 export interface QuizMeta {
@@ -91,18 +92,18 @@ function QuizTopics({ topics }: { topics: Array<string> }) {
   const topicsToShow = topics.slice(0, 3);
   const remainingTopicCount = topicsCount - topicsToShow.length;
   return (
-    <div className="flex gap-4 flex-wrap">
+    <TopicList>
       {topicsToShow.map((topic) => (
-        <span className="text-xs rounded-md bg-accent-100 p-1 px-2" key={topic}>
+        <TopicList.Item key={topic} withTagIcon={false}>
           {topic}
-        </span>
+        </TopicList.Item>
       ))}
       {remainingTopicCount > 0 && (
-        <span className="text-xs rounded-md bg-accent-100 p-1 px-2">
+        <TopicList.Item withTagIcon={false}>
           +{remainingTopicCount} More
-        </span>
+        </TopicList.Item>
       )}
-    </div>
+    </TopicList>
   );
 }
 

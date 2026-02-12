@@ -1,5 +1,6 @@
-import { Flame, TrendingUp, Zap } from "lucide-react";
-import type { ReactNode } from "react";
+import { Flame, TrendingUp, Zap } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 export function StatCardsGrid({
   score,
@@ -17,21 +18,21 @@ export function StatCardsGrid({
         label="Score"
         value={score}
         subtext="Points"
-        colorClass="bg-emerald-500/50"
+        colorClass="bg-emerald-300"
       />
       <StatCard
         icon={<Zap className="fill-amber-400 stroke-none" size={20} />}
         label="Accuracy"
         value={`${accuracy}%`}
         subtext="Correct"
-        colorClass="bg-amber-500/50"
+        colorClass="bg-amber-300"
       />
       <StatCard
         icon={<Flame className="fill-rose-400 stroke-none" size={20} />}
         label="Best Streak"
         value={streak}
         subtext="In a row"
-        colorClass="bg-rose-500/50"
+        colorClass="bg-rose-300"
       />
     </div>
   );
@@ -48,7 +49,10 @@ interface StatCardProps {
 function StatCard({ icon, label, value, subtext, colorClass }: StatCardProps) {
   return (
     <div
-      className={`flex relative flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-600 ${colorClass} backdrop-blur-sm`}
+      className={cn(
+        'flex relative flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-600 backdrop-blur-sm',
+        colorClass,
+      )}
     >
       <div className="absolute p-1 rounded-md px-2 bg-white border top-0 -translate-y-1/2 flex items-center gap-2 mb-2">
         {icon}

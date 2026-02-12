@@ -1,11 +1,5 @@
-import {
-  Calendar,
-  CheckCircleIcon,
-  Clock,
-  TagIcon,
-  XCircleIcon,
-} from 'lucide-react';
-import { StatCardsGrid } from '../GamePlay/StatCards';
+import { Calendar, CheckCircleIcon, TagIcon, XCircleIcon } from 'lucide-react';
+import { StatCardsGrid } from '../General/StatCards';
 import {
   Card,
   CardContent,
@@ -13,13 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '../ui/accordion';
-import type { AnswerChoice, Question } from '@/stores/QuizFormStore';
+import { Accordion } from '../ui/accordion';
+import { QuestionCard } from '../General/QuestionCard';
+import { ChoiceList } from '../General/ChoiceList';
+import type { Question } from '@/stores/QuizFormStore';
+import type { ReactNode } from 'react';
 import { calculateAccuracy, calculateLongestStreak, cn } from '@/lib/utils';
 
 export interface UserGameDetail {
@@ -150,7 +142,7 @@ function QuestionsContainer({
       <CardContent>
         <Accordion type="multiple">
           {questions.map((q) => (
-            <Question key={q.id} question={q} />
+            <ReviewQuestionCard key={q.id} question={q} />
           ))}
         </Accordion>
       </CardContent>
@@ -158,90 +150,96 @@ function QuestionsContainer({
   );
 }
 
-function Question({
+function ReviewQuestionCard({
   question,
 }: {
   question: Question & { submittedChoiceId: string | null };
 }) {
-  let status = '';
-  if (question.submittedChoiceId === null) status = 'not attempted';
-  else if (question.correctChoiceId === question.submittedChoiceId)
+  let status: QuestionStatus = 'incorrect';
+  if (question.submittedChoiceId === null) status = 'skipped';
+  if (question.submittedChoiceId === question.correctChoiceId)
     status = 'correct';
-  else status = 'incorrect';
 
   return (
-    <AccordionItem value={question.id}>
-      <AccordionTrigger>
-        <div className="flex gap-4 px-2 text-sm">
-          <div className="size-8 grow-0 shrink-0 rounded-full bg-primary-300 grid place-items-center">
-            {question.order}
-          </div>
-          <div className="flex flex-col gap-2">
-            <div>{question.text}</div>
-            <span className="flex gap-2 items-center text-xs text-muted-foreground">
-              <div className="flex gap-2 items-center">
-                <Clock size={12} />
-                {question.timeLimitSeconds}s
-              </div>
-              <div>
-                {status === 'correct' && (
-                  <span className="flex items-center p-1 bg-green-200 rounded-md text-green-800 gap-2">
-                    <CheckCircleIcon size={12} /> Correct
-                  </span>
-                )}
-                {status === 'incorrect' && (
-                  <span className="flex items-center p-1 bg-red-200 text-red-800 rounded-md gap-2">
-                    <XCircleIcon size={12} /> Incorrect
-                  </span>
-                )}
-                {status === 'not attempted' && (
-                  <span className="flex items-center p-1 bg-yellow-200 text-yellow-800 rounded-md gap-2">
-                    Skipped
-                  </span>
-                )}
-              </div>
-            </span>
-          </div>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent>
-        <ul className="ml-8 p-2 grid gap-2">
-          {question.choices.map((choice) => (
-            <Choice
-              key={choice.id}
-              choice={choice}
-              isWrongSubmission={
-                !!question.submittedChoiceId &&
-                question.submittedChoiceId === choice.id &&
-                status === 'incorrect'
-              }
-              isCorrect={question.correctChoiceId === choice.id}
-            />
-          ))}
-        </ul>
-      </AccordionContent>
-    </AccordionItem>
+    <QuestionCard.Root value={question.id}>
+      <QuestionCard.Header>
+        <QuestionCard.OrderBadge order={question.order} />
+        <QuestionCard.HeaderContent>
+          <QuestionCard.Text className="overflow-hidden wrap-break-word">
+            {question.text}
+          </QuestionCard.Text>
+          <QuestionCard.MetaRow>
+            <QuestionCard.TimeLimit>
+              {question.timeLimitSeconds}
+            </QuestionCard.TimeLimit>
+            <StatusBadge status={status} />
+          </QuestionCard.MetaRow>
+        </QuestionCard.HeaderContent>
+      </QuestionCard.Header>
+      <QuestionCard.Body className="ml-8 p-2">
+        <ChoiceList>
+          {question.choices.map((c) => {
+            const isCorrect = c.id === question.correctChoiceId;
+            const isWrongSubmission =
+              status === 'incorrect' && question.submittedChoiceId === c.id;
+            return (
+              <ChoiceList.Item
+                className="text-xs"
+                key={c.id}
+                isCorrect={isCorrect}
+                isWrongSubmission={isWrongSubmission}
+              >
+                {c.text}
+              </ChoiceList.Item>
+            );
+          })}
+        </ChoiceList>
+      </QuestionCard.Body>
+    </QuestionCard.Root>
   );
 }
 
-function Choice({
-  isCorrect,
-  choice,
-  isWrongSubmission,
+type QuestionStatus = 'correct' | 'incorrect' | 'skipped';
+
+const statusConfig: Record<
+  QuestionStatus,
+  { className: string; icon: ReactNode; label: string }
+> = {
+  correct: {
+    className: 'bg-green-200 text-green-800',
+    icon: <CheckCircleIcon size={12} />,
+    label: 'Correct',
+  },
+  incorrect: {
+    className: 'bg-red-200 text-red-800',
+    icon: <XCircleIcon size={12} />,
+    label: 'Incorrect',
+  },
+  skipped: {
+    className: 'bg-yellow-200 text-yellow-800',
+    icon: null,
+    label: 'Skipped',
+  },
+};
+
+function StatusBadge({
+  status,
+  className,
 }: {
-  isCorrect: boolean;
-  choice: AnswerChoice;
-  isWrongSubmission: boolean;
+  status: QuestionStatus;
+  className?: string;
 }) {
+  const config = statusConfig[status];
   return (
-    <li
+    <span
       className={cn(
-        'bg-gray-100 p-1 rounded-lg px-2 text-xs',
-        isCorrect && 'bg-lime-300',
-        isWrongSubmission && 'bg-red-300',
+        'flex items-center p-1 rounded-md gap-2 text-xs',
+        config.className,
+        className,
       )}
     >
-      {choice.text}
-    </li>
+      {config.icon}
+      {config.label}
+    </span>
   );
 }

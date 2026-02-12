@@ -1,4 +1,4 @@
-import { CircleQuestionMark, Clock, TagIcon } from 'lucide-react';
+import { CircleQuestionMark } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -8,13 +8,13 @@ import {
 } from '../ui/card';
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
 } from '../ui/accordion';
-import type { AnswerChoice, Question } from '@/stores/QuizFormStore';
+import { QuestionCard } from '../General/QuestionCard';
+import { TopicList } from '../General/TopicList';
+import { ChoiceList } from '../General/ChoiceList';
+import type { Question } from '@/stores/QuizFormStore';
 import type { Quiz } from '@/lib/utils';
-import { cn, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 
 export function QuizPreview({ quiz }: { quiz: Quiz }) {
   return (
@@ -53,17 +53,11 @@ function PreviewHeader({ quiz }: { quiz: Quiz }) {
 
 function QuizTopics({ topics }: { topics: Array<string> }) {
   return (
-    <ul className="flex gap-4 flex-wrap">
+    <TopicList>
       {topics.map((topic) => (
-        <li
-          className="text-xs flex items-center gap-2 rounded-md bg-accent-100 p-1 px-2"
-          key={topic}
-        >
-          <TagIcon size={12} />
-          {topic}
-        </li>
+        <TopicList.Item key={topic}>{topic}</TopicList.Item>
       ))}
-    </ul>
+    </TopicList>
   );
 }
 
@@ -79,7 +73,7 @@ function QuestionsContainer({ questions }: { questions: Array<Question> }) {
       <CardContent>
         <Accordion type="multiple">
           {questions.map((q) => (
-            <Question key={q.id} question={q} />
+            <PreviewQuestionCard key={q.id} question={q}/>
           ))}
         </Accordion>
       </CardContent>
@@ -87,53 +81,47 @@ function QuestionsContainer({ questions }: { questions: Array<Question> }) {
   );
 }
 
-function Question({ question }: { question: Question }) {
-  return (
-    <AccordionItem value={question.id}>
-      <AccordionTrigger>
-        <div className="flex gap-4 px-2">
-          <div className="size-8 rounded-full bg-primary-300 grid place-items-center">
-            {question.order}
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="text-lg">{question.text}</div>
-            <span className="flex gap-2 items-center text-xs text-muted-foreground">
-              <Clock size={12} />
-              {question.timeLimitSeconds}s
-            </span>
-          </div>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent>
-        <ul className="ml-8 p-2 grid gap-2">
-          {question.choices.map((choice) => (
-            <Choice
-              key={choice.id}
-              choice={choice}
-              isCorrect={question.correctChoiceId === choice.id}
-            />
-          ))}
-        </ul>
-      </AccordionContent>
-    </AccordionItem>
-  );
-}
 
-function Choice({
-  isCorrect,
-  choice,
-}: {
-  isCorrect: boolean;
-  choice: AnswerChoice;
-}) {
+function PreviewQuestionCard({ question }: { question: Question }) {
+  const correctChoice = question.choices.find(
+    (c) => c.id === question.correctChoiceId,
+  );
   return (
-    <li
-      className={cn(
-        'bg-gray-100 p-1 rounded-lg px-2',
-        isCorrect && 'bg-lime-300',
-      )}
-    >
-      {choice.text}
-    </li>
+    <QuestionCard.Root value={question.id}>
+      <QuestionCard.Header>
+        <QuestionCard.OrderBadge order={question.order} />
+        <QuestionCard.HeaderContent>
+          <QuestionCard.Text className="overflow-hidden wrap-break-word">
+            {question.text}
+          </QuestionCard.Text>
+          <QuestionCard.MetaRow>
+            <QuestionCard.TimeLimit>
+              {question.timeLimitSeconds}
+            </QuestionCard.TimeLimit>
+            {correctChoice && (
+              <span className="p-1 px-2 text-xs text-green-700 bg-green-200 rounded-md">
+                {correctChoice.text}
+              </span>
+            )}
+          </QuestionCard.MetaRow>
+        </QuestionCard.HeaderContent>
+      </QuestionCard.Header>
+      <QuestionCard.Body className="ml-8 p-2">
+        <ChoiceList>
+          {question.choices.map((c) => {
+            const isCorrect = c.id === question.correctChoiceId;
+            return (
+              <ChoiceList.Item
+                className="text-xs"
+                key={c.id}
+                isCorrect={isCorrect}
+              >
+                {c.text}
+              </ChoiceList.Item>
+            );
+          })}
+        </ChoiceList>
+      </QuestionCard.Body>
+    </QuestionCard.Root>
   );
 }
