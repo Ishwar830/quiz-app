@@ -92,7 +92,7 @@ function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
 
 function QuestionText({ text }: { text: string }) {
   return (
-    <div className="bg-primary-100 border p-6 rounded-xl shadow-sm mb-4 overflow-hidden">
+    <div className="bg-primary-100 border p-6 rounded-xl shadow-sm overflow-hidden">
       <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
         {text}
       </h2>

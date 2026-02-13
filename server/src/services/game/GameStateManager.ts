@@ -21,7 +21,7 @@ const initializeGameState = async (room: Room) => {
     quizEndedAt: null,
     currentQuestionInfo: null,
     countdownInfo: null,
-    finalRankings: null,
+    topRankings: null,
   };
 
   await redisClient.json.set(
@@ -69,14 +69,14 @@ const updateGameState = async (roomId: string, updates: Partial<GameState>) => {
 };
 
 const endQuiz = async (roomId: string) => {
-  const finalRankings = await ScoreManager.getLeaderboard(roomId);
+  const leaderboard = await ScoreManager.getLeaderboard(roomId);
 
   const gameState = await updateGameState(roomId, {
     status: "FINISHED",
     quizEndedAt: Date.now(),
     currentQuestionInfo: null,
     countdownInfo: null,
-    finalRankings,
+    topRankings: leaderboard.slice(0, 10), // send top 10 players only
   });
 
   persistGameData(roomId);
@@ -108,7 +108,6 @@ const prepareNextQuestion = async (roomId: string) => {
     return;
   }
 
-  // GameEventEmitter.emit("questionEnded", gameState);
   await setupCountdown(roomId);
   await startNextQuestion(roomId);
 };

@@ -5,7 +5,15 @@ import {
   useNavigate,
 } from '@tanstack/react-router';
 import { ToastContainer } from 'react-toastify';
-import { MenuIcon, X } from 'lucide-react';
+import {
+  GamepadIcon,
+  LayoutDashboardIcon,
+  LibraryIcon,
+  LogOutIcon,
+  MenuIcon,
+  SquarePlusIcon,
+  X,
+} from 'lucide-react';
 import { useState } from 'react';
 import type { User } from 'better-auth';
 import UserAvatar from '@/components/UserAvatar';
@@ -90,6 +98,29 @@ function Header() {
   );
 }
 
+const navList = [
+  {
+    title: 'Dashboard',
+    href: '/dashboard',
+    icon: <LayoutDashboardIcon size={20} className="stroke-primary-400" />,
+  },
+  {
+    title: 'My Quizzes',
+    href: '/quizzes',
+    icon: <LibraryIcon size={20} className="stroke-secondary-400" />,
+  },
+  {
+    title: 'Quiz Builder',
+    href: '/quizbuilder',
+    icon: <SquarePlusIcon size={20} className="stroke-accent-400" />,
+  },
+  {
+    title: 'Past Games',
+    href: '/games',
+    icon: <GamepadIcon size={20} className="stroke-orange-500" />,
+  },
+];
+
 function Menu({
   isOpen,
   closeMenu,
@@ -97,26 +128,17 @@ function Menu({
   isOpen: boolean;
   closeMenu: () => void;
 }) {
-  const navList = [
-    {
-      title: 'Dashboard',
-      href: '/dashboard',
-    },
-    {
-      title: 'My Quizzes',
-      href: '/quizzes',
-    },
-    {
-      title: 'Quiz Builder',
-      href: '/quizbuilder',
-    },
-  ];
   const navigate = useNavigate();
+
+  const handleNavigation = (href: string) => {
+    closeMenu();
+    navigate({ to: href });
+  };
+
   const handleLogout = async () => {
     const { data } = await auth.signOut();
     if (data?.success) {
-      closeMenu();
-      navigate({ to: '/' });
+      handleNavigation('/');
     }
   };
 
@@ -124,24 +146,26 @@ function Menu({
     <div
       className={cn(
         { 'scale-y-0 opacity-0': !isOpen },
-        'absolute right-0 top-0 opacity-100 translate-y-14 w-60 shadow-md rounded-md bg-white border p-4 transition-transform duration-200 origin-top',
+        'absolute right-0 top-0 opacity-100 translate-y-14 w-50 shadow-md rounded-md bg-white border p-4 transition-transform duration-200 origin-top',
       )}
     >
-      <nav className="space-y-4 flex flex-col">
+      <nav className="flex flex-col gap-4 text-sm">
         {navList.map((item) => (
           <Link
             key={item.title}
             to={item.href}
-            activeProps={{ className: 'bg-primary-200' }}
-            className="hover:underline p-2 rounded-sm active:bg-primary-200"
+            onClick={() => closeMenu()}
+            className="text-start hover:cursor-pointer p-2 rounded-sm flex gap-2 items-center"
           >
+            {item.icon}
             {item.title}
           </Link>
         ))}
         <button
           onClick={handleLogout}
-          className="p-2 rounded-sm text-red-500 text-start hover:cursor-pointer"
+          className="p-2 rounded-sm flex gap-2 items-center text-red-500 text-start hover:cursor-pointer"
         >
+          <LogOutIcon size={20} />
           LogOut
         </button>
       </nav>

@@ -1,4 +1,4 @@
-import { ArrowRightIcon, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 
 export interface UserGameMeta {
@@ -11,7 +11,7 @@ export interface UserGameMeta {
 
 export function GameCard({ game }: { game: UserGameMeta }) {
   return (
-    <div className="hover:scale-101 hover:-translate-y-1 shadow-sm transition-transform duration-300 group p-4 border rounded-lg space-y-1">
+    <div className="hover:scale-101 hover:-translate-y-1 shadow-sm transition-transform duration-300 group p-4 border rounded-lg space-y-1 bg-white">
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
           <Calendar className="w-3 h-3" />
@@ -41,14 +41,20 @@ export function GameCard({ game }: { game: UserGameMeta }) {
           </span>
         </div>
       </div>
-      <div className="text-xs w-fit">
+      <div className="text-xs w-fit flex gap-4">
         <Link
           to="/games/$gameId"
-          className="flex items-center gap-1 hover:underline"
+          className="hover:underline"
           params={{ gameId: game.id }}
         >
-          <span>See complete info</span>
-          <ArrowRightIcon size={12} />
+          <span>My Performance</span>
+        </Link>
+        <Link
+          to="/games/$gameId/leaderboard"
+          className="hover:underline"
+          params={{ gameId: game.id }}
+        >
+          <span>Leaderboard</span>
         </Link>
       </div>
     </div>

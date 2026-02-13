@@ -8,3 +8,4 @@ gamesRouter.use(authMiddleware);
 
 gamesRouter.get("/", GamesController.getUserGames);
 gamesRouter.get("/:gameId", GamesController.getGameDetails);
+gamesRouter.get("/:gameId/rankings", GamesController.getGameLeaderboard);

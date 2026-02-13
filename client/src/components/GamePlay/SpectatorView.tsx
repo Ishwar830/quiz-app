@@ -33,7 +33,7 @@ export default function SpectatorView() {
 
   return (
     <>
-      <div className="flex-1 place-content-end hidden sm:block">
+      <div className="flex-1 hidden sm:block">
         <SubmissionsVertical question={question} analytics={analytics} />
       </div>
       <div className="flex-1 sm:hidden">
@@ -61,7 +61,7 @@ function SubmissionsVertical({
   const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500'];
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="h-full grid grid-cols-4 gap-4">
       {question.choices.map((choice, index) => {
         const count = analytics.info[choice.id] ?? 0;
         const percentage = getPercentageForSubmission(count);
@@ -77,7 +77,7 @@ function SubmissionsVertical({
                 </span>
               </div>
               <div
-                className={`h-full rounded-tl-lg opacity-80 rounded-tr-lg ${colors[index]}  origin-bottom transition-transform duration-500`}
+                className={`h-full rounded-tl-xl opacity-80 rounded-tr-xl ${colors[index]}  origin-bottom transition-transform duration-500`}
                 style={{ transform: `scaleY(${percentage / 100})` }}
               ></div>
             </div>

@@ -71,7 +71,7 @@ function Rankings() {
       <h2 className="text-2xl font-bold tracking-wider">
         <span className="flex items-center gap-4">
           <Medal size={24} />
-          Rankings
+          Top #10 Rankings
         </span>
         <div className="h-1 w-1/3 bg-secondary-300 mt-2" />
       </h2>
@@ -129,11 +129,11 @@ function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
 
       <div className="divide-y divide-slate-500/50">
         {rankings.map((r) => {
-          const isMe = r.id === member.id;
+          const isMe = r.userId === member.id;
 
           return (
             <div
-              key={r.id}
+              key={r.userId}
               className={`grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center transition-colors 
                   ${isMe ? 'bg-primary-50 hover:bg-primary-200' : 'hover:bg-secondary-200'}
                 `}
@@ -185,14 +185,14 @@ function PodiumStep({
 }) {
   const column = rank == 1 ? 2 : rank == 2 ? 1 : 3;
   return (
-    <div className={`col-start-${column}` + ' flex flex-col items-center'}>
+    <div className={`col-start-${column}` + ' flex flex-col items-center relative'}>
       <div
         className={`relative mb-3 transition-transform duration-300 ${isWinner ? 'scale-110' : 'scale-100'}`}
       >
         <div
           className={`rounded-full p-1 ${isWinner ? 'bg-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.4)]' : 'bg-slate-700'}`}
         >
-          <UserAvatar name={player.name} size='lg'/>
+          <UserAvatar name={player.name} size="lg" />
         </div>
         {isWinner && (
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce">
@@ -206,7 +206,7 @@ function PodiumStep({
         </div>
       </div>
 
-      <div className="text-center mb-2 z-10">
+      <div className="text-center mb-2 z-1">
         <div
           className={`font-bold truncate max-w-20 sm:max-w-30 ${isWinner ? 'text-text-950' : 'text-text-800'}`}
         >

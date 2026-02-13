@@ -35,12 +35,12 @@ function onConnection(socket: Socket) {
   );
 
   socket.onAny((event, ...args) => {
-    console.log(event, "  ", args);
+    // console.log(event, "  ", args);
   });
 
   socket.onAnyOutgoing((event, ...args) => {
     if (event == "question:analytics") return;
-    console.log(event, "  ", args);
+    // console.log(event, "  ", args);
   });
 }
 

@@ -7,7 +7,7 @@ import {
   gameQuestions,
 } from "../../db/schema/game.ts";
 import { GameDataPayload } from "../types.js";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 const saveGame = async (gameData: GameDataPayload) => {
   return await db.transaction(async (tx) => {
@@ -110,11 +110,41 @@ const getFullGameDetails = async (gameId: string) => {
   });
 };
 
-const getGameRankings = async (gameId: string) => {
-  return await db.query.gameParticipants.findMany({
+const getGameRankings = async (gameId: string, page: number = 1) => {
+  const pageSize = 10;
+  const offset = (page - 1) * pageSize;
+
+  const dataPromise = db.query.gameParticipants.findMany({
     where: eq(gameParticipants.gameId, gameId),
     orderBy: (gameParticipants, { asc }) => asc(gameParticipants.rank),
+    limit: pageSize,
+    offset: offset,
+    columns: {
+      userId: false,
+    },
+    with: {
+      user: {
+        columns: {
+          name: true,
+        },
+      },
+    },
   });
+
+  const countPromise = db
+    .select({ value: count() })
+    .from(gameParticipants)
+    .where(eq(gameParticipants.gameId, gameId));
+
+  const [rankings, totalRes] = await Promise.all([dataPromise, countPromise]);
+
+  const totalCount = totalRes[0]?.value ?? 0;
+
+  return {
+    items: rankings.map((r) => ({ ...r, name: r.user.name, user: undefined })),
+    totalCount,
+    totalPages: Math.ceil(totalCount / pageSize),
+  };
 };
 
 const getGameDetailsForUser = async (gameId: string, userId: string) => {

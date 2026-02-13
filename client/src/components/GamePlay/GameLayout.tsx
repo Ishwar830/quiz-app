@@ -28,9 +28,9 @@ export function GameLayout() {
       updateCountdownInfo(countdownInfo);
     });
 
-    socket.on('quiz:end', ({ finalRankings }) => {
+    socket.on('quiz:end', ({ topRankings }) => {
       updateGameStatus('FINISHED');
-      updateRankings(finalRankings);
+      updateRankings(topRankings);
     });
 
     // eslint-disable-next-line @typescript-eslint/array-type

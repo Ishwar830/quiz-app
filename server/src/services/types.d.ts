@@ -57,7 +57,7 @@ export interface GameState {
   quizEndedAt: number | null;
   currentQuestionInfo: QuestionInfo | null;
   countdownInfo: CountdownInfo | null;
-  finalRankings: Array<RankInfo> | null;
+  topRankings: Array<RankInfo> | null;
 }
 
 export interface Submission {

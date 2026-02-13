@@ -27,7 +27,7 @@ export interface Room {
 }
 
 export interface RankInfo {
-  id: string;
+  userId: string;
   name: string;
   rank: number;
   score: number;
@@ -42,7 +42,7 @@ export interface GameState {
   endedAt: number | null;
   currentQuestionInfo: Question;
   countdownInfo: { endsAt: number } | null;
-  finalRankings: Array<RankInfo>;
+  topRankings: Array<RankInfo>;
 }
 
 interface GameActions {
@@ -66,7 +66,7 @@ export const createGameStore = (initialState: GameState) => {
         set({ status: 'COUNTDOWN', countdownInfo: { endsAt } }),
       updateQuestionInfo: (questionInfo) =>
         set({ status: 'QUESTION_ACTIVE', currentQuestionInfo: questionInfo }),
-      updateRankings: (finalRankings) => set({ finalRankings }),
+      updateRankings: (topRankings) => set({ topRankings }),
     },
   }));
 };
@@ -82,4 +82,4 @@ export const useGameRoom = () => useGameStore((s) => s.room);
 export const useQuestionInfo = () => useGameStore((s) => s.currentQuestionInfo);
 export const useGameActions = () => useGameStore((s) => s.actions);
 export const useCountdownInfo = () => useGameStore((s) => s.countdownInfo);
-export const useRankings = () => useGameStore((s) => s.finalRankings);
+export const useRankings = () => useGameStore((s) => s.topRankings);

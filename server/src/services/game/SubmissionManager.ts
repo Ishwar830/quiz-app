@@ -68,10 +68,12 @@ const fetchSubmissions = async (query: string) => {
     documents: Array<{ id: string; value: Submission }>;
   };
 
-  const { documents } = (await redisClient.ft.search(
-    INDEX_KEY,
-    query,
-  )) as unknown as QueryResponse;
+  const { documents } = (await redisClient.ft.search(INDEX_KEY, query, {
+    LIMIT: {
+      from: 0,
+      size: 1000,
+    },
+  })) as unknown as QueryResponse;
 
   const submissions = documents.map(({ value }) => value);
   return submissions;

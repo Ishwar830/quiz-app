@@ -20,6 +20,7 @@ import { Route as AuthenticatedRoomsRoomIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedQuizzesQuizIdRouteImport } from './routes/_authenticated/quizzes_.$quizId'
 import { Route as AuthenticatedQuizbuilderChar123QuizIdChar125RouteImport } from './routes/_authenticated/quizbuilder.{-$quizId}'
 import { Route as AuthenticatedGamesGameIdRouteImport } from './routes/_authenticated/games_.$gameId'
+import { Route as AuthenticatedGamesGameIdLeaderboardRouteImport } from './routes/_authenticated/games_.$gameId_.leaderboard'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -79,6 +80,12 @@ const AuthenticatedGamesGameIdRoute =
     path: '/games/$gameId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedGamesGameIdLeaderboardRoute =
+  AuthenticatedGamesGameIdLeaderboardRouteImport.update({
+    id: '/games_/$gameId_/leaderboard',
+    path: '/games/$gameId/leaderboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
   '/quizzes/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
+  '/games/$gameId/leaderboard': typeof AuthenticatedGamesGameIdLeaderboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -103,6 +111,7 @@ export interface FileRoutesByTo {
   '/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
   '/quizzes/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
+  '/games/$gameId/leaderboard': typeof AuthenticatedGamesGameIdLeaderboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,6 +126,7 @@ export interface FileRoutesById {
   '/_authenticated/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
   '/_authenticated/quizzes_/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/_authenticated/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
+  '/_authenticated/games_/$gameId_/leaderboard': typeof AuthenticatedGamesGameIdLeaderboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/quizbuilder/{-$quizId}'
     | '/quizzes/$quizId'
     | '/rooms/$roomId'
+    | '/games/$gameId/leaderboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/quizbuilder/{-$quizId}'
     | '/quizzes/$quizId'
     | '/rooms/$roomId'
+    | '/games/$gameId/leaderboard'
   id:
     | '__root__'
     | '/'
@@ -156,6 +168,7 @@ export interface FileRouteTypes {
     | '/_authenticated/quizbuilder/{-$quizId}'
     | '/_authenticated/quizzes_/$quizId'
     | '/_authenticated/rooms/$roomId'
+    | '/_authenticated/games_/$gameId_/leaderboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGamesGameIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/games_/$gameId_/leaderboard': {
+      id: '/_authenticated/games_/$gameId_/leaderboard'
+      path: '/games/$gameId/leaderboard'
+      fullPath: '/games/$gameId/leaderboard'
+      preLoaderRoute: typeof AuthenticatedGamesGameIdLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -255,6 +275,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedQuizbuilderChar123QuizIdChar125Route: typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
   AuthenticatedQuizzesQuizIdRoute: typeof AuthenticatedQuizzesQuizIdRoute
   AuthenticatedRoomsRoomIdRoute: typeof AuthenticatedRoomsRoomIdRoute
+  AuthenticatedGamesGameIdLeaderboardRoute: typeof AuthenticatedGamesGameIdLeaderboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -266,6 +287,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedQuizbuilderChar123QuizIdChar125Route,
   AuthenticatedQuizzesQuizIdRoute: AuthenticatedQuizzesQuizIdRoute,
   AuthenticatedRoomsRoomIdRoute: AuthenticatedRoomsRoomIdRoute,
+  AuthenticatedGamesGameIdLeaderboardRoute:
+    AuthenticatedGamesGameIdLeaderboardRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

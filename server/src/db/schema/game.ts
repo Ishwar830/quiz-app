@@ -9,6 +9,7 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
+import { user } from "./users.ts";
 
 export const games = pgTable(
   "games",
@@ -127,6 +128,10 @@ export const gameParticipantRelations = relations(
     game: one(games, {
       fields: [gameParticipants.gameId],
       references: [games.id],
+    }),
+    user: one(user, {
+      fields: [gameParticipants.userId],
+      references: [user.id],
     }),
   }),
 );

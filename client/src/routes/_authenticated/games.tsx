@@ -26,7 +26,7 @@ function RouteComponent() {
         </p>
       </header>
       <main>
-        <ul className="grid gap-2">
+        <ul className="grid gap-3">
           {userGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
