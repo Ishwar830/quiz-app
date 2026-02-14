@@ -7,7 +7,7 @@ import * as gameSchema from "./schema/game.ts";
 import { Pool as NeonPool } from "@neondatabase/serverless";
 import { Pool as PgPool } from "pg";
 
-const schema = {
+export const schema = {
   ...userSchema,
   ...quizSchema,
   ...gameSchema,

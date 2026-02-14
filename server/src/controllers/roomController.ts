@@ -19,7 +19,7 @@ export const createRoomHandler: RequestHandler = async (req, res) => {
 
   console.log("room creation");
 
-  const quiz = await QuizRepository.getQuizById(quizId);
+  const quiz = await QuizRepository.getUserQuizById(user.id, quizId);
 
   if (!quiz) {
     return res.status(400).json(ApiResponse.error("Quiz doesnt exist"));

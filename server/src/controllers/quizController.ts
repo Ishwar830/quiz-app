@@ -18,9 +18,10 @@ export const getQuizzesHandler: RequestHandler = async (req, res, next) => {
 
 export const getQuizHandler: RequestHandler = async (req, res, next) => {
   const quizId = req.params.quizId as string;
+  const user = req.user!;
 
   try {
-    const data = await QuizRepository.getQuizById(quizId);
+    const data = await QuizRepository.getUserQuizById(user.id, quizId);
     res.json(ApiResponse.success(data));
   } catch (err) {
     next(err);

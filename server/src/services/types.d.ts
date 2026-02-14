@@ -15,7 +15,6 @@ export interface RoomMember {
 
 export interface Question {
   id: string;
-  quizId: string;
   text: string;
   order: number;
   timeLimitSeconds: number;
@@ -83,8 +82,8 @@ interface GameDataPayload {
   startedAt: Date;
   endedAt: Date;
   questions: Array<GameQuestion>;
-  submissions: Array<Submission>;
-  rankings: Array<RankInfo>;
+  submissions: Array<Omit<Submission, "roomId">>;
+  rankings: Array<Omit<RankInfo, "name">>;
 }
 
 export type SubmissionPayload = Omit<Submission, "isCorrect">;

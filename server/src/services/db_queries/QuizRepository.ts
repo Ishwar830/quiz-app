@@ -2,7 +2,6 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../../db/index.ts";
 import { questions, quiz } from "../../db/schema/quizzes.ts";
 import type { QuizPayload } from "../../lib/zod_schemas.ts";
-import { user } from "../../db/schema/users.ts";
 
 const getUserQuizzes = async (userId: string) => {
   const res = await db.query.quiz.findMany({

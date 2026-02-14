@@ -8,6 +8,43 @@ import {
 } from "../../db/schema/game.ts";
 import { GameDataPayload } from "../types.js";
 import { count, eq } from "drizzle-orm";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { schema } from "../../db/index.ts";
+import { ExtractTablesWithRelations } from "drizzle-orm";
+import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+
+type Tx = PgTransaction<
+  NodePgQueryResultHKT,
+  typeof schema,
+  ExtractTablesWithRelations<typeof schema>
+>;
+
+const insertQuestions = async (
+  tx: Tx,
+  questions: Array<typeof gameQuestions.$inferInsert>,
+) => {
+  if (questions.length === 0) return;
+
+  await tx.insert(schema.gameQuestions).values(questions);
+};
+
+const insertSubmissions = async (
+  tx: Tx,
+  submissions: Array<typeof gameSubmissions.$inferInsert>,
+) => {
+  if (submissions.length === 0) return;
+
+  await tx.insert(schema.gameSubmissions).values(submissions);
+};
+
+const insertParticipants = async (
+  tx: Tx,
+  rankings: Array<typeof gameParticipants.$inferInsert>,
+) => {
+  if (rankings.length === 0) return;
+
+  await tx.insert(schema.gameParticipants).values(rankings);
+};
 
 const saveGame = async (gameData: GameDataPayload) => {
   return await db.transaction(async (tx) => {
@@ -19,34 +56,21 @@ const saveGame = async (gameData: GameDataPayload) => {
       ...gameMeta,
     });
 
-    if (questions.length) {
-      await tx
-        .insert(gameQuestions)
-        .values(questions.map((gq) => ({ ...gq, gameId })));
-    }
+    await insertQuestions(
+      tx,
+      questions.map((q) => ({ ...q, gameId })),
+    );
 
-    const tasks = [];
-
-    if (submissions.length) {
-      tasks.push(
-        tx.insert(gameSubmissions).values(
-          submissions.map((gs) => ({
-            ...gs,
-            gameId,
-          })),
-        ),
-      );
-    }
-
-    if (rankings.length) {
-      tasks.push(
-        tx
-          .insert(gameParticipants)
-          .values(rankings.map((gr) => ({ ...gr, gameId }))),
-      );
-    }
-
-    await Promise.all(tasks);
+    await Promise.all([
+      insertSubmissions(
+        tx,
+        submissions.map((s) => ({ ...s, gameId })),
+      ),
+      insertParticipants(
+        tx,
+        rankings.map((gr) => ({ ...gr, gameId })),
+      ),
+    ]);
 
     return gameId;
   });
@@ -79,7 +103,11 @@ const getGamesByUserId = async (userId: string) => {
   const res = await db.query.gameParticipants.findMany({
     where: eq(gameParticipants.userId, userId),
     with: {
-      game: true,
+      game: {
+        columns: {
+          hostId: false
+        }
+      },
     },
   });
 
@@ -87,7 +115,6 @@ const getGamesByUserId = async (userId: string) => {
     ...t.game,
     rank: t.rank,
     score: t.score,
-    hostId: undefined,
   }));
 
   return userGames;
