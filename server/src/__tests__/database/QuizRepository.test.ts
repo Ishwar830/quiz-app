@@ -5,7 +5,6 @@ import { user } from "../../db/schema/users.ts";
 import type { QuizPayload } from "../../lib/zod_schemas.ts";
 import { clearDb } from "./test_utils.ts";
 
-
 describe("Quiz Repository Integration Tests", () => {
   const testUserId = "test-123";
 
@@ -36,6 +35,45 @@ describe("Quiz Repository Integration Tests", () => {
 
     expect(result).toBeDefined();
     expect(result?.title).toBe("New Quiz");
+  });
+
+  it("should get quiz with questions", async () => {
+    await db.insert(quiz).values({
+      id: "quiz_test",
+      userId: testUserId,
+      title: "Existing Quiz",
+      description: "Existing Desc",
+      topics: [],
+    });
+
+    await db.insert(questions).values([
+      {
+        id: "question_1_test",
+        text: "question_text",
+        choices: [],
+        quizId: "quiz_test",
+        order: 1,
+        timeLimitSeconds: 10,
+        correctChoiceId: "1",
+      },
+      {
+        id: "question_2_test",
+        text: "question_text",
+        choices: [],
+        quizId: "quiz_test",
+        order: 1,
+        timeLimitSeconds: 10,
+        correctChoiceId: "1",
+      },
+    ]);
+
+    const result = await QuizRepository.getUserQuizById(testUserId, "quiz_test")
+
+    expect(result).toBeDefined();
+    expect(result?.title).toBe("Existing Quiz");
+    expect(result?.questions).toHaveLength(2);
+    expect(result?.questions[0].text).toBe("question_text");
+    expect(result?.questions[1].id).toBe("question_2_test");
   });
 
   it("should get quizzes for user", async () => {

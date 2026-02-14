@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../../db/index.ts";
 import { questions, quiz } from "../../db/schema/quizzes.ts";
 import type { QuizPayload } from "../../lib/zod_schemas.ts";
+import { user } from "../../db/schema/users.ts";
 
 const getUserQuizzes = async (userId: string) => {
   const res = await db.query.quiz.findMany({
@@ -24,16 +25,16 @@ const getUserQuizzes = async (userId: string) => {
   return result;
 };
 
-const getQuizById = async (quizId: string) => {
+const getUserQuizById = async (userId: string, quizId: string) => {
   const result = await db.query.quiz.findFirst({
-    where: eq(quiz.id, quizId),
+    where: and(eq(quiz.userId, userId), eq(quiz.id, quizId)),
     with: {
       questions: {
         orderBy: (questions, { asc }) => [asc(questions.order)],
       },
     },
   });
-  
+
   return result;
 };
 
@@ -42,7 +43,7 @@ const createOrUpdateQuiz = async (
   quizId: string,
   data: QuizPayload,
 ) => {
-  const quizWithId = await getQuizById(quizId);
+  const quizWithId = await getUserQuizById(userId, quizId);
 
   if (quizWithId) {
     return await updateQuiz(quizId, userId, data);
@@ -134,7 +135,7 @@ const updateQuiz = async (
 
 export const QuizRepository = {
   getUserQuizzes,
-  getQuizById,
+  getUserQuizById,
   deleteQuiz,
   createOrUpdateQuiz,
 } as const;
