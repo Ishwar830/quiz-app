@@ -9,7 +9,7 @@ const leaderboardSearchSchema = z.object({
 });
 
 export const Route = createFileRoute(
-  '/_authenticated/games_/$gameId_/leaderboard',
+  '/_authenticated/(games)/games_/$gameId_/leaderboard',
 )({
   validateSearch: leaderboardSearchSchema,
   loaderDeps: ({ search: { page } }) => ({ page }),
@@ -118,7 +118,7 @@ function PaginationControls({ totalPages }: { totalPages: number }) {
 
       <div className="flex gap-2">
         {nextPages.map((pageNum) => {
-          if (pageNum > totalPages || pageNum < 0) return null;
+          if (pageNum > totalPages || pageNum <= 0) return null;
           return (
             <button
               onClick={() => handlePageChange(pageNum)}

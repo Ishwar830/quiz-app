@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { fetchQuiz } from '@/lib/utils';
 import { QuizPreview } from '@/components/Quiz/QuizPreview';
 
-export const Route = createFileRoute('/_authenticated/quizzes_/$quizId')({
+export const Route = createFileRoute('/_authenticated/(quizzes)/quizzes_/$quizId')({
   component: RouteComponent,
   loader: async ({ params }) => {
     const quizId = params.quizId;

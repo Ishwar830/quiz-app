@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import type { UserGameMeta } from '@/components/GameHistory/GameCard';
 import { GameCard } from '@/components/GameHistory/GameCard';
 
-export const Route = createFileRoute('/_authenticated/games')({
+export const Route = createFileRoute('/_authenticated/(games)/games')({
   component: RouteComponent,
   loader: getUserGames,
 });

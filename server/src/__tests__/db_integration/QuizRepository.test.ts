@@ -1,8 +1,6 @@
 import { db } from "../../db/index.ts";
-import { questions, quiz } from "../../db/schema/quizzes.ts";
 import { QuizRepository } from "../../services/db_queries/QuizRepository.ts";
 import { user } from "../../db/schema/users.ts";
-import type { QuizPayload } from "../../lib/zod_schemas.ts";
 import {
   clearDb,
   getMockQuizPayloadData,
@@ -20,6 +18,10 @@ describe("Quiz Repository Integration Tests", () => {
       name: "test-user",
       email: "test@email.com",
     });
+  });
+
+  afterAll(async () => {
+    await clearDb();
   });
 
   it("should create a quiz", async () => {

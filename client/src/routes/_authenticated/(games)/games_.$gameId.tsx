@@ -5,7 +5,7 @@ import {
   GameDetailsHeader,
 } from '@/components/GameHistory/GameDetails';
 
-export const Route = createFileRoute('/_authenticated/games_/$gameId')({
+export const Route = createFileRoute('/_authenticated/(games)/games_/$gameId')({
   component: RouteComponent,
   loader: async ({ params }) => {
     return (await getGameDetails(params.gameId)) as UserGameDetail;

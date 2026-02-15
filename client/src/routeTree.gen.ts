@@ -13,14 +13,14 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedQuizzesRouteImport } from './routes/_authenticated/quizzes'
-import { Route as AuthenticatedGamesRouteImport } from './routes/_authenticated/games'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedRoomsRoomIdRouteImport } from './routes/_authenticated/rooms.$roomId'
-import { Route as AuthenticatedQuizzesQuizIdRouteImport } from './routes/_authenticated/quizzes_.$quizId'
 import { Route as AuthenticatedQuizbuilderChar123QuizIdChar125RouteImport } from './routes/_authenticated/quizbuilder.{-$quizId}'
-import { Route as AuthenticatedGamesGameIdRouteImport } from './routes/_authenticated/games_.$gameId'
-import { Route as AuthenticatedGamesGameIdLeaderboardRouteImport } from './routes/_authenticated/games_.$gameId_.leaderboard'
+import { Route as AuthenticatedquizzesQuizzesRouteImport } from './routes/_authenticated/(quizzes)/quizzes'
+import { Route as AuthenticatedgamesGamesRouteImport } from './routes/_authenticated/(games)/games'
+import { Route as AuthenticatedquizzesQuizzesQuizIdRouteImport } from './routes/_authenticated/(quizzes)/quizzes_.$quizId'
+import { Route as AuthenticatedgamesGamesGameIdRouteImport } from './routes/_authenticated/(games)/games_.$gameId'
+import { Route as AuthenticatedgamesGamesGameIdLeaderboardRouteImport } from './routes/_authenticated/(games)/games_.$gameId_.leaderboard'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -41,16 +41,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedQuizzesRoute = AuthenticatedQuizzesRouteImport.update({
-  id: '/quizzes',
-  path: '/quizzes',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedGamesRoute = AuthenticatedGamesRouteImport.update({
-  id: '/games',
-  path: '/games',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -62,27 +52,38 @@ const AuthenticatedRoomsRoomIdRoute =
     path: '/rooms/$roomId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedQuizzesQuizIdRoute =
-  AuthenticatedQuizzesQuizIdRouteImport.update({
-    id: '/quizzes_/$quizId',
-    path: '/quizzes/$quizId',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedQuizbuilderChar123QuizIdChar125Route =
   AuthenticatedQuizbuilderChar123QuizIdChar125RouteImport.update({
     id: '/quizbuilder/{-$quizId}',
     path: '/quizbuilder/{-$quizId}',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedGamesGameIdRoute =
-  AuthenticatedGamesGameIdRouteImport.update({
-    id: '/games_/$gameId',
+const AuthenticatedquizzesQuizzesRoute =
+  AuthenticatedquizzesQuizzesRouteImport.update({
+    id: '/(quizzes)/quizzes',
+    path: '/quizzes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedgamesGamesRoute = AuthenticatedgamesGamesRouteImport.update({
+  id: '/(games)/games',
+  path: '/games',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedquizzesQuizzesQuizIdRoute =
+  AuthenticatedquizzesQuizzesQuizIdRouteImport.update({
+    id: '/(quizzes)/quizzes_/$quizId',
+    path: '/quizzes/$quizId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedgamesGamesGameIdRoute =
+  AuthenticatedgamesGamesGameIdRouteImport.update({
+    id: '/(games)/games_/$gameId',
     path: '/games/$gameId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedGamesGameIdLeaderboardRoute =
-  AuthenticatedGamesGameIdLeaderboardRouteImport.update({
-    id: '/games_/$gameId_/leaderboard',
+const AuthenticatedgamesGamesGameIdLeaderboardRoute =
+  AuthenticatedgamesGamesGameIdLeaderboardRouteImport.update({
+    id: '/(games)/games_/$gameId_/leaderboard',
     path: '/games/$gameId/leaderboard',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
@@ -92,26 +93,26 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/games': typeof AuthenticatedGamesRoute
-  '/quizzes': typeof AuthenticatedQuizzesRoute
-  '/games/$gameId': typeof AuthenticatedGamesGameIdRoute
+  '/games': typeof AuthenticatedgamesGamesRoute
+  '/quizzes': typeof AuthenticatedquizzesQuizzesRoute
   '/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
-  '/quizzes/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
-  '/games/$gameId/leaderboard': typeof AuthenticatedGamesGameIdLeaderboardRoute
+  '/games/$gameId': typeof AuthenticatedgamesGamesGameIdRoute
+  '/quizzes/$quizId': typeof AuthenticatedquizzesQuizzesQuizIdRoute
+  '/games/$gameId/leaderboard': typeof AuthenticatedgamesGamesGameIdLeaderboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/games': typeof AuthenticatedGamesRoute
-  '/quizzes': typeof AuthenticatedQuizzesRoute
-  '/games/$gameId': typeof AuthenticatedGamesGameIdRoute
+  '/games': typeof AuthenticatedgamesGamesRoute
+  '/quizzes': typeof AuthenticatedquizzesQuizzesRoute
   '/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
-  '/quizzes/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
-  '/games/$gameId/leaderboard': typeof AuthenticatedGamesGameIdLeaderboardRoute
+  '/games/$gameId': typeof AuthenticatedgamesGamesGameIdRoute
+  '/quizzes/$quizId': typeof AuthenticatedquizzesQuizzesQuizIdRoute
+  '/games/$gameId/leaderboard': typeof AuthenticatedgamesGamesGameIdLeaderboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -120,13 +121,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/games': typeof AuthenticatedGamesRoute
-  '/_authenticated/quizzes': typeof AuthenticatedQuizzesRoute
-  '/_authenticated/games_/$gameId': typeof AuthenticatedGamesGameIdRoute
+  '/_authenticated/(games)/games': typeof AuthenticatedgamesGamesRoute
+  '/_authenticated/(quizzes)/quizzes': typeof AuthenticatedquizzesQuizzesRoute
   '/_authenticated/quizbuilder/{-$quizId}': typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
-  '/_authenticated/quizzes_/$quizId': typeof AuthenticatedQuizzesQuizIdRoute
   '/_authenticated/rooms/$roomId': typeof AuthenticatedRoomsRoomIdRoute
-  '/_authenticated/games_/$gameId_/leaderboard': typeof AuthenticatedGamesGameIdLeaderboardRoute
+  '/_authenticated/(games)/games_/$gameId': typeof AuthenticatedgamesGamesGameIdRoute
+  '/_authenticated/(quizzes)/quizzes_/$quizId': typeof AuthenticatedquizzesQuizzesQuizIdRoute
+  '/_authenticated/(games)/games_/$gameId_/leaderboard': typeof AuthenticatedgamesGamesGameIdLeaderboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,10 +138,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/games'
     | '/quizzes'
-    | '/games/$gameId'
     | '/quizbuilder/{-$quizId}'
-    | '/quizzes/$quizId'
     | '/rooms/$roomId'
+    | '/games/$gameId'
+    | '/quizzes/$quizId'
     | '/games/$gameId/leaderboard'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -150,10 +151,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/games'
     | '/quizzes'
-    | '/games/$gameId'
     | '/quizbuilder/{-$quizId}'
-    | '/quizzes/$quizId'
     | '/rooms/$roomId'
+    | '/games/$gameId'
+    | '/quizzes/$quizId'
     | '/games/$gameId/leaderboard'
   id:
     | '__root__'
@@ -162,13 +163,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/_authenticated/dashboard'
-    | '/_authenticated/games'
-    | '/_authenticated/quizzes'
-    | '/_authenticated/games_/$gameId'
+    | '/_authenticated/(games)/games'
+    | '/_authenticated/(quizzes)/quizzes'
     | '/_authenticated/quizbuilder/{-$quizId}'
-    | '/_authenticated/quizzes_/$quizId'
     | '/_authenticated/rooms/$roomId'
-    | '/_authenticated/games_/$gameId_/leaderboard'
+    | '/_authenticated/(games)/games_/$gameId'
+    | '/_authenticated/(quizzes)/quizzes_/$quizId'
+    | '/_authenticated/(games)/games_/$gameId_/leaderboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -208,20 +209,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/quizzes': {
-      id: '/_authenticated/quizzes'
-      path: '/quizzes'
-      fullPath: '/quizzes'
-      preLoaderRoute: typeof AuthenticatedQuizzesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/games': {
-      id: '/_authenticated/games'
-      path: '/games'
-      fullPath: '/games'
-      preLoaderRoute: typeof AuthenticatedGamesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -236,13 +223,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRoomsRoomIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/quizzes_/$quizId': {
-      id: '/_authenticated/quizzes_/$quizId'
-      path: '/quizzes/$quizId'
-      fullPath: '/quizzes/$quizId'
-      preLoaderRoute: typeof AuthenticatedQuizzesQuizIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/quizbuilder/{-$quizId}': {
       id: '/_authenticated/quizbuilder/{-$quizId}'
       path: '/quizbuilder/{-$quizId}'
@@ -250,18 +230,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedQuizbuilderChar123QuizIdChar125RouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/games_/$gameId': {
-      id: '/_authenticated/games_/$gameId'
-      path: '/games/$gameId'
-      fullPath: '/games/$gameId'
-      preLoaderRoute: typeof AuthenticatedGamesGameIdRouteImport
+    '/_authenticated/(quizzes)/quizzes': {
+      id: '/_authenticated/(quizzes)/quizzes'
+      path: '/quizzes'
+      fullPath: '/quizzes'
+      preLoaderRoute: typeof AuthenticatedquizzesQuizzesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/games_/$gameId_/leaderboard': {
-      id: '/_authenticated/games_/$gameId_/leaderboard'
+    '/_authenticated/(games)/games': {
+      id: '/_authenticated/(games)/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof AuthenticatedgamesGamesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/(quizzes)/quizzes_/$quizId': {
+      id: '/_authenticated/(quizzes)/quizzes_/$quizId'
+      path: '/quizzes/$quizId'
+      fullPath: '/quizzes/$quizId'
+      preLoaderRoute: typeof AuthenticatedquizzesQuizzesQuizIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/(games)/games_/$gameId': {
+      id: '/_authenticated/(games)/games_/$gameId'
+      path: '/games/$gameId'
+      fullPath: '/games/$gameId'
+      preLoaderRoute: typeof AuthenticatedgamesGamesGameIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/(games)/games_/$gameId_/leaderboard': {
+      id: '/_authenticated/(games)/games_/$gameId_/leaderboard'
       path: '/games/$gameId/leaderboard'
       fullPath: '/games/$gameId/leaderboard'
-      preLoaderRoute: typeof AuthenticatedGamesGameIdLeaderboardRouteImport
+      preLoaderRoute: typeof AuthenticatedgamesGamesGameIdLeaderboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -269,26 +270,27 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedGamesRoute: typeof AuthenticatedGamesRoute
-  AuthenticatedQuizzesRoute: typeof AuthenticatedQuizzesRoute
-  AuthenticatedGamesGameIdRoute: typeof AuthenticatedGamesGameIdRoute
+  AuthenticatedgamesGamesRoute: typeof AuthenticatedgamesGamesRoute
+  AuthenticatedquizzesQuizzesRoute: typeof AuthenticatedquizzesQuizzesRoute
   AuthenticatedQuizbuilderChar123QuizIdChar125Route: typeof AuthenticatedQuizbuilderChar123QuizIdChar125Route
-  AuthenticatedQuizzesQuizIdRoute: typeof AuthenticatedQuizzesQuizIdRoute
   AuthenticatedRoomsRoomIdRoute: typeof AuthenticatedRoomsRoomIdRoute
-  AuthenticatedGamesGameIdLeaderboardRoute: typeof AuthenticatedGamesGameIdLeaderboardRoute
+  AuthenticatedgamesGamesGameIdRoute: typeof AuthenticatedgamesGamesGameIdRoute
+  AuthenticatedquizzesQuizzesQuizIdRoute: typeof AuthenticatedquizzesQuizzesQuizIdRoute
+  AuthenticatedgamesGamesGameIdLeaderboardRoute: typeof AuthenticatedgamesGamesGameIdLeaderboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedGamesRoute: AuthenticatedGamesRoute,
-  AuthenticatedQuizzesRoute: AuthenticatedQuizzesRoute,
-  AuthenticatedGamesGameIdRoute: AuthenticatedGamesGameIdRoute,
+  AuthenticatedgamesGamesRoute: AuthenticatedgamesGamesRoute,
+  AuthenticatedquizzesQuizzesRoute: AuthenticatedquizzesQuizzesRoute,
   AuthenticatedQuizbuilderChar123QuizIdChar125Route:
     AuthenticatedQuizbuilderChar123QuizIdChar125Route,
-  AuthenticatedQuizzesQuizIdRoute: AuthenticatedQuizzesQuizIdRoute,
   AuthenticatedRoomsRoomIdRoute: AuthenticatedRoomsRoomIdRoute,
-  AuthenticatedGamesGameIdLeaderboardRoute:
-    AuthenticatedGamesGameIdLeaderboardRoute,
+  AuthenticatedgamesGamesGameIdRoute: AuthenticatedgamesGamesGameIdRoute,
+  AuthenticatedquizzesQuizzesQuizIdRoute:
+    AuthenticatedquizzesQuizzesQuizIdRoute,
+  AuthenticatedgamesGamesGameIdLeaderboardRoute:
+    AuthenticatedgamesGamesGameIdLeaderboardRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

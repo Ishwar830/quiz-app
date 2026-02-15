@@ -2,8 +2,6 @@ import { db } from "../../db/index.ts";
 import {
   games,
   gameParticipants,
-  gameQuestions,
-  gameSubmissions,
 } from "../../db/schema/game.ts";
 import { user } from "../../db/schema/users.ts";
 import { GameRepository } from "../../services/db_queries/GameRepository.ts";
