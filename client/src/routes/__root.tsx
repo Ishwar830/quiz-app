@@ -70,13 +70,15 @@ function Header() {
     <header className="sticky z-10 top-0 w-full py-3 px-4 md:px-12 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
       <div className="h-full relative flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2 group">
-          <span className="text-xl text-secondary-500 font-bold tracking-wider">
+          <span className="text-2xl text-secondary-500 font-bold tracking-wider">
             Quizzy
           </span>
         </Link>
         {user ? (
           <div className="flex gap-3 items-center">
-            <UserAvatar name={user.name} size="lg" />
+            <Link to='/dashboard'>
+              <UserAvatar name={user.name} size="lg" />
+            </Link>
             <button
               onClick={handleMenuClick}
               className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 grid place-items-center transition-colors cursor-pointer"
@@ -85,11 +87,18 @@ function Header() {
             </button>
           </div>
         ) : (
-          <Link to="/login">
-            <button className="px-4 py-2 text-sm font-semibold bg-linear-to-r from-primary-500 to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-sm cursor-pointer">
-              Login
-            </button>
-          </Link>
+          <div className="flex gap-4">
+            <Link to="/login">
+              <button className="px-4 py-2 text-xs border-2 hover:border-primary-200 hover:bg-primary-50 hover:-translate-y-0.5 duration-300 rounded-xl font-semibold cursor-pointer">
+                Login
+              </button>
+            </Link>
+            <Link to="/signup">
+              <button className="px-4 py-2 text-xs border-2 hover:border-primary-200 hover:bg-primary-50 hover:-translate-y-0.5 duration-300 rounded-xl font-semibold cursor-pointer">
+                Signup
+              </button>
+            </Link>
+          </div>
         )}
         <Menu isOpen={isOpen} closeMenu={closeMenu} />
       </div>
