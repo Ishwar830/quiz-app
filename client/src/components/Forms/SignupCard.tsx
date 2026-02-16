@@ -17,15 +17,17 @@ import { auth } from '@/lib/authClient';
 
 export function SignUpCard() {
   return (
-    <Card className="w-full max-w-sm mx-auto">
+    <Card className="w-full max-w-sm mx-auto border bg-white shadow-sm overflow-hidden">
       <CardHeader>
-        <CardTitle>Create a new account</CardTitle>
+        <CardTitle className="text-xl">Create your account</CardTitle>
         <CardDescription>
-          Enter your details below to create a new account
+          Enter your details below to get started
         </CardDescription>
         <CardAction>
           <Link to="/login">
-            <Button variant="link">Login</Button>
+            <Button variant="link" className="text-secondary-500">
+              Login
+            </Button>
           </Link>
         </CardAction>
       </CardHeader>
@@ -102,13 +104,15 @@ function SignUpForm() {
           handleChange={handlePasswordChange}
         />
         <FieldError errors={validationError} />
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          className="w-full bg-primary-400 hover:bg-primary-500 text-black shadow-md shadow-primary-500/20 rounded-xl h-10"
+          disabled={isPending}
+        >
           {isPending ? (
-            <span className="animate-spin">
-              <Loader2 />
-            </span>
+            <Loader2 className="animate-spin" />
           ) : (
-            <span>SignUp</span>
+            <span>Sign up</span>
           )}
         </Button>
       </div>

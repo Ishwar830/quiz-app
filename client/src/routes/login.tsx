@@ -7,7 +7,7 @@ export const Route = createFileRoute('/login')({
 
 function RouteComponent() {
   return (
-    <div className="p-10">
+    <div className='p-4 h-full grid items-center'>
       <LoginCard />
     </div>
   );

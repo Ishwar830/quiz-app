@@ -14,7 +14,7 @@ export const createRoomHandler: RequestHandler = async (req, res) => {
   const host: RoomMember = {
     id: user.id,
     name: user.name,
-    role: "PLAYER",
+    role: "SPECTATOR",
   };
 
   console.log("room creation");

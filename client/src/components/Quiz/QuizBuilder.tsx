@@ -273,12 +273,12 @@ function EditQuestionCard({ questionId }: { questionId: string; idx: number }) {
             >
               {question.text || `Question ${question.order}`}
             </QuestionCard.Text>
-            <button
+            <span
               className="justify-self-center self-start w-6 h-6 rounded-full bg-red-100 text-red-500 hover:bg-red-200 grid place-items-center transition-colors cursor-pointer"
               onClick={() => removeQuestion(questionId)}
             >
               <X size={14} />
-            </button>
+            </span>
           </div>
           <QuestionCard.MetaRow>
             <QuestionCard.TimeLimit>
