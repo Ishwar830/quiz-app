@@ -120,45 +120,6 @@ function Rankings() {
   );
 }
 
-// function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
-//   return (
-//     <div className="overflow-hidden bg-white rounded-md border border-slate-400 shadow-xs">
-//       <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-primary-300 text-xs font-semibold uppercase border-b border-gray-800">
-//         <div>Rank</div>
-//         <div>Player</div>
-//         <div className="text-center">Score</div>
-//       </div>
-
-//       <div className="divide-y divide-slate-500/50">
-//         {rankings.map((r) => {
-//           return (
-//             <div
-//               key={r.userId}
-//               className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center hover:bg-primary-50"
-//             >
-//               <div className="text-center font-bold">{r.rank}</div>
-//               <div className="grid grid-cols-[auto_1fr] items-center gap-3 overflow-hidden">
-//                 <UserAvatar name={r.name} />
-//                 <span className="font-medium truncate">{r.name}</span>
-//               </div>
-//               <div className="text-center font-semibold">
-//                 {r.score.toLocaleString()}
-//               </div>
-//             </div>
-//           );
-//         })}
-//       </div>
-
-//       {rankings.length === 0 && (
-//         <div className="p-8 text-center">
-//           <MoreHorizontal className="mx-auto mb-2 opacity-50" />
-//           <p>No more players to show</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
 function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">

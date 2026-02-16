@@ -1,5 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Trophy,
+} from 'lucide-react';
 import { z } from 'zod';
 import UserAvatar from '@/components/UserAvatar';
 import { cn } from '@/lib/utils';
@@ -43,12 +48,14 @@ async function getLeaderboard(
 
 function RouteComponent() {
   const data = Route.useLoaderData();
-  console.log(data);
   return (
-    <div>
-      <h1 className="text-xl font-semibold text-secondary-400 mb-4">
-        Leaderboard
-      </h1>
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 grid place-items-center">
+          <Trophy size={20} />
+        </div>
+        <h1 className="text-xl font-bold text-text-900">Leaderboard</h1>
+      </div>
       <ListRankings rankings={data.items} />
       <PaginationControls totalPages={data.totalPages} />
     </div>
@@ -57,26 +64,45 @@ function RouteComponent() {
 
 function ListRankings({ rankings }: { rankings: Array<Rank> }) {
   return (
-    <div className="overflow-hidden bg-white rounded-md border border-slate-400 shadow-xs">
-      <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-primary-300 text-xs font-semibold uppercase border-b border-gray-800">
+    <div className="overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-sm">
+      <div className="grid grid-cols-[60px_1fr_80px] gap-4 px-5 py-3 bg-primary-300 text-xs font-bold uppercase tracking-wider">
         <div>Rank</div>
         <div>Player</div>
         <div className="text-center">Score</div>
       </div>
 
-      <div className="divide-y divide-slate-500/50">
+      <div className="divide-y divide-slate-100">
         {rankings.map((r) => {
+          const isTop3 = r.rank <= 3;
           return (
             <div
               key={r.id}
-              className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center hover:bg-primary-50"
+              className={cn(
+                'grid grid-cols-[60px_1fr_80px] gap-4 px-5 py-3 items-center transition-colors hover:bg-primary-50',
+                isTop3 && 'bg-amber-50/50',
+              )}
             >
-              <div className="text-center font-bold">{r.rank}</div>
-              <div className="grid grid-cols-[auto_1fr] items-center gap-3 overflow-hidden">
-                <UserAvatar name={r.name} />
-                <span className="font-medium truncate">{r.name}</span>
+              <div className="text-center">
+                {r.rank <= 3 ? (
+                  <span
+                    className={cn(
+                      'inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold',
+                      r.rank === 1 && 'bg-amber-200 text-amber-800',
+                      r.rank === 2 && 'bg-slate-200 text-slate-700',
+                      r.rank === 3 && 'bg-orange-200 text-orange-700',
+                    )}
+                  >
+                    {r.rank}
+                  </span>
+                ) : (
+                  <span className="font-semibold text-text-400">{r.rank}</span>
+                )}
               </div>
-              <div className="text-center font-semibold">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <UserAvatar name={r.name} />
+                <span className="font-medium truncate text-sm">{r.name}</span>
+              </div>
+              <div className="text-center font-bold text-sm">
                 {r.score.toLocaleString()}
               </div>
             </div>
@@ -85,9 +111,9 @@ function ListRankings({ rankings }: { rankings: Array<Rank> }) {
       </div>
 
       {rankings.length === 0 && (
-        <div className="p-8 text-center">
-          <MoreHorizontal className="mx-auto mb-2 opacity-50" />
-          <p>No more players to show</p>
+        <div className="p-10 text-center text-text-400">
+          <MoreHorizontal className="mx-auto mb-2 opacity-40" />
+          <p className="text-sm">No players to show</p>
         </div>
       )}
     </div>
@@ -108,15 +134,16 @@ function PaginationControls({ totalPages }: { totalPages: number }) {
     nextPages = [totalPages - 2, totalPages - 1, totalPages];
 
   return (
-    <div className="flex items-center justify-around px-2 mt-6">
+    <div className="flex items-center justify-center gap-2 mt-6">
       <button
         onClick={() => handlePageChange(1)}
-        className="flex items-center gap-1 text-secondary-400 px-2 p-1 border-2 border-secondary-200 rounded"
+        disabled={page === 1}
+        className="flex items-center gap-1 text-xs font-semibold text-secondary-500 px-3 py-2 rounded-xl border border-secondary-200 hover:bg-secondary-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        <ChevronLeft size={16} /> First
+        <ChevronLeft size={14} /> First
       </button>
 
-      <div className="flex gap-2">
+      <div className="flex gap-1">
         {nextPages.map((pageNum) => {
           if (pageNum > totalPages || pageNum <= 0) return null;
           return (
@@ -124,10 +151,10 @@ function PaginationControls({ totalPages }: { totalPages: number }) {
               onClick={() => handlePageChange(pageNum)}
               key={pageNum}
               className={cn(
-                'rounded-sm size-8 grid place-items-center p-1 bg-accent-300',
-                {
-                  'bg-primary-400': page === pageNum,
-                },
+                'w-8 h-8 rounded-xl text-xs font-semibold grid place-items-center transition-all cursor-pointer',
+                page === pageNum
+                  ? 'bg-linear-to-r from-primary-400 to-primary-500 text-white shadow-sm'
+                  : 'bg-accent-100 hover:bg-accent-200',
               )}
             >
               {pageNum}
@@ -138,9 +165,10 @@ function PaginationControls({ totalPages }: { totalPages: number }) {
 
       <button
         onClick={() => handlePageChange(totalPages)}
-        className="flex items-center gap-1 text-secondary-400 px-2 p-1 border-2 border-secondary-200 rounded"
+        disabled={page === totalPages}
+        className="flex items-center gap-1 text-xs font-semibold text-secondary-500 px-3 py-2 rounded-xl border border-secondary-200 hover:bg-secondary-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        Last <ChevronRight size={16} />
+        Last <ChevronRight size={14} />
       </button>
     </div>
   );
