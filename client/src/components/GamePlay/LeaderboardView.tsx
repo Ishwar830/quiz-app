@@ -1,6 +1,7 @@
 import { Crown, Medal, MoreHorizontal, Trophy } from 'lucide-react';
 import UserAvatar from '../UserAvatar';
 import { StatCardsGrid } from '../General/StatCards';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import type { RankInfo } from '@/stores/GameStore';
 import { useGameRoom, useRankings } from '@/stores/GameStore';
 import { useMember, useMemberSubmissions } from '@/stores/MemberStore';
@@ -27,10 +28,12 @@ function GameSummary() {
   const streak = calculateLongestStreak(submissions);
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-vibrant-coral-50 shadow-sm">
-      <div className="p-6 sm:p-8 grid gap-4 bg-linear-to-br from-primary-200 to-primary-100 border">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="shrink-0 grow-0 size-14 border-2 border-gray-800 bg-white rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-deep-space-blue-400">
+    <Card className="relative overflow-hidden bg-linear-to-br from-primary-300 to-primary-500">
+      <div className="absolute top-0 right-0 size-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 size-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+      <CardHeader>
+        <div className="flex gap-2">
+          <div className="shrink-0 grow-0 size-14 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white/40">
             <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
@@ -38,14 +41,13 @@ function GameSummary() {
               <span>Hosted by</span>
               <span className="text-sm font-bold">{hostname}</span>
             </p>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              {title}
-            </h1>
+            <CardTitle className="text-2xl">{title}</CardTitle>
           </div>
         </div>
-
+      </CardHeader>
+      <CardContent>
         {member.role === 'SPECTATOR' ? (
-          <p className="text-sm leading-relaxed">{description}</p>
+          <p className="leading-relaxed text-sm">{description}</p>
         ) : (
           <StatCardsGrid
             score={member.score ?? 0}
@@ -53,8 +55,8 @@ function GameSummary() {
             streak={streak}
           />
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -68,13 +70,15 @@ function Rankings() {
 
   return (
     <div className="grid gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <h2 className="text-2xl font-bold tracking-wider">
-        <span className="flex items-center gap-4">
-          <Medal size={24} />
-          Top #10 Rankings
-        </span>
-        <div className="h-1 w-1/3 bg-secondary-300 mt-2" />
-      </h2>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-100">
+          <Medal size={18} className="stroke-amber-600" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-text-900">Rankings</h2>
+          <p className="text-xs text-text-400">Top performers this round</p>
+        </div>
+      </div>
 
       {topThree.length > 0 && (
         <div className="grid border-b-4 border-accent-500 grid-cols-3 gap-2 sm:gap-4 items-end mt-6">
@@ -116,50 +120,87 @@ function Rankings() {
   );
 }
 
-function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
-  const member = useMember();
+// function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
+//   return (
+//     <div className="overflow-hidden bg-white rounded-md border border-slate-400 shadow-xs">
+//       <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-primary-300 text-xs font-semibold uppercase border-b border-gray-800">
+//         <div>Rank</div>
+//         <div>Player</div>
+//         <div className="text-center">Score</div>
+//       </div>
 
+//       <div className="divide-y divide-slate-500/50">
+//         {rankings.map((r) => {
+//           return (
+//             <div
+//               key={r.userId}
+//               className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center hover:bg-primary-50"
+//             >
+//               <div className="text-center font-bold">{r.rank}</div>
+//               <div className="grid grid-cols-[auto_1fr] items-center gap-3 overflow-hidden">
+//                 <UserAvatar name={r.name} />
+//                 <span className="font-medium truncate">{r.name}</span>
+//               </div>
+//               <div className="text-center font-semibold">
+//                 {r.score.toLocaleString()}
+//               </div>
+//             </div>
+//           );
+//         })}
+//       </div>
+
+//       {rankings.length === 0 && (
+//         <div className="p-8 text-center">
+//           <MoreHorizontal className="mx-auto mb-2 opacity-50" />
+//           <p>No more players to show</p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+function ListRankings({ rankings }: { rankings: Array<RankInfo> }) {
   return (
-    <div className="overflow-hidden bg-linear-to-b from-secondary-50 to-secondary-100 rounded-xl border-2 border-gray-600 shadow-lg">
-      <div className="grid grid-cols-[60px_1fr_80px] gap-4 p-3 bg-secondary-300 text-xs font-semibold uppercase tracking-wider border-b border-gray-800">
-        <div>Rank</div>
-        <div>Player</div>
-        <div className="text-center">Score</div>
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="grid grid-cols-[60px_1fr_80px] gap-4 px-5 py-3 bg-primary-300 border-b border-slate-200">
+        <span className="text-[10px] font-bold uppercase tracking-widest">
+          Rank
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-widest">
+          Player
+        </span>
+        <span className="text-[10px] text-center font-bold uppercase tracking-widest">
+          Score
+        </span>
       </div>
 
-      <div className="divide-y divide-slate-500/50">
+      <div className="divide-y divide-slate-100">
         {rankings.map((r) => {
-          const isMe = r.userId === member.id;
-
           return (
             <div
               key={r.userId}
-              className={`grid grid-cols-[60px_1fr_80px] gap-4 p-3 items-center transition-colors 
-                  ${isMe ? 'bg-primary-50 hover:bg-primary-200' : 'hover:bg-secondary-200'}
-                `}
+              className={`grid grid-cols-[60px_1fr_80px] gap-4 px-5 py-3 items-center transition-colors duration-200 hover:bg-primary-50`}
             >
-              <div className="text-center font-bold">{r.rank}</div>
-              <div className="grid grid-cols-[auto_1fr] items-center gap-3 overflow-hidden">
+              <span className="text-center font-bold text-sm text-text-500 tabular-nums">
+                {r.rank}
+              </span>
+
+              <div className="flex items-center gap-3 overflow-hidden">
                 <UserAvatar name={r.name} />
-                <span className="font-medium truncate">
+                <span className="font-medium text-sm text-text-800 truncate">
                   {r.name}
-                  {isMe && (
-                    <span className="text-xs ml-2 py-0.5 px-1.5 rounded bg-primary-700 text-white">
-                      YOU
-                    </span>
-                  )}
                 </span>
               </div>
-              <div className="text-center font-semibold">
+
+              <span className="text-center font-bold text-sm text-text-700 tabular-nums">
                 {r.score.toLocaleString()}
-              </div>
+              </span>
             </div>
           );
         })}
       </div>
-
       {rankings.length === 0 && (
-        <div className="p-8 text-center">
+        <div className="p-8 text-center text-sm">
           <MoreHorizontal className="mx-auto mb-2 opacity-50" />
           <p>No more players to show</p>
         </div>
@@ -185,7 +226,7 @@ function PodiumStep({
 }) {
   const column = rank == 1 ? 2 : rank == 2 ? 1 : 3;
   return (
-    <div className={`col-start-${column}` + ' flex flex-col items-center relative'}>
+    <div className={`col-start-${column} flex flex-col items-center relative`}>
       <div
         className={`relative mb-3 transition-transform duration-300 ${isWinner ? 'scale-110' : 'scale-100'}`}
       >
@@ -216,11 +257,11 @@ function PodiumStep({
       </div>
 
       <div
-        className={`w-full ${height} ${color} bg-opacity-20 rounded-t-xl border-t border-x border-white/10 backdrop-blur-md relative overflow-hidden`}
+        className={`w-full ${height} ${color} rounded-t-xl relative overflow-hidden`}
       >
-        <div
-          className={`absolute inset-0 bg-linear-to-b from-white/10 to-transparent opacity-50`}
-        ></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-6xl font-black text-white/50">{rank}</span>
+        </div>
       </div>
     </div>
   );
