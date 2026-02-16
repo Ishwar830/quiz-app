@@ -1,4 +1,4 @@
-import { Calendar } from 'lucide-react';
+import { ArrowRight, Calendar } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 
 export interface UserGameMeta {
@@ -10,51 +10,64 @@ export interface UserGameMeta {
 }
 
 export function GameCard({ game }: { game: UserGameMeta }) {
+  let rankStyle = 'bg-gray-200 text-gray-600';
+  if (game.rank === 1) rankStyle = 'bg-amber-100 text-amber-600';
+  if (game.rank === 2) rankStyle = 'bg-slate-100 text-slate-600';
+  if (game.rank === 3) rankStyle = 'bg-orange-100 text-orange-600';
+
   return (
-    <div className="hover:scale-101 hover:-translate-y-1 shadow-sm transition-transform duration-300 group p-4 border rounded-lg space-y-1 bg-white">
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
-          <Calendar className="w-3 h-3" />
+    <div className="group bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 space-y-3">
+      <div className="flex items-center gap-2 text-text-400">
+        <Calendar size={12} />
+        <span className="text-xs font-medium">
           {new Date(game.endedAt).toLocaleDateString()}
         </span>
-        <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-        <span className="text-xs font-medium text-slate-400">
+        <span className="w-1 h-1 rounded-full bg-slate-300" />
+        <span className="text-xs font-medium">
           {new Date(game.endedAt).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
           })}
         </span>
       </div>
-      <p className="font-semibold">{game.quizTitle}</p>
-      <div className="flex gap-6 items-center">
-        <div className="flex items-center gap-1">
-          <span className="text-xs font-bold text-muted-foreground">Rank</span>
-          <span className="text-lg text-primary-600 font-extrabold">
-            #{game.rank}
-          </span>
-        </div>
 
-        <div className="flex items-center gap-1">
-          <span className="text-xs font-bold text-muted-foreground">Score</span>
-          <span className="text-lg text-secondary-500 font-extrabold">
-            {game.score}
-          </span>
+      <p className="font-semibold text-text-900">{game.quizTitle}</p>
+
+      <div className="flex gap-3">
+        <div
+          className={`${rankStyle} flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold`}
+        >
+          <span className="text-xs">Rank</span>
+          <span>#{game.rank}</span>
+        </div>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-100 text-green-600 text-sm font-bold">
+          <span className="text-xs">Score</span>
+          <span>{game.score}</span>
         </div>
       </div>
-      <div className="text-xs w-fit flex gap-4">
+
+      <div className="flex gap-4">
         <Link
           to="/games/$gameId"
-          className="hover:underline"
           params={{ gameId: game.id }}
+          className="text-xs font-medium text-primary-700 hover:text-primary-800 flex items-center gap-1 transition-colors"
         >
-          <span>My Performance</span>
+          My Performance
+          <ArrowRight
+            size={12}
+            className="group-hover:translate-x-0.5 transition-transform"
+          />
         </Link>
         <Link
           to="/games/$gameId/leaderboard"
-          className="hover:underline"
           params={{ gameId: game.id }}
+          className="text-xs font-medium text-secondary-500 hover:text-secondary-600 flex items-center gap-1 transition-colors"
         >
-          <span>Leaderboard</span>
+          Leaderboard
+          <ArrowRight
+            size={12}
+            className="group-hover:translate-x-0.5 transition-transform"
+          />
         </Link>
       </div>
     </div>
