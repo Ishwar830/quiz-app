@@ -1,4 +1,4 @@
-import { Calendar, CheckCircleIcon, TagIcon, XCircleIcon } from 'lucide-react';
+import { Calendar, CheckCircleIcon, TrophyIcon, XCircleIcon } from 'lucide-react';
 import { StatCardsGrid } from '../General/StatCards';
 import {
   Card,
@@ -10,6 +10,7 @@ import {
 import { Accordion } from '../ui/accordion';
 import { QuestionCard } from '../General/QuestionCard';
 import { ChoiceList } from '../General/ChoiceList';
+import { TopicList } from '../General/TopicList';
 import type { Question } from '@/stores/QuizFormStore';
 import type { ReactNode } from 'react';
 import { calculateAccuracy, calculateLongestStreak, cn } from '@/lib/utils';
@@ -60,15 +61,20 @@ export function GameDetailsHeader({
   );
 
   return (
-    <Card className="bg-primary-50">
+    <Card className="relative overflow-hidden bg-linear-to-br from-primary-300 to-primary-500">
+      <div className="absolute top-0 right-0 size-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 size-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+      <div className='absolute right-10'>
+        <TrophyIcon size={240} className='stroke-white/10 stroke-1'/>
+      </div>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+          <span className="text-xs font-medium flex items-center gap-1">
             <Calendar className="w-3 h-3" />
             {new Date(gameDetails.endedAt).toLocaleDateString()}
           </span>
-          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-          <span className="text-xs font-medium text-slate-400">
+          <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+          <span className="text-xs font-medium">
             {new Date(gameDetails.endedAt).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
@@ -76,22 +82,18 @@ export function GameDetailsHeader({
           </span>
         </div>
         <CardTitle>{gameDetails.quizTitle}</CardTitle>
-        <CardDescription className="text-xs">
+        <CardDescription className="text-xs text-muted-foreground">
           {gameDetails.quizDescription}
         </CardDescription>
         <div className="grid gap-2">
-          <h2 className="border-b-2 border-secondary-500 w-fit">Topics</h2>
-          <ul className="flex gap-4 flex-wrap">
-            {gameDetails.quizTopics.map((topic) => (
-              <li
-                className="text-xs flex items-center gap-2 rounded-md bg-accent-100 p-1 px-2"
-                key={topic}
-              >
-                <TagIcon size={12} />
-                {topic}
-              </li>
+          <h2 className="font-semibold w-fit">Topics</h2>
+          <TopicList>
+            {gameDetails.quizTopics.map((topic, idx) => (
+              <TopicList.Item key={idx}>
+                <span>{topic}</span>
+              </TopicList.Item>
             ))}
-          </ul>
+          </TopicList>
         </div>
       </CardHeader>
       <CardContent className="mt-4">
@@ -135,9 +137,9 @@ function QuestionsContainer({
     <Card>
       <CardHeader className="flex items-center">
         <CardTitle>Questions</CardTitle>
-        <div className="size-8 rounded-full bg-accent-200 grid place-items-center">
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-100 text-accent-700 text-xs font-bold">
           {questions.length}
-        </div>
+        </span>
       </CardHeader>
       <CardContent>
         <Accordion type="multiple">
@@ -233,7 +235,7 @@ function StatusBadge({
   return (
     <span
       className={cn(
-        'flex items-center p-1 rounded-md gap-2 text-xs',
+        'flex items-center px-2 py-0.5 rounded-md gap-2 text-[10px]',
         config.className,
         className,
       )}

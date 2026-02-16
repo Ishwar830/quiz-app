@@ -8,7 +8,7 @@ export function TopicList({
   ...props
 }: ComponentProps<'ul'>) {
   return (
-    <ul className={cn('flex gap-4 flex-wrap', className)} {...props}>
+    <ul className={cn('flex gap-2 flex-wrap', className)} {...props}>
       {children}
     </ul>
   );
@@ -25,12 +25,12 @@ function TopicItem({
   return (
     <li
       className={cn(
-        'text-xs flex items-center gap-2 rounded-md bg-accent-100 p-1 px-2',
+        'inline-flex items-center gap-1.5 text-xs font-medium rounded-full bg-accent-50 text-accent-700 border border-accent-200 px-3 py-1',
         className,
       )}
       {...props}
     >
-      {withTagIcon && <TagIcon size={12} />}
+      {withTagIcon && <TagIcon size={10} className="shrink-0" />}
       {children}
     </li>
   );
