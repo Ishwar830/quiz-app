@@ -6,9 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import {
-  Accordion,
-} from '../ui/accordion';
+import { Accordion } from '../ui/accordion';
 import { QuestionCard } from '../General/QuestionCard';
 import { TopicList } from '../General/TopicList';
 import { ChoiceList } from '../General/ChoiceList';
@@ -33,9 +31,13 @@ function PreviewHeader({ quiz }: { quiz: Quiz }) {
         <CardDescription>{quiz.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <QuizTopics topics={quiz.topics} />
-        <div className="text-sm flex bg-secondary-200 p-2 rounded-lg w-fit gap-2 items-center">
-          <CircleQuestionMark size={16} />
+        <TopicList>
+          {quiz.topics.map((topic) => (
+            <TopicList.Item key={topic}>{topic}</TopicList.Item>
+          ))}
+        </TopicList>
+        <div className="flex items-center gap-1.5 text-xs bg-secondary-50 text-secondary-600 px-2.5 py-1 rounded-full font-medium w-fit">
+          <CircleQuestionMark size={12} />
           <span>{quiz.questions.length} questions</span>
         </div>
         <div className="flex gap-6">
@@ -51,36 +53,25 @@ function PreviewHeader({ quiz }: { quiz: Quiz }) {
   );
 }
 
-function QuizTopics({ topics }: { topics: Array<string> }) {
-  return (
-    <TopicList>
-      {topics.map((topic) => (
-        <TopicList.Item key={topic}>{topic}</TopicList.Item>
-      ))}
-    </TopicList>
-  );
-}
-
 function QuestionsContainer({ questions }: { questions: Array<Question> }) {
   return (
     <Card>
       <CardHeader className="flex items-center">
         <CardTitle>Questions</CardTitle>
-        <div className="size-8 rounded-full bg-accent-200 grid place-items-center">
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-100 text-accent-700 text-xs font-bold">
           {questions.length}
-        </div>
+        </span>
       </CardHeader>
       <CardContent>
         <Accordion type="multiple">
           {questions.map((q) => (
-            <PreviewQuestionCard key={q.id} question={q}/>
+            <PreviewQuestionCard key={q.id} question={q} />
           ))}
         </Accordion>
       </CardContent>
     </Card>
   );
 }
-
 
 function PreviewQuestionCard({ question }: { question: Question }) {
   const correctChoice = question.choices.find(
@@ -99,7 +90,7 @@ function PreviewQuestionCard({ question }: { question: Question }) {
               {question.timeLimitSeconds}
             </QuestionCard.TimeLimit>
             {correctChoice && (
-              <span className="p-1 px-2 text-xs text-green-700 bg-green-200 rounded-md">
+              <span className="py-0.5 px-2 text-xs text-green-700 bg-green-200 rounded-md">
                 {correctChoice.text}
               </span>
             )}

@@ -21,7 +21,6 @@ function RouteComponent() {
   const quizzes = Route.useLoaderData();
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-secondary-100 text-secondary-600 grid place-items-center">
           <Library size={20} />
