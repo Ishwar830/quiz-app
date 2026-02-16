@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import {
   Check,
-  CircleQuestionMarkIcon,
+  CircleHelp,
   Copy,
   Play,
+  Sparkles,
   Trophy,
 } from 'lucide-react';
 import { TopicList } from '../General/TopicList';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useMember } from '@/stores/MemberStore';
 import { useGameRoom } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
@@ -42,10 +44,12 @@ interface LobbyHeaderProps {
 
 function LobbyHeader({ title, description, hostname }: LobbyHeaderProps) {
   return (
-    <div className="overflow-hidden bg-linear-to-br from-primary-200 to-primary-100 border p-4 sm:px-8 sm:py-10 shadow-md text-deep-space-blue-800 rounded-lg">
-      <div className="grid gap-4">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="shrink-0 grow-0 size-14 border-2 border-gray-800 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white">
+    <Card className="relative overflow-hidden bg-linear-to-br from-primary-300 to-primary-500">
+      <div className="absolute top-0 right-0 size-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 size-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+      <CardHeader>
+        <div className="flex gap-2">
+          <div className="shrink-0 grow-0 size-14 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white/40">
             <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
@@ -53,15 +57,14 @@ function LobbyHeader({ title, description, hostname }: LobbyHeaderProps) {
               <span>Hosted by</span>
               <span className="text-sm font-bold">{hostname}</span>
             </p>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              {title}
-            </h1>
+            <CardTitle className="text-2xl">{title}</CardTitle>
           </div>
         </div>
-
+      </CardHeader>
+      <CardContent>
         <p className="leading-relaxed text-sm">{description}</p>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -72,27 +75,28 @@ interface LobbyContentProps {
 
 function LobbyContent({ topics, totalQuestions }: LobbyContentProps) {
   return (
-    <div className="grid gap-4 py-4">
-      <div className="flex flex-col gap-4">
-        <div className="grid gap-2">
-          <h2 className="border-b-2 border-secondary-500 w-fit">Topics</h2>
-          <TopicList>
-            {topics.map((topic) => (
-              <TopicList.Item key={topic}>{topic}</TopicList.Item>
-            ))}
-          </TopicList>
-        </div>
-
-        <div>
-          <div className="rounded-lg text-sm border bg-secondary-200 p-2 w-fit">
-            <div className="flex items-center gap-2">
-              <CircleQuestionMarkIcon size={16} />
-              <span>{totalQuestions} Questions</span>
-            </div>
-          </div>
-        </div>
+    <main className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+      {/* Topics */}
+      <div className="space-y-2.5">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-text-400 flex items-center gap-2">
+          <Sparkles size={14} className="stroke-secondary-400" />
+          Topics
+        </h2>
+        <TopicList>
+          {topics.map((topic) => (
+            <TopicList.Item key={topic}>{topic}</TopicList.Item>
+          ))}
+        </TopicList>
       </div>
-    </div>
+
+      {/* Question count */}
+      <div className="flex items-center gap-2.5 bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-2.5 w-fit">
+        <CircleHelp size={16} className="stroke-secondary-500" />
+        <span className="text-sm font-semibold text-secondary-700">
+          {totalQuestions} Questions
+        </span>
+      </div>
+    </main>
   );
 }
 
@@ -103,7 +107,21 @@ function LobbyFooter({
   isHost: boolean;
   roomCode: string;
 }) {
-  const socket = useSocket();
+  return (
+    <footer className='space-y-4'>
+      <RoomCodeButton roomCode={roomCode} />
+      {isHost ? (
+        <StartQuizButton />
+      ) : (
+        <p className="text-center text-lg mt-4 animate-pulse">
+          Waiting for host to start quiz...
+        </p>
+      )}
+    </footer>
+  );
+}
+
+function RoomCodeButton({ roomCode }: { roomCode: string }) {
   const [copied, setCopied] = useState(false);
 
   const copyCode = () => {
@@ -112,40 +130,51 @@ function LobbyFooter({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+      <h2 className="text-xs font-bold uppercase tracking-widest text-text-400">
+        Room Code
+      </h2>
+      <button
+        onClick={copyCode}
+        className="group w-full flex items-center justify-between bg-linear-to-r from-secondary-400 to-secondary-500 rounded-xl px-6 py-4 text-white transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
+        aria-label="Copy room code"
+      >
+        <span className="text-2xl sm:text-3xl font-bold tracking-[0.3em] font-mono">
+          {roomCode}
+        </span>
+        <span className="flex items-center gap-2 text-sm font-medium text-white">
+          {copied ? (
+            <>
+              <Check size={18} />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy size={18} />
+              Copy
+            </>
+          )}
+        </span>
+      </button>
+    </div>
+  );
+}
+
+function StartQuizButton() {
+  const socket = useSocket();
+
   const handleStartQuiz = () => {
-    if (isHost) socket.emit('quiz:start');
+    socket.emit('quiz:start');
   };
 
   return (
-    <>
-      <div>
-        <h2 className="text-sm font-semibold text-deep-space-blue-700 uppercase tracking-wider mb-3">
-          Room Code
-        </h2>
-        <button
-          onClick={copyCode}
-          className="flex items-center gap-4 justify-center w-full bg-secondary-400 rounded-xl px-6 py-4 hover:bg-secondary-500 border text-white"
-          aria-label="Copy room code"
-        >
-          <span className="text-3xl font-bold tracking-widest text-center">
-            {roomCode}
-          </span>
-          <span className="w-6 h-6">{copied ? <Check /> : <Copy />}</span>
-        </button>
-      </div>
-      {isHost ? (
-        <button
-          onClick={handleStartQuiz}
-          className="w-full flex justify-center items-center gap-2 bg-primary-400 hover:bg-primary-500 hover:scale-[1.02] transition-all duration-300 border shadow-md font-bold py-5 rounded-xl text-lg"
-        >
-          <Play className="fill-white stroke-gray-50" />
-          Start Quiz
-        </button>
-      ) : (
-        <p className="text-center text-lg mt-4 animate-pulse">
-          Waiting for host to start quiz...
-        </p>
-      )}
-    </>
+    <button
+      onClick={handleStartQuiz}
+      className="w-full flex justify-center items-center gap-2 group hover:-translate-y-0.5 transition-all duration-300 border shadow-md font-bold py-5 rounded-xl text-lg text-white tracking-widest bg-linear-to-r from-sky-500 to-sky-600 hover:cursor-pointer"
+    >
+      <Play className="fill-white stroke-gray-50 group-hover:scale-110 duration-300" />
+      Start Quiz
+    </button>
   );
 }
