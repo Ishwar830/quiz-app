@@ -3,19 +3,11 @@ import {
   Edit,
   Eye,
   MoreVertical,
-  PlayCircle,
+  PlayIcon,
   Trash2,
 } from 'lucide-react';
 import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
 import { TopicList } from '../General/TopicList';
 import { formatDate } from '@/lib/utils';
 
@@ -36,34 +28,42 @@ export function QuizCard({ quizInfo }: QuizCardProps) {
   const formattedDate = formatDate(quizInfo.createdAt);
 
   return (
-    <Card className="relative w-full justify-between max-w-100 p-0 overflow-hidden hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300">
-      <div className="pt-4 flex-1 flex flex-col h-full justify-between">
-        <QuizConfigs quizId={quizInfo.id} />
-        <CardHeader>
-          <CardTitle className="text-xl">{quizInfo.title}</CardTitle>
-          <CardDescription>{quizInfo.description}</CardDescription>
-        </CardHeader>
-        <CardContent className="mt-2 flex-1 justify-around flex flex-col gap-2">
+    <div className="relative w-full max-w-100 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
+      <div className="flex-1 flex flex-col p-5">
+        <QuizCardActions quizId={quizInfo.id} />
+
+        <h3 className="text-lg font-bold text-text-900 mb-1 pr-8">
+          {quizInfo.title}
+        </h3>
+        <p className="text-xs text-text-400 mb-4 line-clamp-2">
+          {quizInfo.description}
+        </p>
+
+        <div className="mb-4">
           <QuizTopics topics={quizInfo.topics} />
-          <div className="text-sm flex gap-2 items-center">
-            <CircleQuestionMark size={16} className="stroke-primary-500" />
+        </div>
+
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs bg-secondary-50 text-secondary-600 px-2.5 py-1 rounded-full font-medium">
+            <CircleQuestionMark size={12} />
             <span>{quizInfo.totalQuestions} questions</span>
           </div>
-          <div className="text-xs text-muted-foreground">
-            Created {formattedDate}
-          </div>
-        </CardContent>
+          <span className="text-[10px] text-text-300">{formattedDate}</span>
+        </div>
       </div>
-      <CardFooter className="grid grid-cols-2 p-0 min-h-12 items-stretch font-semibold">
-        <Link to="/quizzes/$quizId" params={{ quizId: quizInfo.id }}>
-          <button className="size-full flex items-center justify-center gap-2 bg-secondary-200 hover:cursor-pointer hover:bg-secondary-300">
-            <Eye size={20} />
-            Preview
-          </button>
+
+      <div className="grid grid-cols-2 border-t border-slate-100">
+        <Link
+          to="/quizzes/$quizId"
+          params={{ quizId: quizInfo.id }}
+          className="flex items-center justify-center gap-2 py-3 text-sm font-semibold text-text-600 hover:bg-slate-100 transition-colors"
+        >
+          <Eye size={16} />
+          Preview
         </Link>
         <StartQuizButton quizId={quizInfo.id} />
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -80,9 +80,10 @@ function StartQuizButton({ quizId }: { quizId: string }) {
   return (
     <button
       onClick={handleStartQuiz}
-      className="flex items-center justify-center gap-2 bg-primary-400 hover:cursor-pointer hover:bg-primary-500"
+      className="flex items-center justify-center gap-2 py-3 text-sm font-semibold bg-linear-to-r from-primary-400 to-primary-500 text-white hover:from-primary-500 hover:to-primary-600 transition-all cursor-pointer"
     >
-      <PlayCircle size={20} /> Start Quiz
+      <PlayIcon className="fill-white" size={16} />
+      Start
     </button>
   );
 }
@@ -107,30 +108,28 @@ function QuizTopics({ topics }: { topics: Array<string> }) {
   );
 }
 
-function QuizConfigs({ quizId }: { quizId: string }) {
+function QuizCardActions({ quizId }: { quizId: string }) {
   const router = useRouter();
 
   return (
-    <div className="absolute top-4 right-4">
+    <div className="absolute top-5 right-4">
       <Popover>
         <PopoverTrigger asChild>
-          <button className="hover:cursor-pointer rounded-full hover:bg-slate-100 p-1">
-            <MoreVertical size={20} />
+          <button className="hover:cursor-pointer rounded-full hover:bg-slate-100 p-1.5 transition-colors">
+            <MoreVertical size={16} />
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-fit p-2 px-3 font-sora">
-          <div className="grid gap-2">
-            <button>
-              <Link
-                to="/quizbuilder/{-$quizId}"
-                params={{ quizId }}
-                className="flex gap-2 items-center p-1 rounded-sm hover:bg-gray-50"
-              >
-                <Edit size={16} /> <span>Edit</span>
-              </Link>
-            </button>
+        <PopoverContent className="w-fit p-1.5 font-sora rounded-xl shadow-lg border border-slate-200">
+          <div className="grid gap-0.5">
+            <Link
+              to="/quizbuilder/{-$quizId}"
+              params={{ quizId }}
+              className="flex gap-2 items-center p-2 px-3 rounded-lg text-sm hover:bg-slate-50 transition-colors"
+            >
+              <Edit size={14} /> Edit
+            </Link>
             <button
-              className="flex gap-2 items-center p-1 rounded-sm text-red-600 hover:text-red-700 hover:bg-gray-50"
+              className="flex gap-2 items-center p-2 px-3 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
               onClick={() =>
                 fetch(`/api/quizzes/${quizId}`, {
                   method: 'DELETE',
@@ -139,7 +138,7 @@ function QuizConfigs({ quizId }: { quizId: string }) {
                 })
               }
             >
-              <Trash2 size={16} /> <span>Delete</span>
+              <Trash2 size={14} /> Delete
             </button>
           </div>
         </PopoverContent>
