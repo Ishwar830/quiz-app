@@ -26,13 +26,10 @@ class BotPlayer {
     try {
       console.log(`[${this.name}] Starting sequence...`);
 
-      // Login
       await this.login();
 
-      // Join Room
       await this.joinRoom();
 
-      // Socket Connection
       this.connectSocket();
     } catch (error) {
       console.error(`[${this.name}] Failed:`, error.message);
@@ -41,7 +38,6 @@ class BotPlayer {
     }
   }
 
-  // --- Login ---
   async login() {
     const response = await axios.post(
       `${API_URL}/api/auth/sign-in/email`,
@@ -68,7 +64,6 @@ class BotPlayer {
     console.log(`[${this.email}] Logged in.`);
   }
 
-  // --- Join Room ---
   async joinRoom() {
     await axios.post(
       `${API_URL}/api/rooms/join/${ROOM_CODE}?role=PLAYER`,
@@ -84,9 +79,7 @@ class BotPlayer {
     console.log(`[${this.name}] Joined Room ${ROOM_CODE}`);
   }
 
-  // --- Connect Socket ---
   connectSocket() {
-    // Socket.io Node client doesn't use browsers, so we pass cookies in headers
     this.socket = io(API_URL);
     this.socket.auth = { userId: this.user.id };
 
@@ -99,7 +92,7 @@ class BotPlayer {
     });
 
     this.socket.emit("room:join", ROOM_CODE);
-    // --- GAMEPLAY LOGIC ---
+   
     this.socket.on("question:update", (data) => {
       const thinkingTime = Math.floor(Math.random() * 3000) + 1000;
       console.log(`[${this.name}] Thinking...`);
