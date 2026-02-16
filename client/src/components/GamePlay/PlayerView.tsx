@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckIcon, Loader2, X } from 'lucide-react';
+import { CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import type { Submission } from '@/stores/MemberStore';
 import { cn } from '@/lib/utils';
 import { useSocket } from '@/socket';
@@ -108,31 +108,46 @@ function QuestionChoice({
       onClick={() => handleSubmit(id)}
       disabled={hasQuestionEnded}
       className={cn(
-        'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border hover:cursor-pointer hover:scale-102 transition-transform transform duration-300 overflow-hidden wrap-break-word gap-2 shadow-sm',
-        status !== 'idle' && 'bg-primary-50 scale-[1.02]',
+        'grid grid-cols-[32px_1fr_32px] p-4 rounded-xl text-left border hover:cursor-pointer hover:scale-102 transition-transform transform duration-300 overflow-hidden wrap-break-word gap-2 shadow-sm bg-white',
+        status === 'idle' && hasQuestionEnded && 'border-slate-200 opacity-60',
+        status !== 'idle' && 'scale-[1.02]',
         {
-          'border-lime-400 bg-lime-100': status === 'correct',
-          'border-red-400 bg-red-100': status === 'incorrect',
+          'border-emerald-400 bg-emerald-50': status === 'correct',
+          'border-red-400 bg-red-50': status === 'incorrect',
         },
       )}
     >
       <span
         className={cn(
-          'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
+          'inline-flex items-center justify-center size-8 rounded-xl text-sm font-bold',
           `${labelColors[index]} text-white`,
         )}
       >
         {String.fromCharCode(65 + index)}
       </span>
 
-      <span className="text-lg font-medium">{text}</span>
+      <span className="text-sm self-center font-semibold">{text}</span>
 
-      <span>
+      <span className="flex items-center justify-center">
         {status === 'submitting' && (
-          <Loader2 className="text-gray-500 animate-spin" />
+          <Loader2 size={22} className="text-primary-500 animate-spin" />
         )}
-        {status === 'correct' && <CheckIcon className="text-lime-600" />}
-        {status === 'incorrect' && <X className="text-red-600" />}
+        {status === 'correct' && (
+          <CheckCircle2
+            size={22}
+            className="text-emerald-500 fill-emerald-100 animate-in zoom-in duration-300"
+          />
+        )}
+        {status === 'incorrect' && (
+          <XCircle
+            size={22}
+            className="text-red-500 fill-red-100 animate-in zoom-in duration-300"
+          />
+        )}
+
+        {status === 'correct' && (
+          <div className="absolute inset-0 bg-linear-to-r from-transparent via-emerald-200/30 to-transparent animate-shimmer" />
+        )}
       </span>
     </button>
   );

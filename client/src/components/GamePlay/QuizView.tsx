@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Clock, GhostIcon, TrendingUp } from 'lucide-react';
+import { CircleQuestionMarkIcon, Clock, Eye, TrendingUp } from 'lucide-react';
 import SpectatorView from './SpectatorView';
 import PlayerView from './PlayerView';
 import { useGameRoom, useQuestionInfo } from '@/stores/GameStore';
@@ -44,47 +44,67 @@ function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
   const questionInfo = useQuestionInfo();
 
   const isLastQuestion = questionInfo.order == quizMeta.totalQuestions;
+  const progress = (questionInfo.order / quizMeta.totalQuestions) * 100;
 
   return (
-    <div className="p-4 shadow-sm rounded-xl border grid gap-4">
-      <div className="flex justify-between items-center mx-2">
-        {member.role === 'PLAYER' ? (
-          <div className="flex gap-2 text-lg items-center">
-            <TrendingUp className="text-lime-600" />
-            <p className="flex gap-2 items-center">
-              <span className="text-sm">Score</span>
-              <span className="font-semibold text-xl">{member.score}</span>
-            </p>
-          </div>
-        ) : (
-          <div className="flex gap-2 items-center">
-            <GhostIcon className="stroke-secondary-400" />
-            <span className="text-sm text-primary-700 border-b-2 border-secondary-400">
-              Spectator Mode
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="h-1.5 bg-slate-100">
+        <div
+          className="h-full bg-linear-to-r from-primary-400 to-primary-500 transition-all duration-700 ease-out rounded-r-full"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      <div className="px-4 sm:px-5 py-3 space-y-3">
+        <div className="flex justify-between items-center">
+          {member.role === 'PLAYER' ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100">
+                <TrendingUp size={16} className="stroke-emerald-600" />
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl font-bold text-text-900 tabular-nums">
+                  {member.score}
+                </span>
+                <span className="text-xs text-text-400 font-medium">pts</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary-50 border border-secondary-200">
+              <Eye size={14} className="stroke-secondary-500" />
+              <span className="text-xs font-semibold text-secondary-600">
+                Spectator
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
+            <span className="text-xs text-text-400">Q</span>
+            <span className="text-sm font-bold text-text-800 tabular-nums">
+              {questionInfo.order}
+              <span className="text-text-300 font-normal">
+                /{quizMeta.totalQuestions}
+              </span>
             </span>
           </div>
-        )}
-        <p className="flex gap-2 items-center">
-          <span className="text-xs">Question</span>
-          <span className="font-semibold text-lg">
-            {questionInfo.order} / {quizMeta.totalQuestions}
-          </span>
-        </p>
-      </div>
-      <div className="flex items-center justify-between mx-2">
-        <QuestionTimer endTime={questionInfo.submissionEndTime} />
-        {hasQuestionEnded && (
-          <div className="flex gap-2 items-center">
-            <span className="size-2 bg-green-500 rounded-full animate-pulse"></span>
-            {isLastQuestion ? (
-              <span>Thanks for playing!</span>
-            ) : (
-              <span className="text-xs text-muted-foreground">
-                Next Question will start soon
+        </div>
+
+        <div className="flex items-center justify-between">
+          <QuestionTimer endTime={questionInfo.submissionEndTime} />
+          {hasQuestionEnded && (
+            <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
-            )}
-          </div>
-        )}
+              <span className="text-xs font-medium text-text-500">
+                {isLastQuestion
+                  ? 'Thanks for playing!'
+                  : 'Next question coming up…'}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -92,8 +112,11 @@ function QuizViewHeader({ hasQuestionEnded }: { hasQuestionEnded: boolean }) {
 
 function QuestionText({ text }: { text: string }) {
   return (
-    <div className="bg-primary-100 border p-6 rounded-xl shadow-sm overflow-hidden">
-      <h2 className="text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
+    <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary-500 to-primary-600 p-6 sm:p-8 shadow-lg">
+      <div className="absolute -top-2 -right-4">
+        <CircleQuestionMarkIcon size={120} className="stroke-white/10" />
+      </div>
+      <h2 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-bold leading-tight text-white wrap-break-word">
         {text}
       </h2>
     </div>
@@ -102,16 +125,30 @@ function QuestionText({ text }: { text: string }) {
 
 function QuestionTimer({ endTime }: { endTime: number }) {
   const timeLeft = useTimer(endTime);
+  const isLow = timeLeft < 5;
+  const isCritical = timeLeft <= 2;
 
   return (
-    <div className="flex items-center justify-between gap-2 w-15">
-      <span>
-        <Clock size={18} className="mb-1" />
-      </span>
+    <div
+      className={cn(
+        'flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 bg-slate-100 text-text-700',
+        { 'bg-amber-100 text-amber-700': isLow },
+        { 'bg-red-100 text-red-700': isCritical },
+      )}
+    >
+      <Clock
+        size={14}
+        className={cn(
+          'transition-colors stroke-text-400',
+          { 'stroke-amber-500': isLow },
+          { 'stroke-red-500': isCritical },
+        )}
+      />
       <span
-        className={cn('text-2xl font-bold', {
-          'text-red-600 animate-pulse': timeLeft < 5,
-        })}
+        className={cn(
+          'text-lg font-bold tabular-nums',
+          isCritical && 'animate-pulse',
+        )}
       >
         {timeLeft}s
       </span>

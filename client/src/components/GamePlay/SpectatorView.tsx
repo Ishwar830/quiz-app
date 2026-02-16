@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BarChart3, Users } from 'lucide-react';
 import type { Question } from '@/stores/GameStore';
 import { useSocket } from '@/socket';
 import { useQuestionInfo } from '@/stores/GameStore';
@@ -31,19 +32,10 @@ export default function SpectatorView() {
     };
   }, [question.id]);
 
-  return (
-    <>
-      <div className="flex-1 hidden sm:block">
-        <SubmissionsVertical question={question} analytics={analytics} />
-      </div>
-      <div className="flex-1 sm:hidden">
-        <SubmissionsHorizontal question={question} analytics={analytics} />
-      </div>
-    </>
-  );
+  return <LiveResults question={question} analytics={analytics} />;
 }
 
-function SubmissionsVertical({
+function LiveResults({
   question,
   analytics,
 }: {
@@ -61,102 +53,68 @@ function SubmissionsVertical({
   const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500'];
 
   return (
-    <div className="h-full grid grid-cols-4 gap-4">
-      {question.choices.map((choice, index) => {
-        const count = analytics.info[choice.id] ?? 0;
-        const percentage = getPercentageForSubmission(count);
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BarChart3 size={14} className="stroke-text-400" />
+          <span className="text-xs font-bold uppercase tracking-widest text-text-400">
+            Live Results
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200">
+          <Users size={12} className="stroke-text-400" />
+          <span className="text-xs font-semibold text-text-600 tabular-nums">
+            {totalSubmissions}
+          </span>
+        </div>
+      </div>
 
-        return (
-          <div key={choice.id} className="grid grid-rows-[1fr_40px]">
-            <div className="relative border-b-4 border-gray-700 ">
-              <div
-                className={`absolute bottom-0 z-10 mb-2 left-1/2 -translate-x-1/2`}
-              >
-                <span className="rounded-full bg-accent-200 shadow-sm font-semibold size-10 grid place-items-center">
-                  {count}
-                </span>
-              </div>
-              <div
-                className={`h-full rounded-tl-xl opacity-80 rounded-tr-xl ${colors[index]}  origin-bottom transition-transform duration-500`}
-                style={{ transform: `scaleY(${percentage / 100})` }}
-              ></div>
-            </div>
+      <div className='grid sm:grid-cols-2 gap-4'>
+        {question.choices.map((choice, index) => {
+          const color = colors[index % colors.length];
+          const count = analytics.info[choice.id] ?? 0;
+          const percentage = getPercentageForSubmission(count);
 
-            <div className="grid items-center text-center">
-              <div
-                className={`truncate rounded-sm p-1 px-2 ${colors[index]} text-white  text-sm`}
-              >
-                {choice.text}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function SubmissionsHorizontal({
-  question,
-  analytics,
-}: {
-  question: Question;
-  analytics: QuestionAnalytics;
-}) {
-  const totalSubmissions = analytics.totalSubmissions;
-
-  const getPercentageForSubmission = (count: number) => {
-    return totalSubmissions === 0
-      ? 0
-      : Math.floor((count / totalSubmissions) * 100);
-  };
-
-  const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500'];
-
-  return (
-    <div className="grid gap-4">
-      {question.choices.map((choice, index) => {
-        const count = analytics.info[choice.id] ?? 0;
-        const percentage = getPercentageForSubmission(count);
-
-        return (
-          <div
-            key={choice.id}
-            className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-sm transform transition-all duration-300 hover:scale-102 relative overflow-hidden"
-          >
+          return (
             <div
-              className={`absolute inset-0 ${colors[index]} opacity-20 origin-left transition-transform duration-500`}
-              style={{ transform: `scaleX(${percentage / 100})` }}
-            ></div>
+              key={choice.id}
+              className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden"
+            >
+              <div
+                className={`absolute inset-y-0 left-0 ${color} opacity-15 transition-all duration-700 ease-out`}
+                style={{ width: `${percentage}%` }}
+              />
 
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-1">
-                <span
-                  className={cn(
-                    'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
-                    `${colors[index]} text-white`,
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <span
+                    className={cn(
+                      'inline-flex items-center justify-center w-8 h-8 rounded-xl text-sm font-bold text-white shrink-0',
+                      color,
+                    )}
+                  >
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="text-sm font-semibold text-text-800 truncate">
+                    {choice.text}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 ml-2">
+                  {percentage > 0 && (
+                    <span className="text-xs text-text-400 tabular-nums">
+                      {percentage}%
+                    </span>
                   )}
-                >
-                  {String.fromCharCode(65 + index)}
-                </span>
-
-                <span className="text-gray-800 text-lg font-semibold flex-1">
-                  {choice.text}
-                </span>
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-accent-100">
+                    {count}
+                  </span>
+                </div>
               </div>
-
-              <span
-                className={cn(
-                  'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
-                  `${colors[index]} text-white`,
-                )}
-              >
-                {count}
-              </span>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
