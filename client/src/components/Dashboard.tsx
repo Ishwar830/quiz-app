@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
-import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
 import UserAvatar from './UserAvatar';
 import {
   Dialog,
@@ -20,16 +19,17 @@ import {
 import { JoinRoomForm } from './Forms/JoinRoomForm';
 import { AiRoomForm } from './Forms/AiRoomForm';
 import type { User } from 'better-auth';
+import type { ReactNode } from 'react';
 
 export function Dashboard({ user }: { user: User }) {
   return (
-    <>
+    <div className='space-y-6'>
       <DashboardHeader
         username={user.name}
         imageUrl={user.image ?? undefined}
       />
       <DashboardContent />
-    </>
+    </div>
   );
 }
 
@@ -62,34 +62,79 @@ function DashboardHeader({
 
 function DashboardContent() {
   return (
-    <main className="mt-4">
-      <div className="grid gap-4">
-        <CreateRoomCard />
+    <main>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <ActionCard
+          href="/quizzes"
+          icon={<PlaySquare size={20} />}
+          title="Create Room"
+          description="Host a live quiz game"
+          iconBg="bg-emerald-100"
+          iconColor="text-emerald-600"
+        />
         <JoinRoomCard />
         <AIRoomCard />
-        <PastGamesCard />
-        <BrowseQuizCard />
-        <BuildQuizCard />
+        <ActionCard
+          href="/games"
+          icon={<GamepadIcon size={20} />}
+          title="Past Games"
+          description="Review your game history"
+          iconBg="bg-orange-100"
+          iconColor="text-orange-600"
+        />
+        <ActionCard
+          href="/quizzes"
+          icon={<Library size={20} />}
+          title="My Quizzes"
+          description="Browse your quiz collection"
+          iconBg="bg-secondary-100"
+          iconColor="text-secondary-600"
+        />
+        <ActionCard
+          href="/quizbuilder/{-$quizId}"
+          icon={<SquarePlus size={20} />}
+          title="Build Quiz"
+          description="Create a custom quiz"
+          iconBg="bg-accent-100"
+          iconColor="text-accent-700"
+        />
       </div>
     </main>
   );
 }
 
-function CreateRoomCard() {
+function ActionCard({
+  href,
+  icon,
+  title,
+  description,
+  iconBg,
+  iconColor,
+}: {
+  href: string;
+  icon: ReactNode;
+  title: string;
+  description: string;
+  iconBg: string;
+  iconColor: string;
+}) {
   return (
-    <Link to="/quizzes">
-      <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
-        <CardContent className="space-y-3">
-          <PlaySquare className="stroke-green-600 rounded-2xl p-2 bg-green-100 size-10" />
-          <CardTitle className="flex gap-2 items-center">
-            <span>Create Room</span>
-            <span className="group-hover:translate-x-1 duration-300">
-              <ArrowRight size={16} className="stroke-green-600" />
-            </span>
-          </CardTitle>
-          <CardDescription>Host a game</CardDescription>
-        </CardContent>
-      </Card>
+    <Link to={href}>
+      <div className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+        <div
+          className={`shrink-0 w-10 h-10 rounded-xl ${iconBg} ${iconColor} grid place-items-center`}
+        >
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm text-text-900">{title}</p>
+          <p className="text-xs text-text-400 truncate">{description}</p>
+        </div>
+        <ArrowRight
+          size={16}
+          className="text-text-300 group-hover:text-text-600 group-hover:translate-x-0.5 transition-all duration-300 shrink-0"
+        />
+      </div>
     </Link>
   );
 }
@@ -97,21 +142,22 @@ function CreateRoomCard() {
 function JoinRoomCard() {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
-          <CardContent className="space-y-3">
-            <Users className="stroke-blue-600 rounded-2xl p-2 bg-blue-100 size-10" />
-            <CardTitle className="flex gap-2 items-center">
-              <span>Join Room</span>
-              <span className="group-hover:translate-x-1 duration-300">
-                <ArrowRight size={16} className="stroke-blue-600" />
-              </span>
-            </CardTitle>
-            <CardDescription className="text-start">
-              Have a game code? Enter it here to jump into a live session.
-            </CardDescription>
-          </CardContent>
-        </Card>
+      <DialogTrigger asChild>
+        <div className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+          <div className="shrink-0 w-10 h-10 rounded-xl bg-blue-100 text-blue-600 grid place-items-center">
+            <Users size={20} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm text-text-900">Join Room</p>
+            <p className="text-xs text-text-400 truncate">
+              Enter a code to join a live session
+            </p>
+          </div>
+          <ArrowRight
+            size={16}
+            className="text-text-300 group-hover:text-text-600 group-hover:translate-x-0.5 transition-all duration-300 shrink-0"
+          />
+        </div>
       </DialogTrigger>
       <DialogContent className="font-sora">
         <DialogHeader className="text-start">
@@ -128,62 +174,25 @@ function JoinRoomCard() {
   );
 }
 
-function BrowseQuizCard() {
-  return (
-    <Link to="/quizzes">
-      <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
-        <CardContent className="space-y-3">
-          <Library className="stroke-secondary-600 rounded-2xl p-2 bg-secondary-100 size-10" />
-          <CardTitle className="flex gap-2 items-center">
-            <span>My Quiz Collection</span>
-            <span className="group-hover:translate-x-1 duration-300">
-              <ArrowRight size={16} className="stroke-secondary-600" />
-            </span>
-          </CardTitle>
-          <CardDescription>Browse your quizzes</CardDescription>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
-
-function BuildQuizCard() {
-  return (
-    <Link to="/quizbuilder/{-$quizId}">
-      <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
-        <CardContent className="space-y-3">
-          <SquarePlus className="stroke-accent-700 rounded-2xl p-2 bg-accent-100 size-10" />
-          <CardTitle className="flex gap-2 items-center">
-            <span>Build Custom Quiz</span>
-            <span className="group-hover:translate-x-1 duration-300">
-              <ArrowRight size={16} className="stroke-accent-600" />
-            </span>
-          </CardTitle>
-          <CardDescription>Create a new quiz</CardDescription>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
-
 function AIRoomCard() {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
-          <CardContent className="space-y-3">
-            <Sparkles className="stroke-primary-600 rounded-2xl p-2 bg-primary-100 size-10" />
-            <CardTitle className="flex gap-2 items-center">
-              <span>AI Quiz</span>
-              <span className="group-hover:translate-x-1 duration-300">
-                <ArrowRight size={16} className="stroke-primary-600" />
-              </span>
-            </CardTitle>
-            <CardDescription className="text-start">
-              Generate quiz using AI
-            </CardDescription>
-          </CardContent>
-        </Card>
+      <DialogTrigger asChild>
+        <div className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
+          <div className="shrink-0 w-10 h-10 rounded-xl bg-primary-100 text-primary-600 grid place-items-center">
+            <Sparkles size={20} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm text-text-900">AI Quiz</p>
+            <p className="text-xs text-text-400 truncate">
+              Generate a quiz with AI
+            </p>
+          </div>
+          <ArrowRight
+            size={16}
+            className="text-text-300 group-hover:text-text-600 group-hover:translate-x-0.5 transition-all duration-300 shrink-0"
+          />
+        </div>
       </DialogTrigger>
       <DialogContent className="font-sora">
         <DialogHeader className="text-start">
@@ -195,24 +204,5 @@ function AIRoomCard() {
         <AiRoomForm />
       </DialogContent>
     </Dialog>
-  );
-}
-
-function PastGamesCard() {
-  return (
-    <Link to="/games">
-      <Card className="hover:scale-101 hover:-translate-y-1 hover:shadow-md transition-transform duration-300 group">
-        <CardContent className="space-y-3">
-          <GamepadIcon className="stroke-orange-500 rounded-2xl p-2 bg-orange-100 size-10" />
-          <CardTitle className="flex gap-2 items-center">
-            <span>Past Games</span>
-            <span className="group-hover:translate-x-1 duration-300">
-              <ArrowRight size={16} className="stroke-orange-600" />
-            </span>
-          </CardTitle>
-          <CardDescription>Check your past game participations</CardDescription>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }
