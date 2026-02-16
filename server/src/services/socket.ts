@@ -114,7 +114,7 @@ function setupGameEventHandlers() {
   GameEventEmitter.on(
     "countdownStarted",
     ({ room, countdownInfo }: GameState) => {
-      io.to(room.id).emit("question:countdown", countdownInfo!.endsAt);
+      io.to(room.id).emit("question:countdown", countdownInfo);
     },
   );
 

@@ -41,7 +41,7 @@ export interface GameState {
   startedAt: number | null;
   endedAt: number | null;
   currentQuestionInfo: Question;
-  countdownInfo: { endsAt: number } | null;
+  countdownInfo: { duration: number; endsAt: number } | null;
   topRankings: Array<RankInfo>;
 }
 
@@ -49,7 +49,10 @@ interface GameActions {
   actions: {
     updateQuestionInfo: (questionInfo: Question) => void;
     updateGameStatus: (status: GameStatus) => void;
-    updateCountdownInfo: (endsAt: number) => void;
+    updateCountdownInfo: (countdownInfo: {
+      duration: number;
+      endsAt: number;
+    }) => void;
     updateRankings: (rankings: Array<RankInfo>) => void;
   };
 }
@@ -62,8 +65,8 @@ export const createGameStore = (initialState: GameState) => {
     ...initialState,
     actions: {
       updateGameStatus: (status) => set({ status }),
-      updateCountdownInfo: (endsAt) =>
-        set({ status: 'COUNTDOWN', countdownInfo: { endsAt } }),
+      updateCountdownInfo: (countdownInfo) =>
+        set({ status: 'COUNTDOWN', countdownInfo }),
       updateQuestionInfo: (questionInfo) =>
         set({ status: 'QUESTION_ACTIVE', currentQuestionInfo: questionInfo }),
       updateRankings: (topRankings) => set({ topRankings }),
