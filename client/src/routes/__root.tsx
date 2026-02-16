@@ -80,9 +80,9 @@ function Header() {
             </span>
             <button
               onClick={handleMenuClick}
-              className="bg-white p-1 rounded-md hover:bg-blue-400 text-blue-500 hover:text-white hover:cursor-pointer"
+              className="w-9 h-9 rounded-xl hover:bg-slate-200 grid place-items-center transition-colors cursor-pointer"
             >
-              {isOpen ? <X /> : <MenuIcon />}
+              {isOpen ? <X size={18} /> : <MenuIcon size={18} />}
             </button>
           </div>
         ) : (
@@ -102,22 +102,26 @@ const navList = [
   {
     title: 'Dashboard',
     href: '/dashboard',
-    icon: <LayoutDashboardIcon size={20} className="stroke-primary-400" />,
+    icon: <LayoutDashboardIcon size={18} />,
+    color: 'text-primary-500 bg-primary-50',
   },
   {
     title: 'My Quizzes',
     href: '/quizzes',
-    icon: <LibraryIcon size={20} className="stroke-secondary-400" />,
+    icon: <LibraryIcon size={18} />,
+    color: 'text-secondary-500 bg-secondary-50',
   },
   {
     title: 'Quiz Builder',
     href: '/quizbuilder',
-    icon: <SquarePlusIcon size={20} className="stroke-accent-400" />,
+    icon: <SquarePlusIcon size={18} />,
+    color: 'text-accent-600 bg-accent-50',
   },
   {
     title: 'Past Games',
     href: '/games',
-    icon: <GamepadIcon size={20} className="stroke-orange-500" />,
+    icon: <GamepadIcon size={18} />,
+    color: 'text-orange-500 bg-orange-50',
   },
 ];
 
@@ -145,28 +149,38 @@ function Menu({
   return (
     <div
       className={cn(
-        { 'scale-y-0 opacity-0': !isOpen },
-        'absolute right-0 top-0 opacity-100 translate-y-14 w-50 shadow-md rounded-md bg-white border p-4 transition-transform duration-200 origin-top',
+        'absolute right-0 top-0 translate-y-14 w-56 rounded-2xl bg-white border border-slate-200 shadow-xl p-2 transition-all duration-200 origin-top-right',
+        isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none',
       )}
     >
-      <nav className="flex flex-col gap-4 text-sm">
+      <nav className="flex flex-col gap-0.5">
         {navList.map((item) => (
           <Link
             key={item.title}
             to={item.href}
             onClick={() => closeMenu()}
-            className="text-start hover:cursor-pointer p-2 rounded-sm flex gap-2 items-center"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 transition-colors text-sm font-medium text-text-700"
           >
-            {item.icon}
+            <span
+              className={cn(
+                'w-8 h-8 rounded-lg grid place-items-center',
+                item.color,
+              )}
+            >
+              {item.icon}
+            </span>
             {item.title}
           </Link>
         ))}
+        <div className="my-1 border-t border-slate-100" />
         <button
           onClick={handleLogout}
-          className="p-2 rounded-sm flex gap-2 items-center text-red-500 text-start hover:cursor-pointer"
+          className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-red-50 transition-colors text-sm font-medium text-red-500 w-full text-start cursor-pointer"
         >
-          <LogOutIcon size={20} />
-          LogOut
+          <span className="w-8 h-8 rounded-lg bg-red-50 text-red-500 grid place-items-center">
+            <LogOutIcon size={18} />
+          </span>
+          Log Out
         </button>
       </nav>
     </div>
