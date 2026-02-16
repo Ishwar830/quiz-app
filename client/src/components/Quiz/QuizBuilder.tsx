@@ -1,16 +1,15 @@
 import { useContext, useState } from 'react';
-import { PlusCircle, X } from 'lucide-react';
+import { PlusCircle, SquarePlusIcon, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Field, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
 import { Button } from '../ui/button';
-import {
-  Accordion,
-} from '../ui/accordion';
+import { Accordion } from '../ui/accordion';
 import { QuestionCard } from '../General/QuestionCard';
 import { TopicList } from '../General/TopicList';
 import { ChoiceList } from '../General/ChoiceList';
+import { Card, CardContent } from '../ui/card';
 import type { AnswerChoice, QuizFormState } from '@/stores/QuizFormStore';
 import {
   QuizStoreContext,
@@ -22,28 +21,36 @@ import {
   useQuizTitle,
   useQuizTopics,
 } from '@/stores/QuizFormStore';
-import { generateMockFormQuestion } from '@/lib/utils';
+import { cn, generateMockFormQuestion } from '@/lib/utils';
 
 export function QuizBuilder({ quiz }: { quiz: QuizFormState }) {
   const [store] = useState(createQuizStore(quiz));
 
   return (
     <QuizStoreContext.Provider value={store}>
-      <div className="grid gap-2">
+      <div className="grid gap-4">
         <div className="flex justify-between mb-4 items-center">
-          <p className="text-xl font-semibold text-secondary-400">
-            Quiz Builder
-          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-accent-100 text-accent-600 grid place-items-center">
+              <SquarePlusIcon size={20} />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-text-900">Quiz Builder</h1>
+              <p className="text-xs text-text-400">
+                Create and edit quiz content
+              </p>
+            </div>
+          </div>
           <SaveQuizButton />
         </div>
-        <div className="flex flex-col gap-6 border-b-2 border-secondary-500 pb-2">
-          <QuizTitle />
-          <QuizDescription />
-          <QuizTopic />
-        </div>
-        <div className="mt-4">
-          <QuestionContainer />
-        </div>
+        <Card>
+          <CardContent className="flex flex-col gap-4">
+            <QuizTitle />
+            <QuizDescription />
+            <QuizTopic />
+          </CardContent>
+        </Card>
+        <QuestionContainer />
       </div>
     </QuizStoreContext.Provider>
   );
@@ -86,7 +93,7 @@ function SaveQuizButton() {
 
   return (
     <Button
-      className="bg-primary-400 text-text-800 transition-transform duration-200 hover:scale-105 hover:bg-primary-500 shadow-sm"
+      className="bg-primary-400 text-text-800 transition-transform duration-300 hover:scale-105 hover:bg-primary-500 shadow-sm"
       onClick={saveQuiz}
     >
       Save
@@ -166,7 +173,7 @@ function QuizTopic() {
           <TopicList.Item key={idx}>
             <span>{topic}</span>
             <button
-              className="rounded-full p-1 bg-rose-300 hover:cursor-pointer"
+              className="rounded-full p-1 bg-red-100 hover:bg-red-200 text-red-500 hover:cursor-pointer"
               onClick={() => removeTopic(idx)}
             >
               <X size={12} />
@@ -182,14 +189,14 @@ function QuestionContainer() {
   const questionsIds = useQuizQuestionIds();
   const { addQuestion } = useQuizFormActions();
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4 mb-4">
-        <p className="text-xl">Questions</p>
-        <span className="rounded-full size-8 grid place-items-center bg-accent-200 text-center">
+    <div className="mt-6 space-y-4 bg-white p-4 px-5 rounded-2xl border shadow-sm">
+      <div className="flex items-center gap-3">
+        <h2 className="text-lg font-bold text-text-900">Questions</h2>
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-100 text-accent-700 text-xs font-bold">
           {questionsIds.length}
         </span>
         <Button
-          className="border-secondary-200 border-2 text-secondary-400 bg-white hover:bg-secondary-400 hover:text-white"
+          className="ml-auto border border-secondary-200 text-secondary-500 bg-white hover:bg-secondary-50 rounded-xl gap-2"
           onClick={() => {
             if (questionsIds.length >= 20) {
               toast.error('Maximum Question limit reached', {
@@ -200,13 +207,11 @@ function QuestionContainer() {
             addQuestion(generateMockFormQuestion());
           }}
         >
+          <PlusCircle size={14} />
           Add Question
         </Button>
       </div>
-      <Accordion
-        className="pl-4 grid gap-4"
-        type="multiple"
-      >
+      <Accordion className="space-y-2" type="multiple">
         {questionsIds.map((id, idx) => (
           <EditQuestionCard key={id} questionId={id} idx={idx} />
         ))}
@@ -260,15 +265,20 @@ function EditQuestionCard({ questionId }: { questionId: string; idx: number }) {
         <QuestionCard.OrderBadge order={question.order} />
         <QuestionCard.HeaderContent>
           <div className="grid gap-2 grid-cols-[1fr_32px]">
-            <QuestionCard.Text className="overflow-hidden wrap-break-word">
+            <QuestionCard.Text
+              className={cn(
+                'overflow-hidden wrap-break-word',
+                !question.text && 'text-gray-400',
+              )}
+            >
               {question.text || `Question ${question.order}`}
             </QuestionCard.Text>
-            <span
-              className="justify-self-center bg-red-400 self-start rounded-full size-6 grid place-items-center hover:cursor-pointer"
+            <button
+              className="justify-self-center self-start w-6 h-6 rounded-full bg-red-100 text-red-500 hover:bg-red-200 grid place-items-center transition-colors cursor-pointer"
               onClick={() => removeQuestion(questionId)}
             >
-              <X size={20} />
-            </span>
+              <X size={14} />
+            </button>
           </div>
           <QuestionCard.MetaRow>
             <QuestionCard.TimeLimit>
