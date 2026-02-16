@@ -5,6 +5,7 @@ import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Field, FieldError, FieldLabel, FieldSet } from '../ui/field';
 import { Input } from '../ui/input';
+import { TopicList } from '../General/TopicList';
 import type { ValidationError } from './LoginCard';
 import type { FormEvent } from 'react';
 import { cn } from '@/lib/utils';
@@ -183,23 +184,20 @@ function QuizTopicsField({
           <PlusCircle />
         </button>
       </div>
-      <div className="flex gap-2 flex-wrap">
+      <TopicList>
         {topics.map((topic, idx) => (
-          <div
-            key={idx}
-            className="flex items-center gap-2 text-sm rounded-xl bg-accent-100 p-1 px-2"
-          >
+          <TopicList.Item key={idx}>
             <span>{topic}</span>
             <button
               type="button"
-              className="rounded-full p-1 bg-rose-300 hover:cursor-pointer"
+              className="rounded-full p-1 bg-red-100 hover:bg-red-200 text-red-500 hover:cursor-pointer"
               onClick={() => removeTopic(idx)}
             >
               <X size={12} />
             </button>
-          </div>
+          </TopicList.Item>
         ))}
-      </div>
+      </TopicList>
     </div>
   );
 }

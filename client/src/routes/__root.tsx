@@ -18,7 +18,6 @@ import { useState } from 'react';
 import type { User } from 'better-auth';
 import UserAvatar from '@/components/UserAvatar';
 import { auth } from '@/lib/authClient';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface RouterContext {
@@ -68,28 +67,28 @@ function Header() {
 
   const { user } = Route.useRouteContext();
   return (
-    <header className="sticky z-10 top-0 w-full py-4 px-4 md:px-12 shadow-xs bg-slate-100/70 backdrop-blur-sm">
+    <header className="sticky z-10 top-0 w-full py-3 px-4 md:px-12 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
       <div className="h-full relative flex justify-between items-center">
-        <span className="font-semibold text-2xl tracking-wider text-secondary-500">
-          Quizzy
-        </span>
+        <Link to="/" className="flex items-center gap-2 group">
+          <span className="text-xl text-secondary-500 font-bold tracking-wider">
+            Quizzy
+          </span>
+        </Link>
         {user ? (
-          <div className="flex gap-4 items-center">
-            <span>
-              <UserAvatar name={user.name} size="lg" />
-            </span>
+          <div className="flex gap-3 items-center">
+            <UserAvatar name={user.name} size="lg" />
             <button
               onClick={handleMenuClick}
-              className="w-9 h-9 rounded-xl hover:bg-slate-200 grid place-items-center transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 grid place-items-center transition-colors cursor-pointer"
             >
               {isOpen ? <X size={18} /> : <MenuIcon size={18} />}
             </button>
           </div>
         ) : (
           <Link to="/login">
-            <Button className="bg-white text-black border-black border-2 hover:bg-primary-500 hover:border-primary-600 hover:text-white">
+            <button className="px-4 py-2 text-sm font-semibold bg-linear-to-r from-primary-500 to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-sm cursor-pointer">
               Login
-            </Button>
+            </button>
           </Link>
         )}
         <Menu isOpen={isOpen} closeMenu={closeMenu} />
@@ -150,7 +149,9 @@ function Menu({
     <div
       className={cn(
         'absolute right-0 top-0 translate-y-14 w-56 rounded-2xl bg-white border border-slate-200 shadow-xl p-2 transition-all duration-200 origin-top-right',
-        isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none',
+        isOpen
+          ? 'scale-100 opacity-100'
+          : 'scale-90 opacity-0 pointer-events-none',
       )}
     >
       <nav className="flex flex-col gap-0.5">

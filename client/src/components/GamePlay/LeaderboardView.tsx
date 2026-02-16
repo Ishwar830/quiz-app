@@ -33,7 +33,7 @@ function GameSummary() {
       <div className="absolute bottom-0 left-0 size-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
       <CardHeader>
         <div className="flex gap-2">
-          <div className="shrink-0 grow-0 size-14 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-white/40">
+          <div className="shrink-0 grow-0 size-14 rounded-xl shadow-lg grid place-items-center transform -rotate-3 hover:rotate-0 transition-transform duration-300 bg-accent-50">
             <Trophy size={32} className="stroke-accent-500" />
           </div>
           <div>
