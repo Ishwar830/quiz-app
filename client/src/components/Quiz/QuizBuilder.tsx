@@ -44,7 +44,7 @@ export function QuizBuilder({ quiz }: { quiz: QuizFormState }) {
           <SaveQuizButton />
         </div>
         <Card>
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="flex flex-col gap-6 px-2">
             <QuizTitle />
             <QuizDescription />
             <QuizTopic />
@@ -189,7 +189,7 @@ function QuestionContainer() {
   const questionsIds = useQuizQuestionIds();
   const { addQuestion } = useQuizFormActions();
   return (
-    <div className="mt-6 space-y-4 bg-white p-4 px-5 rounded-2xl border shadow-sm">
+    <div className="mt-6 space-y-4 bg-white p-2 py-6 rounded-2xl border shadow-sm">
       <div className="flex items-center gap-3">
         <h2 className="text-lg font-bold text-text-900">Questions</h2>
         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-100 text-accent-700 text-xs font-bold">

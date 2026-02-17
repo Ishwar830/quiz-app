@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -7,10 +7,10 @@ const topics = [
   'World History',
   'Movies',
   'Pop Culture',
-  'Javascript',
+  'Programming',
   'Geography',
-  'Classic Literature',
-  'Space Exploration',
+  'Physics',
+  'Algebra',
 ];
 
 function useTypingEffect(
@@ -23,33 +23,38 @@ function useTypingEffect(
   const [charIdx, setCharIdx] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const typeChar = useEffectEvent(() => {
+    const currentWord = words[wordIdx];
+    if (isDeleting) {
+      setCharIdx((c) => c - 1);
+      if (charIdx - 1 === 0) {
+        setIsDeleting(false);
+        setWordIdx((wordIdx + 1) % words.length);
+      }
+    } else {
+      if (charIdx + 1 <= currentWord.length) setCharIdx((c) => c + 1);
+      if (charIdx + 1 === currentWord.length) {
+        setTimeout(() => {
+          setIsDeleting(true);
+        }, pauseMs);
+      }
+    }
+
+    setDisplay(currentWord.slice(0, charIdx));
+  });
+
   useEffect(() => {
-    const current = words[wordIdx];
+    let timerId = null;
+    if (isDeleting) {
+      timerId = window.setInterval(typeChar, typingSpeed / 2);
+    } else {
+      timerId = window.setInterval(typeChar, typingSpeed);
+    }
 
-    const timeout = setTimeout(
-      () => {
-        if (!isDeleting) {
-          setDisplay(current.slice(0, charIdx + 1));
-          if (charIdx + 1 === current.length) {
-            setTimeout(() => setIsDeleting(true), pauseMs);
-          } else {
-            setCharIdx((c) => c + 1);
-          }
-        } else {
-          setDisplay(current.slice(0, charIdx));
-          if (charIdx === 0) {
-            setIsDeleting(false);
-            setWordIdx((w) => (w + 1) % words.length);
-          } else {
-            setCharIdx((c) => c - 1);
-          }
-        }
-      },
-      isDeleting ? typingSpeed / 2 : typingSpeed,
-    );
-
-    return () => clearTimeout(timeout);
-  }, [charIdx, isDeleting, wordIdx, words, typingSpeed, pauseMs]);
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [isDeleting]);
 
   return display;
 }
