@@ -2,7 +2,7 @@
 const API_URL = "http://localhost:8080"
 const CLIENT_URL = "http://localhost:3000";
 
-const ROOM_CODE = "QNLBW7";
+const ROOM_CODE = "";
 
 // keep it low
 const NUM_BOTS = 20;
