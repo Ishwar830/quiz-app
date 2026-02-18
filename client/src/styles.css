@@ -7,7 +7,7 @@
 @font-face {
   font-family: 'Sora';
 
-  src: url('./assets/fonts/Sora.ttf') format('truetype');
+  src: url('./assets/fonts/Sora.woff2') format('woff2');
   font-weight: 100 800;
   font-style: normal;
   font-display: swap;
