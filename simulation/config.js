@@ -1,8 +1,8 @@
-import "dotenv/config";
 
-const API_URL = process.env.API_URL;
-const CLIENT_URL = process.env.CLIENT_URL;
-const ROOM_CODE = process.env.ROOM_CODE;
+const API_URL = "http://localhost:8080"
+const CLIENT_URL = "http://localhost:3000";
+
+const ROOM_CODE = "QNLBW7";
 
 // keep it low
 const NUM_BOTS = 20;

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { config } from "./config.js";
 import fs from "node:fs";
 
@@ -14,23 +13,23 @@ class BotSignUp {
 
   async signup() {
     try {
-      const response = await axios.post(
-        `${API_URL}/api/auth/sign-up/email`,
-        {
+      const response = await fetch(`${API_URL}/api/auth/sign-up/email`, {
+        method: "POST",
+        headers: {
+          Origin: CLIENT_URL,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           name: this.name,
           email: this.email,
           password: this.password,
-        },
-        {
-          headers: {
-            Origin: CLIENT_URL,
-          },
-        },
-      );
-      console.log(response.data);
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
     } catch (error) {
       console.log(`${this.name} failed to sign up`);
-      console.error(error.response.data.message);
+      console.log(error);
     }
   }
 }

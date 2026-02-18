@@ -1,6 +1,4 @@
-import "dotenv/config";
 import fs from "node:fs";
-import axios from "axios";
 import io from "socket.io-client";
 import { config } from "./config.js";
 
@@ -39,42 +37,41 @@ class BotPlayer {
   }
 
   async login() {
-    const response = await axios.post(
-      `${API_URL}/api/auth/sign-in/email`,
-      {
+    const response = await fetch(`${API_URL}/api/auth/sign-in/email`, {
+      method: "POST",
+      headers: {
+        Origin: CLIENT_URL,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         email: this.email,
         password: this.password,
-      },
-      {
-        headers: {
-          Origin: CLIENT_URL,
-        },
-      },
-    );
+      }),
+    });
 
-    const rawCookies = response.headers["set-cookie"];
+    if (response.ok) {
+      const data = await response.json();
+      const rawCookies = response.headers.getSetCookie();
 
-    if (!rawCookies) {
-      throw new Error("No cookies received from login!");
+      if (!rawCookies) {
+        throw new Error("No cookies received from login!");
+      }
+
+      this.cookies = rawCookies;
+      this.user = data.user;
+
+      console.log(`[${this.email}] Logged in.`);
     }
-
-    this.cookies = rawCookies;
-    this.user = response.data.user;
-
-    console.log(`[${this.email}] Logged in.`);
   }
 
   async joinRoom() {
-    await axios.post(
-      `${API_URL}/api/rooms/join/${ROOM_CODE}?role=PLAYER`,
-      {},
-      {
-        headers: {
-          Origin: CLIENT_URL,
-          Cookie: this.cookies,
-        },
+    await fetch(`${API_URL}/api/rooms/join/${ROOM_CODE}?role=PLAYER`, {
+      method: "POST",
+      headers: {
+        Origin: CLIENT_URL,
+        Cookie: this.cookies,
       },
-    );
+    });
 
     console.log(`[${this.name}] Joined Room ${ROOM_CODE}`);
   }
@@ -92,7 +89,7 @@ class BotPlayer {
     });
 
     this.socket.emit("room:join", ROOM_CODE);
-   
+
     this.socket.on("question:update", (data) => {
       const thinkingTime = Math.floor(Math.random() * 3000) + 1000;
       console.log(`[${this.name}] Thinking...`);
