@@ -9,19 +9,13 @@ import {
   InputGroupInput,
 } from '../ui/input-group';
 
-interface FieldProps {
-  value: string;
-  handleChange: (updatedValue: string) => void;
-}
-
-export function EmailField({ value, handleChange }: FieldProps) {
+export function EmailField() {
   return (
     <Field>
       <FieldLabel htmlFor="email">Email</FieldLabel>
       <Input
-        onChange={(e) => handleChange(e.target.value)}
-        value={value}
         id="email"
+        name='email'
         type="email"
         placeholder="johndoe@example.com"
         required
@@ -30,7 +24,7 @@ export function EmailField({ value, handleChange }: FieldProps) {
   );
 }
 
-export function PasswordField({ value, handleChange }: FieldProps) {
+export function PasswordField() {
   const [reveal, setReveal] = useState(false);
   return (
     <Field>
@@ -38,11 +32,10 @@ export function PasswordField({ value, handleChange }: FieldProps) {
       <InputGroup>
         <InputGroupInput
           id="password"
+          name='password'
           placeholder="Your password"
           type={reveal ? 'text' : 'password'}
           required
-          value={value}
-          onChange={(e) => handleChange(e.target.value)}
         />
         <InputGroupAddon align="inline-end">
           <InputGroupButton onClick={() => setReveal(!reveal)}>
@@ -54,18 +47,11 @@ export function PasswordField({ value, handleChange }: FieldProps) {
   );
 }
 
-export function UserNameField({ value, handleChange }: FieldProps) {
+export function UserNameField() {
   return (
     <Field>
       <FieldLabel htmlFor="name">Name</FieldLabel>
-      <Input
-        id="name"
-        type="text"
-        placeholder="John Doe"
-        required
-        value={value}
-        onChange={(e) => handleChange(e.target.value)}
-      />
+      <Input id="name" name='name' type="text" placeholder="John Doe" required />
     </Field>
   );
 }

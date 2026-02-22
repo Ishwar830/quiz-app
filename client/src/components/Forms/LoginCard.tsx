@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Loader2, Zap } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   Card,
   CardAction,
@@ -12,7 +13,6 @@ import {
 import { Button } from '../ui/button';
 import { FieldError, FieldSeparator } from '../ui/field';
 import { EmailField, PasswordField } from './FormFields';
-import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/authClient';
 
 export function LoginCard() {
@@ -38,77 +38,50 @@ export function LoginCard() {
   );
 }
 
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
-
 export interface ValidationError {
   message?: string;
 }
 
 function LoginForm() {
+  const [isPending, setIsPending] = useState(false);
   const navigate = useNavigate();
-  const { formData, handleInputChange } = useForm<LoginFormInputs>({
-    email: '',
-    password: '',
-  });
   const [validationError, setValidationError] =
     useState<Array<ValidationError>>();
-  const [isPending, setIsPending] = useState(false);
 
-  const handleEmailChange = (val: string) => {
-    handleInputChange('email', val);
-  };
-
-  const handlePasswordChange = (val: string) => {
-    handleInputChange('password', val);
-  };
-
-  const handleSubmit = async () => {
-    setIsPending(true);
-
+  const formAction = async (formData: FormData) => {
     try {
+      setIsPending(true);
       const { data, error } = await auth.signIn.email({
-        email: formData.email,
-        password: formData.password,
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
       });
       if (data) navigate({ to: '/dashboard' });
       if (error) setValidationError([error]);
     } catch (err) {
-      console.error(err);
+      toast.warn('Unknown error occurred. Try Again!');
     } finally {
       setIsPending(false);
     }
   };
 
   const handleGuestLogin = async () => {
-    setIsPending(true);
-
     try {
+      setIsPending(true);
       const { data, error } = await auth.signIn.anonymous();
       if (data) navigate({ to: '/dashboard' });
       if (error) setValidationError([error]);
     } catch (err) {
-      console.error(err);
+      toast.warn('Unknown error occurred. Try Again!');
     } finally {
       setIsPending(false);
     }
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-    >
+    <form action={formAction}>
       <div className="flex flex-col gap-4">
-        <EmailField value={formData.email} handleChange={handleEmailChange} />
-        <PasswordField
-          value={formData.password}
-          handleChange={handlePasswordChange}
-        />
+        <EmailField />
+        <PasswordField />
         <FieldError errors={validationError} />
 
         <Button

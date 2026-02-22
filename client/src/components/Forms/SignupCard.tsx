@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   Card,
   CardAction,
@@ -12,7 +13,6 @@ import {
 import { Button } from '../ui/button';
 import { FieldError } from '../ui/field';
 import { EmailField, PasswordField, UserNameField } from './FormFields';
-import { useForm } from '@/hooks/useForm';
 import { auth } from '@/lib/authClient';
 
 export function SignUpCard() {
@@ -38,71 +38,39 @@ export function SignUpCard() {
   );
 }
 
-interface SignUpFormInputs {
-  name: string;
-  email: string;
-  password: string;
-}
-
 interface ValidationError {
   message?: string;
 }
 
 function SignUpForm() {
   const navigate = useNavigate();
-  const { formData, handleInputChange } = useForm<SignUpFormInputs>({
-    name: '',
-    email: '',
-    password: '',
-  });
   const [validationError, setValidationError] =
     useState<Array<ValidationError>>();
   const [isPending, setIsPending] = useState(false);
 
-  const handleNameChange = (val: string) => {
-    handleInputChange('name', val);
-  };
-
-  const handleEmailChange = (val: string) => {
-    handleInputChange('email', val);
-  };
-
-  const handlePasswordChange = (val: string) => {
-    handleInputChange('password', val);
-  };
-
-  const handleSubmit = async () => {
-    setIsPending(true);
-
+  const formAction = async (formData: FormData) => {
     try {
+      setIsPending(true);
       const { data, error } = await auth.signUp.email({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
       });
       if (data) navigate({ to: '/dashboard' });
       if (error) setValidationError([error]);
     } catch (err) {
-      console.error(err);
+      toast.warn('Unknown error occurred. Try Again!');
     } finally {
       setIsPending(false);
     }
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-    >
+    <form action={formAction}>
       <div className="flex flex-col gap-4">
-        <UserNameField value={formData.name} handleChange={handleNameChange} />
-        <EmailField value={formData.email} handleChange={handleEmailChange} />
-        <PasswordField
-          value={formData.password}
-          handleChange={handlePasswordChange}
-        />
+        <UserNameField />
+        <EmailField />
+        <PasswordField />
         <FieldError errors={validationError} />
         <Button
           type="submit"
