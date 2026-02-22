@@ -9,7 +9,12 @@ const authMiddleware: RequestHandler = async (req, res, next) => {
   });
 
   if (!data) {
-    return res.status(401).json(ApiResponse.error("Unauthorized user"));
+    return res.status(401).json(
+      ApiResponse.error({
+        code: "UNAUTHORIZED USER",
+        message: "User is not authorized",
+      }),
+    );
   }
 
   req.user = data.user;

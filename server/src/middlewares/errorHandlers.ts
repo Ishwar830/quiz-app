@@ -7,10 +7,21 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  console.log(err);
-  res.status(500).json(ApiResponse.error("Internal Server Error"));
+  console.error("ERROR:", err);
+
+  return res.status(500).json(
+    ApiResponse.error({
+      code: "SERVER ERROR",
+      message: "Internal Server Error",
+    }),
+  );
 };
 
 export const notFoundHandler: RequestHandler = (req, res) => {
-  res.status(404).json(ApiResponse.error(`Cannot ${req.method} ${req.path}`));
+  res.status(404).json(
+    ApiResponse.error({
+      code: "NOT FOUND",
+      message: `Cannot ${req.method} ${req.path}`,
+    }),
+  );
 };

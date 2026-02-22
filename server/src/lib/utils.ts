@@ -1,26 +1,25 @@
-export class ApiResponse<T = any> {
-  public readonly success: boolean;
-  public readonly data: T | null;
-  public readonly error?: Record<string, string>;
+export interface ApiError {
+  code: string;
+  message: string;
+  details?: any;
+}
+
+export class ApiResponse {
+  public readonly data: any;
+  public readonly error: ApiError | null;
   public readonly timestamp: string;
 
-  constructor(
-    success: boolean,
-    data: T | null = null,
-    error?: Record<string, string>,
-  ) {
-    this.success = success;
+  constructor(data: any = null, error: ApiError | null = null) {
     this.data = data;
     this.error = error;
     this.timestamp = new Date().toISOString();
   }
 
-  static success<T>(data: T): ApiResponse<T> {
-    return new ApiResponse<T>(true, data);
+  static success(data: any) {
+    return new ApiResponse(data);
   }
 
-  static error(error: string | Record<string, string>): ApiResponse<null> {
-    if (typeof error === "string") error = { message: error };
-    return new ApiResponse(false, null, error);
+  static error(error: ApiError) {
+    return new ApiResponse(null, error);
   }
 }

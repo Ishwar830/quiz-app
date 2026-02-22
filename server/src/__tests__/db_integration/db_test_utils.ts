@@ -9,7 +9,11 @@ import {
 import { questions, quiz } from "../../db/schema/quizzes.ts";
 import { user } from "../../db/schema/users.ts";
 import { QuizPayload } from "../../lib/zod_schemas.ts";
-import { GameDataPayload, GameQuestion } from "../../services/types.js";
+import {
+  GameDataPayload,
+  GameQuestion,
+  Question,
+} from "../../services/types.js";
 
 export const clearDb = async () => {
   await db.delete(gameParticipants);
@@ -27,27 +31,26 @@ export const getMockQuizPayloadData = () => {
     title: "Mock Quiz",
     description: "Quiz Desc",
     topics: ["mock"],
-    questions: [
-      {
-        id: nanoid(),
-        text: "question_1",
-        choices: [],
-        order: 1,
-        timeLimitSeconds: 10,
-        correctChoiceId: "1",
-      },
-      {
-        id: nanoid(),
-        text: "question_2",
-        choices: [],
-        order: 2,
-        timeLimitSeconds: 10,
-        correctChoiceId: "1",
-      },
-    ],
+    questions: Array.from({ length: 5 }).map(() => getMockQuizQuestion()),
   };
 
   return mockQuiz;
+};
+
+export const getMockQuizQuestion = (): Question => {
+  const qId = nanoid();
+  const choices = Array.from({ length: 4 }).map((_, idx) => ({
+    id: nanoid(),
+    text: `choice-${idx}`,
+  }));
+  return {
+    id: qId,
+    text: `question-${qId}`,
+    timeLimitSeconds: 10,
+    choices,
+    correctChoiceId: choices[0].id,
+    order: 1,
+  };
 };
 
 export const insertMockQuizForUser = async (userId: string) => {

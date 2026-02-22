@@ -47,7 +47,7 @@ describe("Quiz Repository Integration Tests", () => {
 
     expect(result).toBeDefined();
     expect(result?.title).toBe(mockQuiz.title);
-    expect(result?.questions).toHaveLength(2);
+    expect(result?.questions).toHaveLength(mockQuiz.questions.length);
     expect(result?.questions[0].text).toBe(mockQuiz.questions[0].text);
     expect(result?.questions[1].id).toBe(mockQuiz.questions[1].id);
   });

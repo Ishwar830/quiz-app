@@ -23,4 +23,7 @@ apiRouter.use(notFoundHandler);
 
 apiRouter.use(errorHandler);
 
-export default apiRouter;
+export const app = express();
+
+app.use("/api", apiRouter);
+
