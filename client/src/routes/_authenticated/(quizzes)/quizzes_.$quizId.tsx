@@ -1,15 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { EyeIcon } from 'lucide-react';
-import { fetchQuiz } from '@/lib/utils';
 import { QuizPreview } from '@/components/Quiz/QuizPreview';
+import { getQuiz } from '@/api/quiz.api';
 
 export const Route = createFileRoute(
   '/_authenticated/(quizzes)/quizzes_/$quizId',
 )({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const quizId = params.quizId;
-    return await fetchQuiz(quizId);
+    const { data, error } = await getQuiz(params.quizId);
+    if (data) return data;
+    throw new Error(error?.message);
   },
 });
 

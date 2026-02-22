@@ -8,10 +8,15 @@ import {
 } from '@/components/ui/input-group';
 import { QuizCard } from '@/components/Quiz/QuizCard';
 import { QuizCardSkeleton, Skeleton } from '@/components/Skeletons';
+import { getUserQuizzes } from '@/api/quiz.api';
 
 export const Route = createFileRoute('/_authenticated/(quizzes)/quizzes')({
   component: RouteComponent,
-  loader: getUserQuizzes,
+  loader: async () => {
+    const { data, error } = await getUserQuizzes();
+    if (data) return data;
+    throw new Error(error?.message);
+  },
   pendingComponent: () => <LoadingCardContainer />,
   pendingMinMs: 200,
   pendingMs: 200,
@@ -73,17 +78,6 @@ function QuizContainer({ quizzes }: { quizzes: Array<QuizMeta> }) {
       ))}
     </div>
   );
-}
-
-async function getUserQuizzes() {
-  const res = await fetch('/api/quizzes');
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch quizzes: ${res.status}`);
-  }
-
-  const { data } = await res.json();
-  return data as Array<QuizMeta>;
 }
 
 function LoadingCardContainer() {

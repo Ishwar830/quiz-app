@@ -18,7 +18,7 @@ interface Member {
   score?: number;
 }
 
-interface MemberState {
+export interface MemberState {
   member: Member;
   submissions: Array<Submission>;
 }

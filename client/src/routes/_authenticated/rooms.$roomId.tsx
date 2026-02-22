@@ -4,25 +4,16 @@ import { SocketProvider } from '@/socket';
 import { GameStoreContext, createGameStore } from '@/stores/GameStore';
 import { MemberStoreContext, createMemberStore } from '@/stores/MemberStore';
 import { GameLayout } from '@/components/GamePlay/GameLayout';
+import { getGameStatus } from '@/api/room.api';
 
 export const Route = createFileRoute('/_authenticated/rooms/$roomId')({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const roomId = params.roomId;
-    return await getGameStatus(roomId);
+    const { data, error } = await getGameStatus(params.roomId);
+    if (data) return data;
+    throw new Error(error?.message);
   },
 });
-
-async function getGameStatus(roomId: string) {
-  const res = await fetch(`/api/rooms/${roomId}`);
-  if (!res.ok) {
-    const { error } = await res.json();
-    throw new Error(error);
-  }
-  const { data } = await res.json();
-  console.log(data);
-  return data;
-}
 
 function RouteComponent() {
   const { user } = Route.useRouteContext();

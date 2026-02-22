@@ -1,20 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { GamepadIcon } from 'lucide-react';
-import type { UserGameMeta } from '@/components/GameHistory/GameCard';
 import { GameCard } from '@/components/GameHistory/GameCard';
+import { getUserGames } from '@/api/games.api';
 
 export const Route = createFileRoute('/_authenticated/(games)/games')({
   component: RouteComponent,
-  loader: getUserGames,
+  loader: async () => {
+    const { data, error } = await getUserGames();
+    if (data) return data;
+    throw new Error(error?.message);
+  },
 });
-
-async function getUserGames() {
-  const res = await fetch('/api/games');
-  if (res.ok) {
-    return (await res.json()) as Array<UserGameMeta>;
-  }
-  throw new Error('Failed to fetch games');
-}
 
 function RouteComponent() {
   const userGames = Route.useLoaderData();

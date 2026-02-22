@@ -8,6 +8,7 @@ import {
 import { z } from 'zod';
 import UserAvatar from '@/components/UserAvatar';
 import { cn } from '@/lib/utils';
+import { getGameLeaderboard } from '@/api/games.api';
 
 const leaderboardSearchSchema = z.object({
   page: z.number().int().positive().min(1).catch(1),
@@ -19,12 +20,14 @@ export const Route = createFileRoute(
   validateSearch: leaderboardSearchSchema,
   loaderDeps: ({ search: { page } }) => ({ page }),
   loader: async ({ params, deps: { page } }) => {
-    return await getLeaderboard(params.gameId, page);
+    const { data, error } = await getGameLeaderboard(params.gameId, page);
+    if (data) return data;
+    throw new Error(error?.message);
   },
   component: RouteComponent,
 });
 
-interface LeaderboardData {
+export interface LeaderboardData {
   items: Array<Rank>;
   totalCount: number;
   totalPages: number;
@@ -35,15 +38,6 @@ interface Rank {
   name: string;
   score: number;
   rank: number;
-}
-
-async function getLeaderboard(
-  gameId: string,
-  page: number,
-): Promise<LeaderboardData> {
-  const res = await fetch(`/api/games/${gameId}/rankings?page=${page}`);
-  if (res.ok) return await res.json();
-  throw new Error('Failed to fetch game rankings');
 }
 
 function RouteComponent() {
