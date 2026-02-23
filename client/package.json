@@ -6,7 +6,7 @@
     "dev": "vite --port 3000",
     "build": "vite build && tsc",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest",
     "lint": "eslint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix"
@@ -46,6 +46,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "prettier": "^3.5.3",
     "typescript": "^5.7.2",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "vitest": "^4.0.18"
   }
 }
