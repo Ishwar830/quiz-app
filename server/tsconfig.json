@@ -6,5 +6,5 @@
     "rewriteRelativeImportExtensions": true,
     "types": ["vitest/globals"]
   },
-  "exclude": ["node_modules", "__tests__"]
+  "exclude": ["node_modules", "./src/__tests__"]
 }

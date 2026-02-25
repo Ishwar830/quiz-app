@@ -1,6 +1,6 @@
 import type { GameState } from '@/stores/GameStore';
 import type { ApiResponse } from './types.api';
-import type { MemberState } from '@/stores/MemberStore';
+import type { Member, MemberState } from '@/stores/MemberStore';
 
 export async function getGameStatus(
   roomId: string,
@@ -16,4 +16,17 @@ export async function getGameStatus(
       error: { code: 'UNKNOWN ERROR', message: errorMessage },
     };
   }
+}
+
+export async function joinRoom(
+  roomCode: string,
+  role: 'PLAYER' | 'SPECTATOR',
+): Promise<ApiResponse<Omit<Member, 'score'>>> {
+  const res = await fetch(`/api/rooms/join/${roomCode}?role=${role}`, {
+    method: 'POST',
+  });
+
+  const { data, error } = await res.json();
+
+  return { data, error };
 }

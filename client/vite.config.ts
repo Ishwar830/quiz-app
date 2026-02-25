@@ -44,6 +44,15 @@ export default defineConfig({
           dir: './src/__tests__/stores',
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'component-testing',
+          dir: './src/__tests__/components',
+          setupFiles: ['./src/__tests__/components/setup.ts'],
+          environment: 'jsdom'
+        },
+      },
     ],
   },
 });

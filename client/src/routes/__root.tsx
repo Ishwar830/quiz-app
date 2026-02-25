@@ -19,6 +19,7 @@ import type { User } from 'better-auth';
 import UserAvatar from '@/components/UserAvatar';
 import { auth } from '@/lib/authClient';
 import { cn } from '@/lib/utils';
+import { getUser } from '@/api/user.api';
 
 interface RouterContext {
   user: User | null;
@@ -27,11 +28,11 @@ interface RouterContext {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RouteComponent,
   beforeLoad: async () => {
-    const { data } = await auth.getSession();
+    const { user } = await getUser();
 
-    if (data == null) return null;
+    if (user == null) return null;
     return {
-      user: data.user,
+      user,
     };
   },
 });
@@ -76,7 +77,7 @@ function Header() {
         </Link>
         {user ? (
           <div className="flex gap-3 items-center">
-            <Link to='/dashboard'>
+            <Link to="/dashboard">
               <UserAvatar name={user.name} size="lg" />
             </Link>
             <button

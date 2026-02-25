@@ -15,7 +15,7 @@ export function EmailField() {
       <FieldLabel htmlFor="email">Email</FieldLabel>
       <Input
         id="email"
-        name='email'
+        name="email"
         type="email"
         placeholder="johndoe@example.com"
         required
@@ -32,14 +32,24 @@ export function PasswordField() {
       <InputGroup>
         <InputGroupInput
           id="password"
-          name='password'
+          name="password"
           placeholder="Your password"
           type={reveal ? 'text' : 'password'}
           required
         />
         <InputGroupAddon align="inline-end">
-          <InputGroupButton onClick={() => setReveal(!reveal)}>
-            {reveal ? <EyeOffIcon /> : <EyeIcon />}
+          <InputGroupButton
+            type="button"
+            aria-controls="password"
+            aria-label={reveal ? 'Show password' : 'Hide password'}
+            aria-pressed={reveal}
+            onClick={() => setReveal(!reveal)}
+          >
+            {reveal ? (
+              <EyeOffIcon aria-hidden="true" />
+            ) : (
+              <EyeIcon aria-hidden="true" />
+            )}
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>
@@ -51,7 +61,13 @@ export function UserNameField() {
   return (
     <Field>
       <FieldLabel htmlFor="name">Name</FieldLabel>
-      <Input id="name" name='name' type="text" placeholder="John Doe" required />
+      <Input
+        id="name"
+        name="name"
+        type="text"
+        placeholder="John Doe"
+        required
+      />
     </Field>
   );
 }

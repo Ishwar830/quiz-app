@@ -6,6 +6,7 @@ import { Field, FieldError, FieldLabel, FieldSet } from '../ui/field';
 import { Input } from '../ui/input';
 import type { ValidationError } from './LoginCard';
 import type { FormEvent } from 'react';
+import { joinRoom } from '@/api/room.api';
 
 export function JoinRoomForm() {
   const navigate = useNavigate();
@@ -17,23 +18,21 @@ export function JoinRoomForm() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`/api/rooms/join/${roomCode}?role=${role}`, {
-        method: 'POST',
-      });
+      const { error } = await joinRoom(
+        roomCode,
+        role as 'PLAYER' | 'SPECTATOR',
+      );
 
-      const { data, error } = await res.json();
-
-      if (res.ok) {
-        console.log(data);
+      if (error) {
+        setErrors([error]);
+      } else {
         navigate({
           to: '/rooms/$roomId',
           params: { roomId: roomCode },
         });
-      } else {
-        setErrors([error]);
       }
     } catch (err) {
-      setErrors([{ message: 'Server Error' }]);
+      setErrors([{ message: 'Unknown Error' }]);
     }
   };
 

@@ -13,7 +13,8 @@ import {
 import { Button } from '../ui/button';
 import { FieldError, FieldSeparator } from '../ui/field';
 import { EmailField, PasswordField } from './FormFields';
-import { auth } from '@/lib/authClient';
+import type { FormEvent } from 'react';
+import { anonymousLogin, userLogin } from '@/api/user.api';
 
 export function LoginCard() {
   return (
@@ -48,16 +49,20 @@ function LoginForm() {
   const [validationError, setValidationError] =
     useState<Array<ValidationError>>();
 
-  const formAction = async (formData: FormData) => {
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
     try {
       setIsPending(true);
-      const { data, error } = await auth.signIn.email({
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
-      });
-      if (data) navigate({ to: '/dashboard' });
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+
+      const { error } = await userLogin(email, password);
+      
       if (error) setValidationError([error]);
+      else navigate({ to: '/dashboard' });
     } catch (err) {
+      console.log('failure');
       toast.warn('Unknown error occurred. Try Again!');
     } finally {
       setIsPending(false);
@@ -67,9 +72,9 @@ function LoginForm() {
   const handleGuestLogin = async () => {
     try {
       setIsPending(true);
-      const { data, error } = await auth.signIn.anonymous();
-      if (data) navigate({ to: '/dashboard' });
+      const { error } = await anonymousLogin();
       if (error) setValidationError([error]);
+      else navigate({ to: '/dashboard' });
     } catch (err) {
       toast.warn('Unknown error occurred. Try Again!');
     } finally {
@@ -78,7 +83,7 @@ function LoginForm() {
   };
 
   return (
-    <form action={formAction}>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-4">
         <EmailField />
         <PasswordField />
@@ -86,14 +91,12 @@ function LoginForm() {
 
         <Button
           type="submit"
-          className="w-full bg-primary-400 hover:bg-primary-500 text-black shadow-md shadow-primary-500/20 rounded-xl h-10"
+          aria-busy={isPending}
+          className="w-full flex gap-2 bg-primary-400 hover:bg-primary-500 text-black shadow-md shadow-primary-500/20 rounded-xl h-10"
           disabled={isPending}
         >
-          {isPending ? (
-            <Loader2 className="animate-spin" />
-          ) : (
-            <span>Login</span>
-          )}
+          <span>Login</span>
+          {isPending && <Loader2 className="animate-spin" />}
         </Button>
 
         <FieldSeparator>Or</FieldSeparator>

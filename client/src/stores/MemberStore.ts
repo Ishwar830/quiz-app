@@ -11,7 +11,7 @@ export interface Submission {
   isCorrect: boolean;
 }
 
-interface Member {
+export interface Member {
   id: string;
   name: string;
   role: 'PLAYER' | 'SPECTATOR';
